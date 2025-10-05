@@ -3,7 +3,7 @@ import SocialCard from "./cards/SocialCard";
 
 export default function About() {
   return (
-    <section className="min-h-screen relative bg-kindofwhite">
+    <section className="min-h-screen relative top-16">
       <div className="min-h-screen flex items-center justify-center py-8">
         <div className="flex flex-col md:flex-row h-full justify-center gap-8 lg:gap-32 relative">
           <div className="w-full md:w-5/12 flex flex-col justify-center text-center">

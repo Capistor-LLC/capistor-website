@@ -53,7 +53,7 @@ export default function MyNavbar({ sections }: NavbarProps) {
 
   return (
     <nav className="fixed top-0 right-0 w-full bg-kindofwhite z-50">
-      <div className="max-w-8 mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-center items-center h-16 relative">
           <div className="flex items-center space-x-6">
             <motion.div
@@ -62,7 +62,7 @@ export default function MyNavbar({ sections }: NavbarProps) {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5, ease: "easeOut" }}>
               <motion.img
-                className="md:w-8 md:h-8 sm:h-6 sm:w-6"
+                className="max-w-9 max-h-9 md:w-8 md:h-8 sm:h-6 sm:w-6"
                 src="/logo_svg1.svg"
                 alt="logo"
                 whileHover={{ scale: 1.1 }}

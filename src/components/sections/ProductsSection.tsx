@@ -56,7 +56,7 @@ export default function ProductsSection({
         <div className="flex flex-col md:flex-row h-full justify-center">
           <div className="w-full md:w-5/12 md:mt-24 sm:p-6 md:p-8 lg:p-12 flex flex-col items-center text-center">
             <motion.h2
-              className="text-2xl sm:text-3xl md:text-4xl lg:text-4xl font-futura font-bold text-sexyblue mt-10 sm:mt-16 md:mt-20 mb-6 sm:mb-8 md:mb-6"
+              className="text-2xl sm:text-3xl md:text-4xl lg:text-4xl font-futura font-bold text-sexyblue mt-6 sm:mt-16 md:mt-20 mb-6 sm:mb-8 md:mb-6"
               initial={{ opacity: 0, y: -50 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}>
@@ -172,7 +172,7 @@ export default function ProductsSection({
                   </button>
                 </div>
                 <button
-                  className="md:hidden absolute top-10 left-36 w-10 h-10 bg-sexyblue/75 text-kindofwhite rounded-full flex items-center justify-center hover:bg-sexyblue transition-colors duration-200 z-40"
+                  className="md:hidden absolute top-12 left-16 w-10 h-10 bg-sexyblue/75 text-kindofwhite rounded-full flex items-center justify-center hover:bg-sexyblue transition-colors duration-200 z-40"
                   onClick={() => setIsMenuOpen(!isMenuOpen)}
                   aria-label="Toggle product menu">
                   <svg
@@ -193,7 +193,7 @@ export default function ProductsSection({
               <AnimatePresence>
                 {isMenuOpen && (
                   <motion.nav
-                    className="absolute top-0 right-0 w-1/2 h-auto max-h-[calc(100vh-589px)] md:hidden bg-kindofwhite/90 p-4 shadow-lg z-50 mt-6 overflow-y-auto"
+                    className="absolute top-3 right-0 w-1/2 h-auto max-h-[calc(100vh-353px)] md:hidden bg-kindofwhite/90 p-4 shadow-lg z-50 mt-6 overflow-y-auto"
                     initial={{ x: "100%" }}
                     animate={{ x: 0 }}
                     exit={{ x: "100%" }}
@@ -203,7 +203,7 @@ export default function ProductsSection({
                       damping: 30,
                     }}>
                     <button
-                      className="w-10 h-10 bg-sexyblue/75 text-kindofwhite rounded-full flex items-center justify-center mb-4 hover:bg-sexyblue transition-colors duration-200"
+                      className="w-10 h-10 bg-sexyblue/75 text-kindofwhite rounded-full flex items-center justify-center mb-3 hover:bg-sexyblue transition-colors duration-200"
                       onClick={() => setIsMenuOpen(false)}
                       aria-label="Close menu">
                       <svg

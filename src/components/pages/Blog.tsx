@@ -36,7 +36,7 @@ export default function BlogSection() {
   return (
     <section className="min-h-screen text-sexyblue flex items-center">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-5xl w-full">
-        <div className="relative top-0 h-screen bg-kindofwhite">
+        <div className="relative top-16 md:top-0 h-screen">
           <div className="flex flex-col h-full justify-center">
             <div className="w-full mt-16 sm:p-6 md:p-8 lg:p-12 flex flex-col items-center text-center">
               <motion.div
@@ -47,7 +47,7 @@ export default function BlogSection() {
                 <h1>My Blog</h1>
                 <p className="text-sexyblue/40 text-lg sm:text-xl md:text-2xl font-futura max-w-2xl mx-auto ">Follow my journey.</p>
               </motion.div>
-              <div className="flex md:flex-row sm:flex-col gap-6 sm:gap-2 md:gap-10 md:w-full md:max-w-full sm:max-w-[600px] sm:h-full">
+              <div className="flex flex-col md:flex-row gap-6 sm:gap-2 md:gap-10">
                 {blogPosts.map((post, index) => (
                   <BlogCard
                     key={index}

@@ -24,7 +24,7 @@ export default function BlogCard({
 
   return (
     <motion.div
-      className="w-full sm:h-48 md:h-full bg-kindofwhite rounded-xl border-2 border-capistor-300/20 shadow-lg overflow-hidden flex md:flex-col sm:flex-row h-full"
+      className="w-full md:h-full bg-kindofwhite rounded-xl border-2 border-capistor-300/20 shadow-lg overflow-hidden flex md:flex-col h-40 sm:flex-row"
       initial={{ opacity: 0, scale: 0.8 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
@@ -32,9 +32,9 @@ export default function BlogCard({
       <img
         src={imageSrc}
         alt={title}
-        className="md:w-full md:h-56 sm:w-40 sm:h-48 object-cover"
+        className="md:w-96 md:h-56 w-28 h-40 object-cover"
       />
-      <div className="p-4 sm:p-6 sm:justify-start flex-1 flex flex-col justify-between">
+      <div className="md:p-4 p-3 sm:justify-start justify-between">
         <div>
           <h3 className="md:text-2xl text-left sm:text-xl font-futura font-bold text-sexyblue mb-2">
             {title}
@@ -43,11 +43,13 @@ export default function BlogCard({
             {text}
           </p>
         </div>
-        <button
-          onClick={onClick}
-          className="md:mt-4 sm:mt-4  inline-block py-2 px-6 bg-sexyblue text-kindofwhite rounded-lg font-futura text-base sm:text-lg hover:bg-capistor-600 transition-colors duration-200 md:w-full sm:w-40 text-center">
-          {buttonText}
-        </button>
+        <div className="text-left md:text-center mt-3">
+          <button
+            onClick={onClick}
+            className="md:mt-4 sm:mt-4  inline-block py-2 px-6 bg-sexyblue text-kindofwhite rounded-lg font-futura text-base sm:text-lg hover:bg-capistor-600 transition-colors duration-200 md:w-full sm:w-40 text-center">
+            {buttonText}
+          </button>
+        </div>
       </div>
     </motion.div>
   );

@@ -29,13 +29,12 @@ export default function Service() {
       description:
         "PCB design, prototyping, and production-grade hardware solutions.",
     },
-    
   ];
 
   return (
     <section className="min-h-screen text-sexyblue flex items-center">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-5xl w-full">
-        <div className="relative top-0 h-screen bg-kindofwhite">
+        <div className="relative top-28 md:top-0 h-screen bg-kindofwhite">
           <div className="flex flex-col h-full justify-center">
             <div className="w-full sm:p-6 md:p-8 lg:p-12 flex flex-col items-center text-center">
               <motion.div
@@ -44,7 +43,9 @@ export default function Service() {
                 animate={{ opacity: isLoaded ? 1 : 0, y: isLoaded ? 0 : -50 }}
                 transition={{ duration: 0.6 }}>
                 <h1>Services We Provide</h1>
-                <p className="text-sexyblue/40 text-lg sm:text-xl md:text-2xl font-futura max-w-2xl mx-auto ">We Do all the shit.</p>
+                <p className="text-sexyblue/40 text-lg sm:text-xl md:text-2xl font-futura max-w-2xl mx-auto ">
+                  We Do all the shit.
+                </p>
               </motion.div>
               <div className="grid md:grid-cols-2 sm:grid-cols-1 gap-6 sm:gap-8 md:gap-10 md:w-full max-w-4xl">
                 {services.map((service, index) => (
@@ -58,7 +59,7 @@ export default function Service() {
                     <h3 className="md:text-2xl text-left sm:text-xl font-futura font-bold text-sexyblue mb-2">
                       {service.title}
                     </h3>
-                    <p className="text-left md:w-full sm:w-72 sm:text-lg text-sexyblue/90 font-fransisco font-normal leading-6 sm:leading-8 text-justify">
+                    <p className="text-left md:w-full sm:w-72 sm:text-lg text-sexyblue/90 font-fransisco font-normal leading-6 sm:leading-8">
                       {service.description}
                     </p>
                   </motion.div>
