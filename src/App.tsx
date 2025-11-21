@@ -3,14 +3,12 @@ import MyNavbar from "./components/Navbar";
 import Home from "./components/home";
 import About from "./components/pages/About";
 import ProductsSection from "./components/sections/ProductsSection";
-import ProductsDemoSection from "./components/sections/ProductsDemoSection"; 
+
 import Services from "./components/pages/Services";
 import Blog from "./components/pages/Blog";
-import Contact from "./components/pages/Contact";
 import { useProductNavigation } from "./utils/useProductNavigation";
 import {
   Product,
-  Category,
   loadProducts,
   getFallbackProducts,
 } from "./utils/productLoader";
@@ -26,16 +24,17 @@ export default function App() {
     contact: useRef<HTMLElement>(null),
   };
 
-  const [products, setProducts] = useState<Category[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
 
   useEffect(() => {
     const initProducts = async () => {
       try {
-        const loadedProducts = await loadProducts();
-        setProducts(loadedProducts.flatMap((category) => category.products));
+        const loadedProducts = await loadProducts(); // already returns Product[]
+        setProducts(loadedProducts);
       } catch (error) {
         console.warn("Failed to load products, using fallback:", error);
-        const fallbackProducts = getFallbackProducts().flatMap((category) => category.products);
+        const fallbackProducts = getFallbackProducts(); // also Product[]
+
         setProducts(fallbackProducts);
       }
     };
@@ -66,7 +65,7 @@ export default function App() {
       </section>
       <section ref={sections.products}>
         <ProductsSection
-          products={getFallbackProducts()} // Pass categories directly
+          products={products}
           currentProduct={currentProduct}
           currentImageIndex={currentImageIndex}
           setCurrentProduct={setCurrentProduct}
@@ -75,17 +74,11 @@ export default function App() {
           previousProduct={previousProduct}
         />
       </section>
-      <section ref={sections.demoproducts} id="products-demo">
-        <ProductsDemoSection />
-      </section>
       <section ref={sections.blog}>
         <Blog />
       </section>
       <section ref={sections.about}>
         <About />
-      </section>
-      <section ref={sections.contact}>
-        <Contact />
       </section>
     </div>
   );

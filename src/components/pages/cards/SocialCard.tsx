@@ -51,12 +51,14 @@ const SocialCard = () => {
         whileHover={{
           scale: 1.02,
           boxShadow: "0 15px 25px rgba(0, 0, 0, 0.25)",
-        }}>
+        }}
+      >
         {/* Profile */}
         <motion.div
           className="mb-5 relative"
           animate={{ y: [0, -5, 0] }}
-          transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}>
+          transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
+        >
           <motion.img
             className="w-40 h-40 rounded-full object-cover border-4 border-capistor-400 shadow-lg hover:shadow-2xl transition-all duration-300"
             src="/profilepic/shoaibPic.jpeg"
@@ -84,8 +86,9 @@ const SocialCard = () => {
           </p>
           <a
             href="mailto:shoaib@capistor.com"
-            className="text-sm text-sexyblue/80 mt-2 inline-block hover:underline hover:text-sexyblue font-fransisco transition-colors duration-200">
-            shoaib@capistor.com
+            className="text-sm text-sexyblue/80 mt-2 inline-block hover:underline hover:text-sexyblue font-fransisco transition-colors duration-200"
+          >
+            info@capistor.com
           </a>
         </div>
 
@@ -97,7 +100,8 @@ const SocialCard = () => {
               href={link.href}
               target="_blank"
               rel="noopener noreferrer"
-              className="transform hover:scale-110 transition-transform duration-200">
+              className="transform hover:scale-110 transition-transform duration-200"
+            >
               <img
                 src={link.img}
                 alt={link.alt}
@@ -109,7 +113,8 @@ const SocialCard = () => {
           {/* CV Button */}
           <button
             onClick={() => setIsCVOpen(true)}
-            className="w-10 h-10 rounded-full bg-black flex items-center justify-center text-white text-sm font-futura font-semibold hover:bg-capistor-600 transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-110">
+            className="w-10 h-10 rounded-full bg-black flex items-center justify-center text-white text-sm font-futura font-semibold hover:bg-capistor-600 transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-110"
+          >
             CV
           </button>
         </div>
@@ -122,17 +127,20 @@ const SocialCard = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          onClick={() => setIsCVOpen(false)}>
+          onClick={() => setIsCVOpen(false)}
+        >
           <motion.div
             className="relative bg-kindofwhite/95 rounded-2xl shadow-2xl w-full max-w-4xl h-[90vh] sm:h-auto overflow-y-auto p-4 sm:p-6 backdrop-blur-xl"
             onClick={(e) => e.stopPropagation()}
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            transition={{ type: 'spring', stiffness: 120, damping: 15 }}>
+            transition={{ type: "spring", stiffness: 120, damping: 15 }}
+          >
             {/* Close Button */}
             <button
               className="absolute top-0 right-1 text-black text-3xl font-bold hover:text-sexyblue transition-colors duration-200"
-              onClick={() => setIsCVOpen(false)}>
+              onClick={() => setIsCVOpen(false)}
+            >
               ×
             </button>
 

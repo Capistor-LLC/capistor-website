@@ -6,6 +6,8 @@ export interface ProductImage {
 }
 
 export interface Product {
+  products: any;
+
   id: number;
   name: string;
   images: ProductImage[];
@@ -28,6 +30,8 @@ export const getFallbackProducts = (): Product[] => [
           "An ESP32-based smart watch for health monitoring and notifications. Features OLED display, heart rate sensor, accelerometer, and Bluetooth connectivity. Custom firmware in C++ handles real-time data processing and mobile app integration for a seamless wearable experience.",
       },
     ],
+
+    products: undefined,
   },
   {
     id: 2,
@@ -41,5 +45,7 @@ export const getFallbackProducts = (): Product[] => [
           "Industrial-grade PCB built for reliability and safety. With noise resistance, EMI/EMC shielding, and CE compliance, it delivers stable performance in harsh environments. Simulation-tested for precision, it powers prototypes and production systems via USB-C for automation and IoT use.",
       },
     ],
+
+    products: undefined,
   },
 ];
