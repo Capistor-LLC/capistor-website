@@ -88,7 +88,7 @@ const SocialCard = () => {
             href="mailto:shoaib@capistor.com"
             className="text-sm text-sexyblue/80 mt-2 inline-block hover:underline hover:text-sexyblue font-fransisco transition-colors duration-200"
           >
-            info@capistor.com
+            shoaib@capistor.com
           </a>
         </div>
 

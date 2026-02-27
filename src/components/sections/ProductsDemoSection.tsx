@@ -53,7 +53,7 @@ const ProductsDemoSection = () => {
                 <img
                   src={`https://img.youtube.com/vi/${video.youtubeId}/maxresdefault.jpg`}
                   alt={`${video.title} Thumbnail`}
-                  className="w-48 h-40 md:w-60 md:h-48 object-cover rounded-l-xl"
+                  className="w-32 h-28 sm:w-40 sm:h-36 md:w-56 md:h-44 lg:w-60 lg:h-48 object-cover rounded-l-xl"
                   crossOrigin="anonymous"
                   referrerPolicy="no-referrer"
                   onError={(e) => {
@@ -80,11 +80,11 @@ const ProductsDemoSection = () => {
               </div>
 
               {/* Text Section */}
-              <div className="flex flex-col justify-center px-4 py-2 md:py-4">
-                <h3 className="md:text-2xl text-xl font-futura font-bold text-black mb-1">
+              <div className="flex flex-col justify-center px-2 sm:px-4 py-2 md:py-4 flex-1 min-w-0">
+                <h3 className="text-lg sm:text-xl md:text-2xl font-futura font-bold text-black mb-1 line-clamp-2">
                   {video.title}
                 </h3>
-                <p className="text-sexyblue/90 text-sm md:text-base font-fransisco leading-relaxed md:w-96 w-64">
+                <p className="text-sexyblue/90 text-xs sm:text-sm md:text-base font-fransisco leading-relaxed line-clamp-3">
                   {video.description}
                 </p>
               </div>

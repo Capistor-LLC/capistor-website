@@ -53,7 +53,7 @@ export default function Service() {
           </motion.div>
 
           {/* Service Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 w-96 md:w-full">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 w-full">
             {services.map((service, index) => (
               <motion.div
                 key={index}
@@ -93,4 +93,3 @@ export default function Service() {
     </section>
   );
 }
- 

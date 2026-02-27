@@ -1,50 +1,76 @@
 import { motion } from "framer-motion";
-import SocialCard from "./cards/SocialCard";
+import { useState, useEffect } from "react";
 
 export default function About() {
-  return (
-    <section className="min-h-screen relative top-16 px-4 sm:px-6 md:px-0">
-      <div className="min-h-screen flex items-center justify-center py-8">
-        <div className="flex flex-col md:flex-row h-full justify-start gap-8 md:gap-10 lg:gap-32 relative md:ml-4 ml-0">
-          
-          {/* Founder Info */}
-          <div className="w-full md:w-1/3 flex flex-col justify-center text-center pr-0 md:pr-10 md:text-left">
-            <motion.h1
-              className="text-2xl sm:text-3xl md:text-4xl font-helvetica font-bold text-black mb-4 sm:mb-6 md:mb-6"
-              initial={{ opacity: 0, y: -50 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-            >
-              About the Founder
-            </motion.h1>
+  const [isLoaded, setIsLoaded] = useState(false);
 
+  useEffect(() => {
+    setIsLoaded(true);
+  }, []);
+
+  return (
+    <section className="min-h-screen flex items-center bg-kindofwhite py-12">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-5xl w-full">
+        <div className="flex flex-col items-center text-center">
+          {/* Heading */}
+          <motion.div
+            className="text-3xl sm:text-4xl lg:text-5xl font-futura font-bold mb-10 md:mb-12"
+            initial={{ opacity: 0, y: -50 }}
+            animate={{ opacity: isLoaded ? 1 : 0, y: isLoaded ? 0 : -50 }}
+            transition={{ duration: 0.6 }}
+          >
+            <h1 className="text-black">About Capistor</h1>
+            <p className="text-sexyblue/50 text-lg sm:text-xl md:text-2xl font-futura max-w-2xl mx-auto mt-2">
+              Engineering Innovative Solutions
+            </p>
+          </motion.div>
+
+          {/* About Content */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 w-full">
+            {/* Company Overview */}
             <motion.div
-              className="bg-kindofwhite p-4 sm:p-6 md:p-6 rounded-2xl border-2 border-capistor-300/20 max-w-sm md:max-w-md shadow-lg mx-auto md:mx-0 mb-4 sm:mb-6 md:mb-10"
-              initial={{ opacity: 0, scale: 1 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.4, ease: 'easeOut' }}
+              className="flex flex-col justify-between p-6 md:p-8 rounded-2xl border border-capistor-300/30 shadow-md bg-kindofwhite transition-all duration-300"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: isLoaded ? 1 : 0, y: isLoaded ? 0 : 20 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              whileHover={{
+                scale: 1.02,
+                borderColor: "rgba(0, 0, 0, 0.25)",
+                boxShadow: "0 15px 25px rgba(0, 0, 0, 0.25)",
+              }}
             >
-              <motion.p
-                className="text-base sm:text-lg md:text-lg text-sexyblue/90 font-fransisco font-normal leading-6 sm:leading-8 md:leading-8 text-justify"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.3 }}
-              >
-                Shoaib Mustafa is the visionary behind this innovative venture,
-                blending technology and design to create impactful solutions.
-                With a passion for accessibility and user experience, he leads
-                with expertise and creativity.
-              </motion.p>
+              <div className="flex flex-col text-left">
+                <h3 className="text-xl sm:text-2xl md:text-2xl font-futura font-bold text-black mb-4">
+                  Our Company
+                </h3>
+                <p className="text-sexyblue/90 text-base sm:text-lg font-fransisco leading-relaxed">
+                  Capistor is a forward-thinking engineering and technology company specializing in embedded systems, PCB design, and industrial automation solutions. We transform innovative ideas into reliable, scalable products that drive industries forward.
+                </p>
+              </div>
+            </motion.div>
+
+            {/* Mission */}
+            <motion.div
+              className="flex flex-col justify-between p-6 md:p-8 rounded-2xl border border-capistor-300/30 shadow-md bg-kindofwhite transition-all duration-300"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: isLoaded ? 1 : 0, y: isLoaded ? 0 : 20 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              whileHover={{
+                scale: 1.02,
+                borderColor: "rgba(0, 0, 0, 0.25)",
+                boxShadow: "0 15px 25px rgba(0, 0, 0, 0.25)",
+              }}
+            >
+              <div className="flex flex-col text-left">
+                <h3 className="text-xl sm:text-2xl md:text-2xl font-futura font-bold text-black mb-4">
+                  Our Mission
+                </h3>
+                <p className="text-sexyblue/90 text-base sm:text-lg font-fransisco leading-relaxed">
+                  To empower businesses with innovative engineering solutions that combine reliability, performance, and sustainability. We partner with clients to deliver cutting-edge technology that solves real-world challenges.
+                </p>
+              </div>
             </motion.div>
           </div>
-
-          {/* Social Cards */}
-          <div className="w-full md:w-auto flex flex-col sm:flex-row items-center md:items-start justify-center md:justify-center border-capistor-300/20 gap-4 sm:gap-6 md:gap-6 lg:gap-8">
-            <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 md:gap-8">
-              <SocialCard />
-            </div>
-          </div>
-
         </div>
       </div>
     </section>

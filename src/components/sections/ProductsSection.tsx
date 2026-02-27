@@ -56,9 +56,9 @@ export default function ProductsSection({
   return (
     <section className="products-section min-h-screen relative z-10">
       <div className="relative top-32 md:top-0 h-screen bg-kindofwhite">
-        <div className="flex flex-col md:flex-row h-full justify-center">
+        <div className="flex flex-col md:flex-row h-full justify-center gap-4 md:gap-0">
           {/* LEFT PANEL */}
-          <div className="w-full md:w-1/4 md:mt-24 sm:p-6 md:p-8 lg:p-12 flex flex-col items-center text-center">
+          <div className="w-full md:w-1/4 md:mt-24 p-3 sm:p-6 md:p-8 lg:p-12 flex flex-col items-center text-center">
             <motion.h2
               className="text-2xl sm:text-3xl md:text-4xl lg:text-4xl font-futura font-bold text-black mt-6 sm:mt-16 md:mt-16 mb-6 sm:mb-8 md:mb-6"
               initial={{ opacity: 0, y: -50 }}
@@ -68,7 +68,7 @@ export default function ProductsSection({
               {product.name}
             </motion.h2>
             <motion.div
-              className="bg-kindofwhite p-4 sm:p-6 md:p-6 rounded-2xl border-2 border-capistor-300/20 max-w-xs sm:max-w-md md:max-w-80 shadow-lg mb-4 sm:mb-6 md:mb-8 max-h-96"
+              className="bg-kindofwhite p-3 sm:p-4 md:p-5 rounded-2xl border-2 border-capistor-300/20 max-w-xs sm:max-w-sm md:max-w-md shadow-lg mb-3 sm:mb-4 md:mb-6 max-h-80 sm:max-h-96"
               key={`${currentProduct}-info`}
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -109,7 +109,7 @@ export default function ProductsSection({
                         onClick={() =>
                           setCurrentImageIndex(
                             (currentImageIndex - 1 + product.images.length) %
-                              product.images.length
+                            product.images.length
                           )
                         }
                         aria-label="Previous image"
@@ -164,11 +164,10 @@ export default function ProductsSection({
                     <button
                       key={index}
                       onClick={() => setCurrentImageIndex(index)}
-                      className={`w-2 sm:w-3 md:w-3 h-2 sm:h-3 md:h-3 rounded-full transition-all duration-300 ${
-                        index === currentImageIndex
+                      className={`w-2 sm:w-3 md:w-3 h-2 sm:h-3 md:h-3 rounded-full transition-all duration-300 ${index === currentImageIndex
                           ? "bg-sexyblue scale-125 shadow-lg shadow-sexyblue/50"
                           : "bg-sexyblue/30 hover:bg-sexyblue/60"
-                      }`}
+                        }`}
                       aria-label={`Select image ${index + 1}`}
                     />
                   ))}
@@ -258,11 +257,10 @@ export default function ProductsSection({
                             setCurrentProduct(index);
                             setIsMenuOpen(false);
                           }}
-                          className={`cursor-pointer px-3 py-2 rounded-md text-sm font-fransisco ${
-                            index === currentProduct
+                          className={`cursor-pointer px-3 py-2 rounded-md text-sm font-fransisco ${index === currentProduct
                               ? "bg-sexyblue text-kindofwhite"
                               : "text-gray-700 hover:bg-gray-200"
-                          }`}
+                            }`}
                         >
                           {prod.name}
                         </li>
@@ -280,11 +278,10 @@ export default function ProductsSection({
                       <li
                         key={prod.id}
                         onClick={() => setCurrentProduct(index)}
-                        className={`cursor-pointer px-3 py-2 w-40 rounded-md font-fransisco ${
-                          index === currentProduct
+                        className={`cursor-pointer px-3 py-2 w-40 rounded-md font-fransisco ${index === currentProduct
                             ? "bg-sexyblue text-kindofwhite"
                             : "text-gray-700 hover:bg-gray-200"
-                        }`}
+                          }`}
                       >
                         {prod.name}
                       </li>

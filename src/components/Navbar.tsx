@@ -74,9 +74,8 @@ export default function MyNavbar({ sections }: NavbarProps) {
                   e.preventDefault();
                   scrollToSection("home");
                 }}
-                className={`text-black font-futura hover:text-capistor-500 transition-colors duration-200 ${
-                  activeSection === "home" ? "font-bold" : ""
-                }`}
+                className={`text-black font-futura hover:text-capistor-500 transition-colors duration-200 ${activeSection === "home" ? "font-bold" : ""
+                  }`}
               >
                 Home
               </a>
@@ -87,9 +86,8 @@ export default function MyNavbar({ sections }: NavbarProps) {
                   e.preventDefault();
                   scrollToSection("services");
                 }}
-                className={`text-black font-futura hover:text-capistor-500 transition-colors duration-200 ${
-                  activeSection === "services" ? "font-bold" : ""
-                }`}
+                className={`text-black font-futura hover:text-capistor-500 transition-colors duration-200 ${activeSection === "services" ? "font-bold" : ""
+                  }`}
               >
                 Services
               </a>
@@ -100,9 +98,8 @@ export default function MyNavbar({ sections }: NavbarProps) {
                   e.preventDefault();
                   scrollToSection("products");
                 }}
-                className={`text-black font-futura hover:text-capistor-500 transition-colors duration-200 ${
-                  activeSection === "products" ? "font-bold" : ""
-                }`}
+                className={`text-black font-futura hover:text-capistor-500 transition-colors duration-200 ${activeSection === "products" ? "font-bold" : ""
+                  }`}
               >
                 Projects
               </a>
@@ -113,9 +110,8 @@ export default function MyNavbar({ sections }: NavbarProps) {
                   e.preventDefault();
                   scrollToSection("blog");
                 }}
-                className={`text-black font-futura hover:text-capistor-500 transition-colors duration-200 ${
-                  activeSection === "blog" ? "font-bold" : ""
-                }`}
+                className={`text-black font-futura hover:text-capistor-500 transition-colors duration-200 ${activeSection === "blog" ? "font-bold" : ""
+                  }`}
               >
                 Blog
               </a>
@@ -126,11 +122,22 @@ export default function MyNavbar({ sections }: NavbarProps) {
                   e.preventDefault();
                   scrollToSection("about");
                 }}
-                className={`text-black font-futura hover:text-capistor-500 transition-colors duration-200 ${
-                  activeSection === "about" ? "font-bold" : ""
-                }`}
+                className={`text-black font-futura hover:text-capistor-500 transition-colors duration-200 ${activeSection === "about" ? "font-bold" : ""
+                  }`}
               >
                 About
+              </a>
+
+              <a
+                href="#contact"
+                onClick={(e) => {
+                  e.preventDefault();
+                  scrollToSection("contact");
+                }}
+                className={`text-black font-futura hover:text-capistor-500 transition-colors duration-200 ${activeSection === "contact" ? "font-bold" : ""
+                  }`}
+              >
+                Contact
               </a>
             </div>
           </div>
@@ -173,9 +180,8 @@ export default function MyNavbar({ sections }: NavbarProps) {
                   e.preventDefault();
                   scrollToSection("home");
                 }}
-                className={`text-black font-futura hover:text-capistor-500 ${
-                  activeSection === "home" ? "font-bold" : ""
-                }`}
+                className={`text-black font-futura hover:text-capistor-500 ${activeSection === "home" ? "font-bold" : ""
+                  }`}
               >
                 Home
               </a>
@@ -186,9 +192,8 @@ export default function MyNavbar({ sections }: NavbarProps) {
                   e.preventDefault();
                   scrollToSection("services");
                 }}
-                className={`text-black font-futura hover:text-capistor-500 ${
-                  activeSection === "services" ? "font-bold" : ""
-                }`}
+                className={`text-black font-futura hover:text-capistor-500 ${activeSection === "services" ? "font-bold" : ""
+                  }`}
               >
                 Services
               </a>
@@ -199,9 +204,8 @@ export default function MyNavbar({ sections }: NavbarProps) {
                   e.preventDefault();
                   scrollToSection("products");
                 }}
-                className={`text-black font-futura hover:text-capistor-500 ${
-                  activeSection === "products" ? "font-bold" : ""
-                }`}
+                className={`text-black font-futura hover:text-capistor-500 ${activeSection === "products" ? "font-bold" : ""
+                  }`}
               >
                 Projects
               </a>
@@ -212,9 +216,8 @@ export default function MyNavbar({ sections }: NavbarProps) {
                   e.preventDefault();
                   scrollToSection("blog");
                 }}
-                className={`text-black font-futura hover:text-capistor-500 ${
-                  activeSection === "blog" ? "font-bold" : ""
-                }`}
+                className={`text-black font-futura hover:text-capistor-500 ${activeSection === "blog" ? "font-bold" : ""
+                  }`}
               >
                 Blog
               </a>
@@ -225,11 +228,22 @@ export default function MyNavbar({ sections }: NavbarProps) {
                   e.preventDefault();
                   scrollToSection("about");
                 }}
-                className={`text-black font-futura hover:text-capistor-500 ${
-                  activeSection === "about" ? "font-bold" : ""
-                }`}
+                className={`text-black font-futura hover:text-capistor-500 ${activeSection === "about" ? "font-bold" : ""
+                  }`}
               >
                 About
+              </a>
+
+              <a
+                href="#contact"
+                onClick={(e) => {
+                  e.preventDefault();
+                  scrollToSection("contact");
+                }}
+                className={`text-black font-futura hover:text-capistor-500 ${activeSection === "contact" ? "font-bold" : ""
+                  }`}
+              >
+                Contact
               </a>
             </motion.div>
           )}

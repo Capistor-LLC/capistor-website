@@ -37,7 +37,7 @@ export default function ProductImage({
   return (
     <motion.div
       key={`${productIndex}-${imageIndex}`}
-      className="w-full max-w-[400px] h-auto max-h-[600px] sm:max-w-[400px] sm:max-h-[400px] md:max-w-[400px] md:max-h-[400px] lg:max-w-[600px] lg:max-h-[600px] rounded-2xl overflow-hidden shadow-2xl relative group"
+      className="w-full max-w-[300px] h-auto max-h-[400px] sm:max-w-[400px] sm:max-h-[500px] md:max-w-[500px] md:max-h-[600px] lg:max-w-[700px] lg:max-h-[700px] rounded-2xl overflow-hidden shadow-2xl relative group"
       initial={{ opacity: 0, y: 100 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8, ease: "easeOut" }}

@@ -84,7 +84,7 @@ export const cvData: CVData = {
         name: "Shoaib Mustafa",
         title: "Junior Embedded Hardware/Software Developer",
         email: "shoaib.mustafa7@hotmail.com",
-        phone: "+92 333 130 4910",
+        phone: "+971508726178",
         phoneSecondary: "+971 503 194 719",
         location: "Ajman, UAE",
         website: "www.capistor.com",
