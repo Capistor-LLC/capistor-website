@@ -1,5 +1,6 @@
 import { RefObject, useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { useLocation, useNavigate } from "react-router-dom";
 
 interface NavbarProps {
   sections: {
@@ -15,10 +16,23 @@ interface NavbarProps {
 
 export default function MyNavbar({ sections }: NavbarProps) {
   const [activeSection, setActiveSection] = useState("home");
+  const location = useLocation();
+  const navigate = useNavigate();
 
   const scrollToSection = (section: keyof typeof sections) => {
-    sections[section].current?.scrollIntoView({ behavior: "smooth" });
-    setActiveSection(section);
+    // If on home page and section exists, scroll to it
+    if (location.pathname === "/" && sections[section].current) {
+      sections[section].current.scrollIntoView({ behavior: "smooth" });
+      setActiveSection(section);
+    } else if (location.pathname !== "/") {
+      // If not on home page, navigate to home first, then scroll will happen
+      navigate("/");
+      // Use setTimeout to allow navigation to complete before scrolling
+      setTimeout(() => {
+        sections[section].current?.scrollIntoView({ behavior: "smooth" });
+        setActiveSection(section);
+      }, 100);
+    }
   };
 
   useEffect(() => {

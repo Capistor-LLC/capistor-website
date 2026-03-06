@@ -10,7 +10,7 @@ export default function ProductDetailSection() {
     }, []);
 
     const specs = [
-        { label: "Diameter", value: "30-50mm" },
+        { label: "Dimensions", value: "50x50mm" },
         { label: "Height", value: "10-20mm" },
         { label: "Battery Life", value: "24 hours" },
         { label: "Communication", value: "Wireless long-range" },
@@ -22,13 +22,20 @@ export default function ProductDetailSection() {
         "Rugged construction for restaurant environments",
         "Color-coded light signals for status feedback",
         "Long-range wireless connectivity",
-        "24-hour battery life guaranteed",
+        "24-hour battery",
     ];
 
     const imageAreas = [
-        { title: "Product View", placeholder: "Front view & LED array" },
-        { title: "PCB Design", placeholder: "Detailed PCB layout" },
-        { title: "Exploded View", placeholder: "Component breakdown" },
+        {
+            title: "Product View",
+            image: "/product_images/pager/exploded_pager.jpeg",
+            alt: "Pager Product View"
+        },
+        {
+            title: "PCB Design",
+            image: "/product_images/pager/pcb_view_front.jpeg",
+            alt: "Pager PCB Front View"
+        },
     ];
 
     return (
@@ -58,19 +65,22 @@ export default function ProductDetailSection() {
                         transition={{ duration: 0.6, delay: 0.1 }}
                     >
                         {/* Main Image Area */}
-                        <div className="rounded-2xl border-2 border-capistor-300/30 bg-kindofwhite/50 shadow-md overflow-hidden min-h-64 sm:min-h-80 md:min-h-96 flex items-center justify-center">
-                            <div className="text-center p-8">
-                                <p className="text-sexyblue/60 font-fransisco text-base">
-                                    {imageAreas[selectedImage].placeholder}
-                                </p>
-                                <p className="text-sexyblue/40 font-futura text-sm mt-2">
-                                    [Placeholder - Add image]
-                                </p>
-                            </div>
-                        </div>
+                        <motion.div
+                            className="rounded-2xl border-2 border-capistor-300/30 bg-kindofwhite/50 shadow-md overflow-hidden aspect-square sm:aspect-auto sm:min-h-80 md:min-h-96 flex items-center justify-center"
+                            key={selectedImage}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ duration: 0.3 }}
+                        >
+                            <img
+                                src={imageAreas[selectedImage].image}
+                                alt={imageAreas[selectedImage].alt}
+                                className="w-full h-full object-contain"
+                            />
+                        </motion.div>
 
                         {/* Image Selector */}
-                        <div className="grid grid-cols-3 gap-3">
+                        <div className="grid grid-cols-2 gap-3">
                             {imageAreas.map((area, index) => (
                                 <motion.button
                                     key={index}

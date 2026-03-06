@@ -7,6 +7,7 @@ import ProductsSection from "./components/sections/ProductsSection";
 import Footer from "./components/Footer";
 import Services from "./components/pages/Services";
 import Blog from "./components/pages/Blog";
+import BlogPostPage from "./components/pages/BlogPostPage";
 import CVPage from "./components/pages/cv/page";
 import ExperienceSection from "./components/sections/ExperienceSection";
 import TestimonialsSection from "./components/sections/TestimonialsSection";
@@ -78,10 +79,10 @@ function HomePage() {
         <ProductDetailSection />
       </section>
       <section>
-        <HowItWorksSection />
+        <VideoSection />
       </section>
       <section>
-        <VideoSection />
+        <HowItWorksSection />
       </section>
       <section ref={sections.products}>
         <ProductsSection
@@ -97,7 +98,7 @@ function HomePage() {
       <section>
         <TestimonialsSection />
       </section>
-      <section ref={sections.blog}>
+      <section ref={sections.blog} id="blog-section">
         <Blog />
       </section>
       <section ref={sections.about}>
@@ -134,11 +135,32 @@ function CVPageWrapper() {
   );
 }
 
+function BlogPostPageWrapper() {
+  const sections = {
+    home: useRef<HTMLElement>(null),
+    about: useRef<HTMLElement>(null),
+    products: useRef<HTMLElement>(null),
+    demoproducts: useRef<HTMLElement>(null),
+    services: useRef<HTMLElement>(null),
+    blog: useRef<HTMLElement>(null),
+    contact: useRef<HTMLElement>(null),
+  };
+
+  return (
+    <div className="min-h-screen bg-kindofwhite font-domine">
+      <MyNavbar sections={sections} />
+      <BlogPostPage />
+      <Footer />
+    </div>
+  );
+}
+
 export default function App() {
   return (
     <Routes>
       <Route path="/" element={<HomePage />} />
       <Route path="/cv" element={<CVPageWrapper />} />
+      <Route path="/blog/:slug" element={<BlogPostPageWrapper />} />
     </Routes>
   );
 }

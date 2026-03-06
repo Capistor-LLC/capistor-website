@@ -165,8 +165,8 @@ export default function ProductsSection({
                       key={index}
                       onClick={() => setCurrentImageIndex(index)}
                       className={`w-2 sm:w-3 md:w-3 h-2 sm:h-3 md:h-3 rounded-full transition-all duration-300 ${index === currentImageIndex
-                          ? "bg-sexyblue scale-125 shadow-lg shadow-sexyblue/50"
-                          : "bg-sexyblue/30 hover:bg-sexyblue/60"
+                        ? "bg-sexyblue scale-125 shadow-lg shadow-sexyblue/50"
+                        : "bg-sexyblue/30 hover:bg-sexyblue/60"
                         }`}
                       aria-label={`Select image ${index + 1}`}
                     />
@@ -258,8 +258,8 @@ export default function ProductsSection({
                             setIsMenuOpen(false);
                           }}
                           className={`cursor-pointer px-3 py-2 rounded-md text-sm font-fransisco ${index === currentProduct
-                              ? "bg-sexyblue text-kindofwhite"
-                              : "text-gray-700 hover:bg-gray-200"
+                            ? "bg-sexyblue text-kindofwhite"
+                            : "text-gray-700 hover:bg-gray-200"
                             }`}
                         >
                           {prod.name}
@@ -279,8 +279,8 @@ export default function ProductsSection({
                         key={prod.id}
                         onClick={() => setCurrentProduct(index)}
                         className={`cursor-pointer px-3 py-2 w-40 rounded-md font-fransisco ${index === currentProduct
-                            ? "bg-sexyblue text-kindofwhite"
-                            : "text-gray-700 hover:bg-gray-200"
+                          ? "bg-sexyblue text-kindofwhite"
+                          : "text-gray-700 hover:bg-gray-200"
                           }`}
                       >
                         {prod.name}
