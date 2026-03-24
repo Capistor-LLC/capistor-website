@@ -11,6 +11,7 @@ import BlogPostPage from "./components/pages/BlogPostPage";
 import CVPage from "./components/pages/cv/page";
 import ExperienceSection from "./components/sections/ExperienceSection";
 import ProductDetailSection from "./components/sections/ProductDetailSection";
+import HeaterControllerSection from "./components/sections/HeaterControllerSection";
 import HowItWorksSection from "./components/sections/HowItWorksSection";
 import ContactSection from "./components/sections/ContactSection";
 import VideoSection from "./components/sections/VideoSection";
@@ -76,6 +77,9 @@ function HomePage() {
       </section>
       <section>
         <ProductDetailSection />
+      </section>
+      <section>
+        <HeaterControllerSection />
       </section>
       <section>
         <VideoSection />
