@@ -1,61 +1,40 @@
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
-import BlogCard from "../cards/BlogCard";
-import { getAllBlogPosts } from "../../data/blogData";
 
 export default function BlogSection() {
   const [isLoaded, setIsLoaded] = useState(false);
-  const blogPosts = getAllBlogPosts();
 
   useEffect(() => {
     setIsLoaded(true);
   }, []);
 
   return (
-    <section className="min-h-screen bg-kindofwhite py-20">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl w-full">
-        <div className="flex flex-col items-center mb-16 sm:mb-20">
+    <section className="min-h-screen bg-kindofwhite py-20 flex items-center justify-center">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl w-full">
+        <div className="flex flex-col items-center">
           {/* Header Section */}
           <motion.div
-            className="text-center w-full mb-12 sm:mb-16"
+            className="text-center w-full"
             initial={{ opacity: 0, y: -40 }}
             animate={{ opacity: isLoaded ? 1 : 0, y: isLoaded ? 0 : -40 }}
             transition={{ duration: 0.6 }}
           >
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-futura font-bold text-black mb-4">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-futura font-bold text-black mb-6">
               Engineering Stories
             </h1>
-            <p className="text-sexyblue/60 text-lg sm:text-xl md:text-2xl font-futura max-w-3xl mx-auto">
-              Deep dives into our projects, challenges, and engineering solutions
-            </p>
-          </motion.div>
-
-          {/* Blog Grid */}
-          <motion.div
-            className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8"
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: isLoaded ? 1 : 0, y: isLoaded ? 0 : 40 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-          >
-            {blogPosts.map((post, index) => (
-              <motion.div
-                key={post.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: isLoaded ? 1 : 0, y: isLoaded ? 0 : 20 }}
-                transition={{ duration: 0.5, delay: 0.1 + index * 0.1 }}
-              >
-                <BlogCard
-                  id={post.id}
-                  slug={post.slug}
-                  title={post.title}
-                  date={post.date}
-                  excerpt={post.excerpt}
-                  image={post.image}
-                  category={post.category}
-                  readTime={post.readTime}
-                />
-              </motion.div>
-            ))}
+            <motion.div
+              className="p-12 rounded-2xl bg-sexyblue/5 border-2 border-sexyblue/30"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: isLoaded ? 1 : 0, scale: isLoaded ? 1 : 0.95 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+            >
+              <p className="text-sexyblue text-xl sm:text-2xl font-futura font-bold mb-3">
+                🚧 Under Development
+              </p>
+              <p className="text-sexyblue/80 text-lg sm:text-xl font-fransisco leading-relaxed">
+                Our blog section is currently under development. We're working on bringing you insightful engineering stories and project insights. Check back soon!
+              </p>
+            </motion.div>
           </motion.div>
         </div>
       </div>

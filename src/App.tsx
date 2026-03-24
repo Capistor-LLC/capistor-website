@@ -10,7 +10,6 @@ import Blog from "./components/pages/Blog";
 import BlogPostPage from "./components/pages/BlogPostPage";
 import CVPage from "./components/pages/cv/page";
 import ExperienceSection from "./components/sections/ExperienceSection";
-import TestimonialsSection from "./components/sections/TestimonialsSection";
 import ProductDetailSection from "./components/sections/ProductDetailSection";
 import HowItWorksSection from "./components/sections/HowItWorksSection";
 import ContactSection from "./components/sections/ContactSection";
@@ -94,9 +93,6 @@ function HomePage() {
           nextProduct={nextProduct}
           previousProduct={previousProduct}
         />
-      </section>
-      <section>
-        <TestimonialsSection />
       </section>
       <section ref={sections.blog} id="blog-section">
         <Blog />

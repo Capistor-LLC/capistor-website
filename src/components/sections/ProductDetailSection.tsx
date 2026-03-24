@@ -144,15 +144,17 @@ export default function ProductDetailSection() {
                             </div>
                         </div>
 
-                        {/* CTA */}
-                        <motion.a
-                            href="mailto:shoaib@capistor.com?subject=Restaurant%20Table%20Pager%20Inquiry"
-                            className="inline-block px-8 py-4 rounded-lg bg-sexyblue text-kindofwhite font-futura font-bold text-center transition-all hover:shadow-lg"
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
+                        {/* Portfolio Disclaimer */}
+                        <motion.div
+                            className="p-6 rounded-lg bg-sexyblue/5 border-2 border-sexyblue/20"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: isLoaded ? 1 : 0, y: isLoaded ? 0 : 20 }}
+                            transition={{ duration: 0.6, delay: 0.4 }}
                         >
-                            Request a Quote
-                        </motion.a>
+                            <p className="text-sexyblue/90 font-fransisco text-sm leading-relaxed">
+                                <span className="font-futura font-bold text-sexyblue">Portfolio Project:</span> This is a product designed for a client. Images and technical details are shared for portfolio purposes only. This product is not for sale—all rights and intellectual property belong to the original client.
+                            </p>
+                        </motion.div>
                     </motion.div>
                 </div>
             </div>

@@ -98,6 +98,18 @@ export default function VideoSection() {
                             </div>
                         </motion.div>
                     )}
+
+                    {/* Portfolio Disclaimer */}
+                    <motion.div
+                        className="w-full max-w-4xl mt-8 p-6 rounded-lg bg-sexyblue/5 border-2 border-sexyblue/20"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: isLoaded ? 1 : 0, y: isLoaded ? 0 : 20 }}
+                        transition={{ duration: 0.6, delay: 0.3 }}
+                    >
+                        <p className="text-sexyblue/90 font-fransisco text-sm leading-relaxed">
+                            <span className="font-futura font-bold text-sexyblue">Portfolio Project:</span> This is a product designed for a client. Images and technical details are shared for portfolio purposes only. This product is not for sale—all rights and intellectual property belong to the original client.
+                        </p>
+                    </motion.div>
                 </div>
             </div>
         </section>
