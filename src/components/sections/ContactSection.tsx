@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import { useForm, ValidationError } from "@formspree/react";
+import { trackContactFormSubmit } from "../../utils/facebookPixel";
 
 export default function ContactSection() {
     const [state, handleSubmit] = useForm("xaqdvrry");
@@ -8,6 +9,7 @@ export default function ContactSection() {
 
     useEffect(() => {
         if (state.succeeded) {
+            trackContactFormSubmit();
             setShowSuccess(true);
             const timer = setTimeout(() => {
                 setShowSuccess(false);

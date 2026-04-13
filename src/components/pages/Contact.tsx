@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import { useForm, ValidationError } from "@formspree/react";
 import { useNavigate } from "react-router-dom";
+import { trackContactFormSubmit } from "../../utils/facebookPixel";
 
 export default function ContactPage() {
   const navigate = useNavigate();
@@ -10,6 +11,7 @@ export default function ContactPage() {
 
   useEffect(() => {
     if (state.succeeded) {
+      trackContactFormSubmit();
       setShowSuccess(true);
       const timer = setTimeout(() => {
         navigate("/");
