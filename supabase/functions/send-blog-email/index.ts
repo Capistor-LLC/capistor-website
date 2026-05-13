@@ -31,7 +31,7 @@ Deno.serve(async (req) => {
     const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
     const ADMIN_EMAIL = (Deno.env.get("ADMIN_EMAIL") ?? "").toLowerCase();
     const SITE_URL = Deno.env.get("SITE_URL") ?? "https://capistor.com";
-    const FROM_EMAIL = Deno.env.get("FROM_EMAIL") ?? "Capistor <hello@capistor.com>";
+    const FROM_EMAIL = Deno.env.get("FROM_EMAIL") ?? "onboarding@resend.dev";
 
     if (!RESEND_API_KEY) {
       return json({ error: "RESEND_API_KEY not set in Supabase secrets" }, 500);
