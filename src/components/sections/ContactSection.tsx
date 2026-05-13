@@ -151,14 +151,16 @@ export default function ContactSection() {
               </p>
               <div className="flex flex-col sm:flex-row justify-center gap-4 text-center text-sm">
                 <a
-                  href="mailto:shoaib@capistor.com"
+                  href="mailto:inquiry@capistor.com"
                   className="text-sexyblue hover:text-black font-futura font-semibold transition-colors"
                 >
-                  shoaib@capistor.com
+                  inquiry@capistor.com
                 </a>
                 <span className="hidden sm:block text-sexyblue/30">·</span>
                 <a
-                  href="tel:+971508726178"
+                  href="https://wa.me/971508726178"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="text-sexyblue hover:text-black font-futura font-semibold transition-colors"
                 >
                   +971 508 726 178

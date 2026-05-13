@@ -94,7 +94,7 @@ export default function Footer() {
                 </svg>
               </a>
               <a
-                href="mailto:shoaib@capistor.com"
+                href="mailto:inquiry@capistor.com"
                 aria-label="Email"
                 className="w-8 h-8 rounded-full bg-kindofwhite/10 hover:bg-kindofwhite/20 flex items-center justify-center transition-colors"
               >
@@ -110,12 +110,17 @@ export default function Footer() {
             <h3 className="text-base font-futura font-bold text-kindofwhite mb-4">Contact</h3>
             <div className="space-y-2">
               <p className="text-kindofwhite/60 font-fransisco text-sm">
-                <a href="mailto:shoaib@capistor.com" className="hover:text-kindofwhite transition-colors">
-                  shoaib@capistor.com
+                <a href="mailto:inquiry@capistor.com" className="hover:text-kindofwhite transition-colors">
+                  inquiry@capistor.com
                 </a>
               </p>
               <p className="text-kindofwhite/60 font-fransisco text-sm">
-                <a href="tel:+971508726178" className="hover:text-kindofwhite transition-colors">
+                <a
+                  href="https://wa.me/971508726178"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-kindofwhite transition-colors"
+                >
                   +971 508 726 178
                 </a>
               </p>
