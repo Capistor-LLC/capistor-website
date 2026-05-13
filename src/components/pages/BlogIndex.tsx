@@ -3,6 +3,8 @@ import { Link, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { supabase, DbBlogPost } from "../../lib/supabase";
 import { formatDate } from "../../lib/blog";
+import Seo from "../ui/Seo";
+import { BlogIndexSkeleton } from "../ui/Skeleton";
 
 export default function BlogIndex() {
   const [posts, setPosts] = useState<DbBlogPost[] | null>(null);
@@ -44,6 +46,11 @@ export default function BlogIndex() {
 
   return (
     <div className="bg-white min-h-screen">
+      <Seo
+        title="Notes & tutorials — Capistor Blog"
+        description="Thoughts on hardware, embedded systems, and the craft of building product. By the team at Capistor Technologies."
+        url="/blog"
+      />
       {/* Hero */}
       <section className="pt-32 pb-12 lg:pt-40 lg:pb-16 px-6 border-b border-gray-100">
         <div className="max-w-3xl mx-auto">
@@ -102,7 +109,7 @@ export default function BlogIndex() {
       {/* Posts */}
       <section className="max-w-3xl mx-auto px-6 py-12 lg:py-16">
         {filtered === null ? (
-          <p className="text-gray-400 font-fransisco">Loading…</p>
+          <BlogIndexSkeleton />
         ) : filtered.length === 0 ? (
           <p className="text-gray-400 font-fransisco py-20 text-center">
             No posts {activeTag ? `tagged "${activeTag}"` : "yet"}.

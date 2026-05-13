@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useRef, useState } from "react";
+import { ChangeEvent, ClipboardEvent, DragEvent, useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import MDEditor from "@uiw/react-md-editor";
 import { supabase, DbBlogSeries } from "../../lib/supabase";
@@ -95,6 +95,60 @@ export default function AdminBlogEditor({ mode }: { mode: Mode }) {
     const { data: pub } = supabase.storage.from("blog-images").getPublicUrl(path);
     setCoverUrl(pub.publicUrl);
     if (coverInputRef.current) coverInputRef.current.value = "";
+  };
+
+  // Upload an inline image to blog-images storage and return its public URL.
+  const uploadInlineImage = async (file: File): Promise<string | null> => {
+    const ext = file.name.split(".").pop()?.toLowerCase() ?? "png";
+    const path = `${slug || "post"}/inline-${Date.now()}-${Math.random()
+      .toString(36)
+      .slice(2, 8)}.${ext}`;
+    const { error: upErr } = await supabase.storage
+      .from("blog-images")
+      .upload(path, file, { contentType: file.type });
+    if (upErr) {
+      setError(`Image upload failed: ${upErr.message}`);
+      return null;
+    }
+    const { data: pub } = supabase.storage.from("blog-images").getPublicUrl(path);
+    return pub.publicUrl;
+  };
+
+  // Insert markdown image at end of body (or at cursor if we can find it).
+  const insertImageMarkdown = (url: string, name = "image") => {
+    const md = `\n\n![${name}](${url})\n\n`;
+    setBody((prev) => prev + md);
+  };
+
+  const onPasteImage = async (e: ClipboardEvent<HTMLDivElement>) => {
+    const items = Array.from(e.clipboardData?.items ?? []);
+    const imageItem = items.find((it) => it.type.startsWith("image/"));
+    if (!imageItem) return;
+    e.preventDefault();
+    const file = imageItem.getAsFile();
+    if (!file) return;
+    setInfo("Uploading pasted image…");
+    const url = await uploadInlineImage(file);
+    if (url) {
+      insertImageMarkdown(url, "pasted image");
+      setInfo("Image inserted.");
+      setTimeout(() => setInfo(null), 1500);
+    }
+  };
+
+  const onDropImages = async (e: DragEvent<HTMLDivElement>) => {
+    const files = Array.from(e.dataTransfer?.files ?? []).filter((f) =>
+      f.type.startsWith("image/")
+    );
+    if (files.length === 0) return;
+    e.preventDefault();
+    setInfo(`Uploading ${files.length} image${files.length === 1 ? "" : "s"}…`);
+    for (const file of files) {
+      const url = await uploadInlineImage(file);
+      if (url) insertImageMarkdown(url, file.name.replace(/\.[^.]+$/, ""));
+    }
+    setInfo("Images inserted.");
+    setTimeout(() => setInfo(null), 1500);
   };
 
   const onSave = async (publishNow = false) => {
@@ -443,7 +497,13 @@ export default function AdminBlogEditor({ mode }: { mode: Mode }) {
             className="w-full px-4 py-2.5 rounded-xl border border-capistor-200/70 bg-white text-base font-fransisco text-sexyblue/80 focus:outline-none focus:ring-2 focus:ring-sexyblue"
           />
 
-          <div data-color-mode="light" className="rounded-xl overflow-hidden border border-capistor-200/70 bg-white">
+          <div
+            data-color-mode="light"
+            className="rounded-xl overflow-hidden border border-capistor-200/70 bg-white"
+            onPaste={onPasteImage}
+            onDrop={onDropImages}
+            onDragOver={(e) => e.preventDefault()}
+          >
             <MDEditor
               value={body}
               onChange={(v) => setBody(v ?? "")}
@@ -454,9 +514,9 @@ export default function AdminBlogEditor({ mode }: { mode: Mode }) {
           </div>
 
           <p className="text-sexyblue/35 font-fransisco text-xs">
-            Markdown · supports code blocks, $math$, $$blocks$$, tables, links, images.
-            Tip: use the Upload-cover button for the hero image; for inline images,
-            upload via Supabase Storage and paste the URL into the markdown.
+            Markdown · code blocks, $math$, $$blocks$$, tables, links.
+            <strong className="text-sexyblue/60"> Drag images into the editor or paste from clipboard</strong> —
+            they auto-upload to Supabase Storage and the markdown is inserted at the end of the post.
           </p>
         </div>
       </div>

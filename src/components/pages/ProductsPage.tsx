@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { supabase, ProductWithImages } from "../../lib/supabase";
+import Seo from "../ui/Seo";
+import { ProductsSkeleton } from "../ui/Skeleton";
 
 export default function ProductsPage() {
   const [products, setProducts] = useState<ProductWithImages[] | null>(null);
@@ -31,8 +33,26 @@ export default function ProductsPage() {
     sectionRefs.current[slug]?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
+  if (products === null) {
+    return (
+      <div className="bg-kindofwhite">
+        <Seo
+          title="Projects — Capistor Technologies"
+          description="Custom hardware projects engineered by Capistor: embedded systems, PCB designs, and industrial devices."
+          url="/products"
+        />
+        <ProductsSkeleton />
+      </div>
+    );
+  }
+
   return (
     <div className="bg-kindofwhite">
+      <Seo
+        title="Projects — Capistor Technologies"
+        description="Custom hardware projects engineered by Capistor: embedded systems, PCB designs, and industrial devices."
+        url="/products"
+      />
       {/* Hero */}
       <section className="pt-32 pb-12 lg:pt-40 lg:pb-16 px-6">
         <div className="max-w-7xl mx-auto text-center">
@@ -79,9 +99,7 @@ export default function ProductsPage() {
       )}
 
       {/* Product sections */}
-      {products === null ? (
-        <div className="py-32 text-center text-sexyblue/40 font-fransisco">Loading…</div>
-      ) : products.length === 0 ? (
+      {products.length === 0 ? (
         <div className="py-32 text-center text-sexyblue/40 font-fransisco">
           No products published yet.
         </div>

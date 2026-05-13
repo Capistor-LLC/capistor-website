@@ -1,5 +1,6 @@
-import { useRef } from "react";
+import { lazy, Suspense, useRef } from "react";
 import { Routes, Route } from "react-router-dom";
+import { HelmetProvider } from "react-helmet-async";
 import MyNavbar from "./components/Navbar";
 import Home from "./components/home";
 import About from "./components/pages/About";
@@ -11,6 +12,7 @@ import CVPage from "./components/pages/cv/page";
 import ProductsPage from "./components/pages/ProductsPage";
 import BlogIndex from "./components/pages/BlogIndex";
 import BlogPost from "./components/pages/BlogPost";
+import NotFound from "./components/pages/NotFound";
 import ExperienceSection from "./components/sections/ExperienceSection";
 import ProductDetailSection from "./components/sections/ProductDetailSection";
 import HeaterControllerSection from "./components/sections/HeaterControllerSection";
@@ -18,16 +20,19 @@ import HowItWorksSection from "./components/sections/HowItWorksSection";
 import ContactSection from "./components/sections/ContactSection";
 import VideoSection from "./components/sections/VideoSection";
 import TestimonialsSection from "./components/sections/TestimonialsSection";
-import AdminLogin from "./components/admin/AdminLogin";
-import AdminDashboard from "./components/admin/AdminDashboard";
-import AdminProductsList from "./components/admin/AdminProductsList";
-import AdminProductEditor from "./components/admin/AdminProductEditor";
-import AdminSubscribers from "./components/admin/AdminSubscribers";
-import AdminBlogList from "./components/admin/AdminBlogList";
-import AdminBlogEditor from "./components/admin/AdminBlogEditor";
-import AdminSeries from "./components/admin/AdminSeries";
-import ProtectedAdmin from "./components/admin/ProtectedAdmin";
+import Seo from "./components/ui/Seo";
 import { useProductsFromDb } from "./utils/useProductsFromDb";
+
+// Lazy-load all admin code so it doesn't ship to public visitors
+const AdminLogin       = lazy(() => import("./components/admin/AdminLogin"));
+const AdminDashboard   = lazy(() => import("./components/admin/AdminDashboard"));
+const AdminProductsList = lazy(() => import("./components/admin/AdminProductsList"));
+const AdminProductEditor = lazy(() => import("./components/admin/AdminProductEditor"));
+const AdminBlogList    = lazy(() => import("./components/admin/AdminBlogList"));
+const AdminBlogEditor  = lazy(() => import("./components/admin/AdminBlogEditor"));
+const AdminSeries      = lazy(() => import("./components/admin/AdminSeries"));
+const AdminSubscribers = lazy(() => import("./components/admin/AdminSubscribers"));
+const ProtectedAdmin   = lazy(() => import("./components/admin/ProtectedAdmin"));
 
 function HomePage() {
   const sections = {
@@ -40,10 +45,23 @@ function HomePage() {
     contact: useRef<HTMLElement>(null),
   };
 
-  const { products, currentProduct, currentImageIndex, setCurrentProduct, setCurrentImageIndex, nextProduct, previousProduct } = useProductsFromDb();
+  const {
+    products,
+    currentProduct,
+    currentImageIndex,
+    setCurrentProduct,
+    setCurrentImageIndex,
+    nextProduct,
+    previousProduct,
+  } = useProductsFromDb();
 
   return (
     <div className="min-h-screen bg-kindofwhite font-domine">
+      <Seo
+        title="Capistor Technologies — Custom embedded systems & PCB design"
+        description="Custom embedded systems, PCB design, and industrial technology solutions. Engineered for production by Capistor Technologies."
+        url="/"
+      />
       <MyNavbar sections={sections} />
 
       <section ref={sections.home}><Home /></section>
@@ -98,26 +116,52 @@ function PageWithChrome({ children }: { children: React.ReactNode }) {
   );
 }
 
-export default function App() {
+function AdminFallback() {
   return (
-    <Routes>
-      <Route path="/" element={<HomePage />} />
-      <Route path="/cv" element={<PageWithChrome><CVPage /></PageWithChrome>} />
-      <Route path="/blog" element={<PageWithChrome><BlogIndex /></PageWithChrome>} />
-      <Route path="/blog/:slug" element={<PageWithChrome><BlogPost /></PageWithChrome>} />
-      <Route path="/products" element={<PageWithChrome><ProductsPage /></PageWithChrome>} />
-
-      <Route path="/admin/login" element={<AdminLogin />} />
-      <Route path="/admin" element={<ProtectedAdmin><AdminDashboard /></ProtectedAdmin>} />
-      <Route path="/admin/products" element={<ProtectedAdmin><AdminProductsList /></ProtectedAdmin>} />
-      <Route path="/admin/products/new" element={<ProtectedAdmin><AdminProductEditor mode="new" /></ProtectedAdmin>} />
-      <Route path="/admin/products/:id/edit" element={<ProtectedAdmin><AdminProductEditor mode="edit" /></ProtectedAdmin>} />
-      <Route path="/admin/blog" element={<ProtectedAdmin><AdminBlogList /></ProtectedAdmin>} />
-      <Route path="/admin/blog/new" element={<ProtectedAdmin><AdminBlogEditor mode="new" /></ProtectedAdmin>} />
-      <Route path="/admin/blog/:id/edit" element={<ProtectedAdmin><AdminBlogEditor mode="edit" /></ProtectedAdmin>} />
-      <Route path="/admin/series" element={<ProtectedAdmin><AdminSeries /></ProtectedAdmin>} />
-      <Route path="/admin/subscribers" element={<ProtectedAdmin><AdminSubscribers /></ProtectedAdmin>} />
-    </Routes>
+    <div className="min-h-screen flex items-center justify-center bg-kindofwhite">
+      <p className="text-sexyblue/40 font-fransisco">Loading…</p>
+    </div>
   );
 }
 
+function withProtectedAdmin(node: React.ReactNode) {
+  return (
+    <Suspense fallback={<AdminFallback />}>
+      <ProtectedAdmin>{node}</ProtectedAdmin>
+    </Suspense>
+  );
+}
+
+export default function App() {
+  return (
+    <HelmetProvider>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/cv" element={<PageWithChrome><CVPage /></PageWithChrome>} />
+        <Route path="/blog" element={<PageWithChrome><BlogIndex /></PageWithChrome>} />
+        <Route path="/blog/:slug" element={<PageWithChrome><BlogPost /></PageWithChrome>} />
+        <Route path="/products" element={<PageWithChrome><ProductsPage /></PageWithChrome>} />
+
+        <Route
+          path="/admin/login"
+          element={
+            <Suspense fallback={<AdminFallback />}>
+              <AdminLogin />
+            </Suspense>
+          }
+        />
+        <Route path="/admin" element={withProtectedAdmin(<AdminDashboard />)} />
+        <Route path="/admin/products" element={withProtectedAdmin(<AdminProductsList />)} />
+        <Route path="/admin/products/new" element={withProtectedAdmin(<AdminProductEditor mode="new" />)} />
+        <Route path="/admin/products/:id/edit" element={withProtectedAdmin(<AdminProductEditor mode="edit" />)} />
+        <Route path="/admin/blog" element={withProtectedAdmin(<AdminBlogList />)} />
+        <Route path="/admin/blog/new" element={withProtectedAdmin(<AdminBlogEditor mode="new" />)} />
+        <Route path="/admin/blog/:id/edit" element={withProtectedAdmin(<AdminBlogEditor mode="edit" />)} />
+        <Route path="/admin/series" element={withProtectedAdmin(<AdminSeries />)} />
+        <Route path="/admin/subscribers" element={withProtectedAdmin(<AdminSubscribers />)} />
+
+        <Route path="*" element={<PageWithChrome><NotFound /></PageWithChrome>} />
+      </Routes>
+    </HelmetProvider>
+  );
+}

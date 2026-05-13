@@ -1,7 +1,7 @@
 // Facebook Pixel tracking utility
 declare global {
   interface Window {
-    fbq: (command: string, event: string, data?: Record<string, any>) => void;
+    fbq?: (command: string, event: string, data?: Record<string, any>) => void;
   }
 }
 
@@ -9,20 +9,20 @@ export const trackFacebookEvent = (
   eventName: string,
   data?: Record<string, any>
 ) => {
-  if (window.fbq) {
-    fbq(eventName === 'PageView' ? 'track' : 'track', eventName, data);
+  if (typeof window !== "undefined" && typeof window.fbq === "function") {
+    window.fbq("track", eventName, data);
   }
 };
 
-export const trackFormSubmission = (formType: string = 'Lead') => {
+export const trackFormSubmission = (formType: string = "Lead") => {
   trackFacebookEvent(formType, {
     value: 0,
-    currency: 'AED',
+    currency: "AED",
   });
 };
 
 export const trackContactFormSubmit = () => {
-  trackFacebookEvent('Lead', {
-    form_type: 'contact_form',
+  trackFacebookEvent("Lead", {
+    form_type: "contact_form",
   });
 };

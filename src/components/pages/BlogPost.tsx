@@ -8,6 +8,9 @@ import rehypeKatex from "rehype-katex";
 import rehypeHighlight from "rehype-highlight";
 import { supabase, DbBlogPost, DbBlogSeries } from "../../lib/supabase";
 import { formatDate } from "../../lib/blog";
+import Seo from "../ui/Seo";
+import ShareButtons from "../ui/ShareButtons";
+import { BlogPostSkeleton } from "../ui/Skeleton";
 import "katex/dist/katex.min.css";
 import "highlight.js/styles/github.css";
 
@@ -55,11 +58,7 @@ export default function BlogPost() {
   }, [slug]);
 
   if (post === undefined) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-white">
-        <p className="text-gray-400 font-fransisco">Loading…</p>
-      </div>
-    );
+    return <BlogPostSkeleton />;
   }
 
   if (post === null) {
@@ -81,6 +80,15 @@ export default function BlogPost() {
 
   return (
     <div className="bg-white min-h-screen">
+      <Seo
+        title={post.title}
+        description={post.excerpt ?? post.subtitle ?? `Read ${post.title} on Capistor.`}
+        image={post.cover_url ?? undefined}
+        url={`/blog/${post.slug}`}
+        type="article"
+        publishedTime={post.published_at ?? undefined}
+        tags={post.tags}
+      />
       <article className="max-w-3xl mx-auto px-6 pt-32 pb-20 lg:pt-40">
 
         {/* Back link */}
@@ -162,6 +170,15 @@ export default function BlogPost() {
           >
             {post.body}
           </ReactMarkdown>
+        </div>
+
+        {/* Share */}
+        <div className="mt-12 pt-8 border-t border-gray-100">
+          <ShareButtons
+            url={`/blog/${post.slug}`}
+            title={post.title}
+            text={post.subtitle ?? post.excerpt ?? undefined}
+          />
         </div>
 
         {/* Series nav */}
