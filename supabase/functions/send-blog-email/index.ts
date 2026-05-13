@@ -32,6 +32,7 @@ Deno.serve(async (req) => {
     const ADMIN_EMAIL = (Deno.env.get("ADMIN_EMAIL") ?? "").toLowerCase();
     const SITE_URL = Deno.env.get("SITE_URL") ?? "https://capistor.com";
     const FROM_EMAIL = Deno.env.get("FROM_EMAIL") ?? "onboarding@resend.dev";
+    const REPLY_TO = Deno.env.get("REPLY_TO_EMAIL") ?? null;
 
     if (!RESEND_API_KEY) {
       return json({ error: "RESEND_API_KEY not set in Supabase secrets" }, 500);
@@ -99,6 +100,7 @@ Deno.serve(async (req) => {
         subject: post.title,
         html,
         text,
+        ...(REPLY_TO ? { reply_to: REPLY_TO } : {}),
       }),
     });
 
@@ -146,7 +148,7 @@ function renderEmail(p: {
     <tr><td align="center">
       <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="background:#fff;border-radius:12px;overflow:hidden;max-width:92%;">
         <tr><td style="padding:32px 40px 12px;">
-          <p style="font-family:Helvetica,Arial,sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#999;margin:0 0 12px;">Capistor — Writing</p>
+          <p style="font-family:Helvetica,Arial,sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#999;margin:0 0 12px;">Capistor Technologies</p>
           <h1 style="font-family:Georgia,serif;font-size:32px;line-height:1.2;color:#111;margin:0 0 12px;">${escape(p.title)}</h1>
           ${subtitle}
           <p style="font-family:Helvetica,Arial,sans-serif;font-size:12px;color:#999;margin:0 0 24px;">${p.readingMinutes} min read</p>
