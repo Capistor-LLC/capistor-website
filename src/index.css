@@ -14,3 +14,104 @@
 
 
 /* Other custom styles can go here */
+
+/* ── Blog post body (Medium-style) ── */
+.blog-prose {
+  color: #2a2a2a;
+  font-family: "Domine", Georgia, serif;
+  font-size: 1.15rem;
+  line-height: 1.75;
+}
+.blog-prose > * + * { margin-top: 1.4em; }
+.blog-prose h1,
+.blog-prose h2,
+.blog-prose h3,
+.blog-prose h4 {
+  font-family: "Domine", Georgia, serif;
+  font-weight: 700;
+  color: #000;
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+  margin-top: 2em;
+  margin-bottom: 0.5em;
+}
+.blog-prose h1 { font-size: 2.25rem; }
+.blog-prose h2 { font-size: 1.75rem; }
+.blog-prose h3 { font-size: 1.4rem; }
+.blog-prose h4 { font-size: 1.2rem; }
+.blog-prose p { color: #292929; }
+.blog-prose a {
+  color: #1a1a1a;
+  text-decoration: underline;
+  text-decoration-color: #cbd5e1;
+  text-underline-offset: 3px;
+  transition: text-decoration-color 0.15s;
+}
+.blog-prose a:hover { text-decoration-color: #1a1a1a; }
+.blog-prose strong { color: #000; font-weight: 700; }
+.blog-prose em { font-style: italic; }
+.blog-prose blockquote {
+  border-left: 3px solid #d4d4d4;
+  padding-left: 1.25rem;
+  color: #525252;
+  font-style: italic;
+  margin-left: 0;
+}
+.blog-prose ul,
+.blog-prose ol {
+  padding-left: 1.5rem;
+}
+.blog-prose ul { list-style: disc; }
+.blog-prose ol { list-style: decimal; }
+.blog-prose li { margin-top: 0.4em; }
+.blog-prose hr {
+  border: none;
+  height: 1px;
+  background: #e5e5e5;
+  margin: 2.5em 0;
+}
+.blog-prose img {
+  max-width: 100%;
+  border-radius: 0.5rem;
+  margin: 1.5em auto;
+}
+.blog-prose table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95em;
+}
+.blog-prose th,
+.blog-prose td {
+  border: 1px solid #e5e5e5;
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+}
+.blog-prose th { background: #fafafa; font-weight: 600; }
+.blog-prose code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.9em;
+  background: #f5f5f5;
+  padding: 0.1em 0.4em;
+  border-radius: 4px;
+  color: #1a1a1a;
+}
+.blog-prose pre {
+  background: #f8f8f8;
+  border: 1px solid #ececec;
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  overflow-x: auto;
+  font-size: 0.9em;
+  line-height: 1.5;
+}
+.blog-prose pre code {
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+  font-size: inherit;
+}
+.blog-prose .katex-display {
+  margin: 1.5em 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+}

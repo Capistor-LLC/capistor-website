@@ -55,3 +55,35 @@ export type DbSubscriber = {
 export type ProductWithImages = DbProduct & {
   images: DbProductImage[];
 };
+
+export type DbBlogSeries = {
+  id: string;
+  slug: string;
+  title: string;
+  description: string | null;
+  created_at: string;
+};
+
+export type DbBlogPost = {
+  id: string;
+  slug: string;
+  title: string;
+  subtitle: string | null;
+  cover_url: string | null;
+  body: string;
+  excerpt: string | null;
+  reading_minutes: number | null;
+  tags: string[];
+  is_published: boolean;
+  is_featured: boolean;
+  series_id: string | null;
+  series_position: number | null;
+  email_sent_at: string | null;
+  published_at: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type BlogPostWithSeries = DbBlogPost & {
+  series: DbBlogSeries | null;
+};

@@ -56,7 +56,7 @@ export default function ProductsPage() {
 
       {/* Product index strip */}
       {products && products.length > 0 && (
-        <div className="border-y border-sexyblue/10 bg-kindofwhite/80 backdrop-blur-sm sticky top-16 z-30 mb-12">
+        <div className="border-y border-sexyblue/10 bg-kindofwhite/90 backdrop-blur-md sticky top-[88px] z-30 mb-12">
           <div className="max-w-7xl mx-auto px-6 overflow-x-auto [&::-webkit-scrollbar]:hidden">
             <div className="flex gap-6 py-3">
               {products.map((p, i) => (

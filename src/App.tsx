@@ -7,9 +7,10 @@ import ProductsSection from "./components/sections/ProductsSection";
 import Footer from "./components/Footer";
 import Services from "./components/pages/Services";
 import Blog from "./components/pages/Blog";
-import BlogPostPage from "./components/pages/BlogPostPage";
 import CVPage from "./components/pages/cv/page";
 import ProductsPage from "./components/pages/ProductsPage";
+import BlogIndex from "./components/pages/BlogIndex";
+import BlogPost from "./components/pages/BlogPost";
 import ExperienceSection from "./components/sections/ExperienceSection";
 import ProductDetailSection from "./components/sections/ProductDetailSection";
 import HeaterControllerSection from "./components/sections/HeaterControllerSection";
@@ -22,6 +23,9 @@ import AdminDashboard from "./components/admin/AdminDashboard";
 import AdminProductsList from "./components/admin/AdminProductsList";
 import AdminProductEditor from "./components/admin/AdminProductEditor";
 import AdminSubscribers from "./components/admin/AdminSubscribers";
+import AdminBlogList from "./components/admin/AdminBlogList";
+import AdminBlogEditor from "./components/admin/AdminBlogEditor";
+import AdminSeries from "./components/admin/AdminSeries";
 import ProtectedAdmin from "./components/admin/ProtectedAdmin";
 import { useProductsFromDb } from "./utils/useProductsFromDb";
 
@@ -99,7 +103,8 @@ export default function App() {
     <Routes>
       <Route path="/" element={<HomePage />} />
       <Route path="/cv" element={<PageWithChrome><CVPage /></PageWithChrome>} />
-      <Route path="/blog/:slug" element={<PageWithChrome><BlogPostPage /></PageWithChrome>} />
+      <Route path="/blog" element={<PageWithChrome><BlogIndex /></PageWithChrome>} />
+      <Route path="/blog/:slug" element={<PageWithChrome><BlogPost /></PageWithChrome>} />
       <Route path="/products" element={<PageWithChrome><ProductsPage /></PageWithChrome>} />
 
       <Route path="/admin/login" element={<AdminLogin />} />
@@ -107,6 +112,10 @@ export default function App() {
       <Route path="/admin/products" element={<ProtectedAdmin><AdminProductsList /></ProtectedAdmin>} />
       <Route path="/admin/products/new" element={<ProtectedAdmin><AdminProductEditor mode="new" /></ProtectedAdmin>} />
       <Route path="/admin/products/:id/edit" element={<ProtectedAdmin><AdminProductEditor mode="edit" /></ProtectedAdmin>} />
+      <Route path="/admin/blog" element={<ProtectedAdmin><AdminBlogList /></ProtectedAdmin>} />
+      <Route path="/admin/blog/new" element={<ProtectedAdmin><AdminBlogEditor mode="new" /></ProtectedAdmin>} />
+      <Route path="/admin/blog/:id/edit" element={<ProtectedAdmin><AdminBlogEditor mode="edit" /></ProtectedAdmin>} />
+      <Route path="/admin/series" element={<ProtectedAdmin><AdminSeries /></ProtectedAdmin>} />
       <Route path="/admin/subscribers" element={<ProtectedAdmin><AdminSubscribers /></ProtectedAdmin>} />
     </Routes>
   );
