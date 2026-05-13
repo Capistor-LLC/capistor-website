@@ -10,6 +10,7 @@ export interface Product {
 
   id: number;
   name: string;
+  tagline: string;
   images: ProductImage[];
 }
 
@@ -21,6 +22,7 @@ export const getFallbackProducts = (): Product[] => [
   {
     id: 1,
     name: "Smart Watch",
+    tagline: "ESP32-powered wearable with health monitoring, OLED display, and Bluetooth connectivity.",
     images: [
       {
         url: "/product_images/smartWatch.jpg",
@@ -36,6 +38,7 @@ export const getFallbackProducts = (): Product[] => [
   {
     id: 2,
     name: "Industrial Board",
+    tagline: "CE-compliant industrial PCB with EMI shielding built for harsh-environment automation.",
     images: [
       {
         url: "/product_images/IndustrialioT.png",

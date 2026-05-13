@@ -15,7 +15,7 @@ import HeaterControllerSection from "./components/sections/HeaterControllerSecti
 import HowItWorksSection from "./components/sections/HowItWorksSection";
 import ContactSection from "./components/sections/ContactSection";
 import VideoSection from "./components/sections/VideoSection";
-import NewsletterSection from "./components/sections/NewsletterSection";
+import TestimonialsSection from "./components/sections/TestimonialsSection";
 import { useProductNavigation } from "./utils/useProductNavigation";
 import {
   Product,
@@ -43,8 +43,7 @@ function HomePage() {
         setProducts(loadedProducts);
       } catch (error) {
         console.warn("Failed to load products, using fallback:", error);
-        const fallbackProducts = getFallbackProducts();
-        setProducts(fallbackProducts);
+        setProducts(getFallbackProducts());
       }
     };
     initProducts();
@@ -66,27 +65,48 @@ function HomePage() {
   return (
     <div className="min-h-screen bg-kindofwhite font-domine">
       <MyNavbar sections={sections} />
+
+      {/* 1. Hero */}
       <section ref={sections.home}>
         <Home />
       </section>
+
+      {/* 2. Services */}
       <section ref={sections.services}>
         <Services />
       </section>
+
+      {/* 3. About */}
+      <section ref={sections.about}>
+        <About />
+      </section>
+
+      {/* 4. Stats — dark bg */}
       <section>
         <ExperienceSection />
       </section>
-      <section>
-        <ProductDetailSection />
-      </section>
-      <section>
-        <HeaterControllerSection />
-      </section>
-      <section>
-        <VideoSection />
-      </section>
+
+      {/* 5. Process */}
       <section>
         <HowItWorksSection />
       </section>
+
+      {/* 6. Case study: Table Pager */}
+      <section>
+        <ProductDetailSection />
+      </section>
+
+      {/* 7. Case study: Heater Controller */}
+      <section>
+        <HeaterControllerSection />
+      </section>
+
+      {/* 8. Video demos — dark bg */}
+      <section>
+        <VideoSection />
+      </section>
+
+      {/* 9. Products gallery */}
       <section ref={sections.products}>
         <ProductsSection
           products={products}
@@ -98,18 +118,23 @@ function HomePage() {
           previousProduct={previousProduct}
         />
       </section>
+
+      {/* 10. Testimonials */}
+      <section>
+        <TestimonialsSection />
+      </section>
+
+      {/* 11. Blog */}
       <section ref={sections.blog} id="blog-section">
         <Blog />
       </section>
-      <section ref={sections.about}>
-        <About />
-      </section>
+
+      {/* 12. Contact */}
       <section ref={sections.contact}>
         <ContactSection />
       </section>
-      <section>
-        <NewsletterSection />
-      </section>
+
+      {/* Footer (includes newsletter) */}
       <Footer />
     </div>
   );
