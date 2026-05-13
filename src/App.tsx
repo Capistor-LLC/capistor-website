@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef } from "react";
 import { Routes, Route } from "react-router-dom";
 import MyNavbar from "./components/Navbar";
 import Home from "./components/home";
@@ -9,6 +9,7 @@ import Services from "./components/pages/Services";
 import Blog from "./components/pages/Blog";
 import BlogPostPage from "./components/pages/BlogPostPage";
 import CVPage from "./components/pages/cv/page";
+import ProductsPage from "./components/pages/ProductsPage";
 import ExperienceSection from "./components/sections/ExperienceSection";
 import ProductDetailSection from "./components/sections/ProductDetailSection";
 import HeaterControllerSection from "./components/sections/HeaterControllerSection";
@@ -16,12 +17,13 @@ import HowItWorksSection from "./components/sections/HowItWorksSection";
 import ContactSection from "./components/sections/ContactSection";
 import VideoSection from "./components/sections/VideoSection";
 import TestimonialsSection from "./components/sections/TestimonialsSection";
-import { useProductNavigation } from "./utils/useProductNavigation";
-import {
-  Product,
-  loadProducts,
-  getFallbackProducts,
-} from "./utils/productLoader";
+import AdminLogin from "./components/admin/AdminLogin";
+import AdminDashboard from "./components/admin/AdminDashboard";
+import AdminProductsList from "./components/admin/AdminProductsList";
+import AdminProductEditor from "./components/admin/AdminProductEditor";
+import AdminSubscribers from "./components/admin/AdminSubscribers";
+import ProtectedAdmin from "./components/admin/ProtectedAdmin";
+import { useProductsFromDb } from "./utils/useProductsFromDb";
 
 function HomePage() {
   const sections = {
@@ -34,79 +36,22 @@ function HomePage() {
     contact: useRef<HTMLElement>(null),
   };
 
-  const [products, setProducts] = useState<Product[]>([]);
-
-  useEffect(() => {
-    const initProducts = async () => {
-      try {
-        const loadedProducts = await loadProducts();
-        setProducts(loadedProducts);
-      } catch (error) {
-        console.warn("Failed to load products, using fallback:", error);
-        setProducts(getFallbackProducts());
-      }
-    };
-    initProducts();
-  }, []);
-
-  const {
-    currentProduct,
-    currentImageIndex,
-    setCurrentProduct,
-    setCurrentImageIndex,
-    nextProduct,
-  } = useProductNavigation(products);
-
-  const previousProduct = () => {
-    setCurrentProduct((prev) => (prev - 1 + products.length) % products.length);
-    setCurrentImageIndex(0);
-  };
+  const { products, currentProduct, currentImageIndex, setCurrentProduct, setCurrentImageIndex, nextProduct, previousProduct } = useProductsFromDb();
 
   return (
     <div className="min-h-screen bg-kindofwhite font-domine">
       <MyNavbar sections={sections} />
 
-      {/* 1. Hero */}
-      <section ref={sections.home}>
-        <Home />
-      </section>
+      <section ref={sections.home}><Home /></section>
+      <section ref={sections.services}><Services /></section>
+      <section ref={sections.about}><About /></section>
 
-      {/* 2. Services */}
-      <section ref={sections.services}>
-        <Services />
-      </section>
+      <section><ExperienceSection /></section>
+      <section><HowItWorksSection /></section>
+      <section><ProductDetailSection /></section>
+      <section><HeaterControllerSection /></section>
+      <section><VideoSection /></section>
 
-      {/* 3. About */}
-      <section ref={sections.about}>
-        <About />
-      </section>
-
-      {/* 4. Stats — dark bg */}
-      <section>
-        <ExperienceSection />
-      </section>
-
-      {/* 5. Process */}
-      <section>
-        <HowItWorksSection />
-      </section>
-
-      {/* 6. Case study: Table Pager */}
-      <section>
-        <ProductDetailSection />
-      </section>
-
-      {/* 7. Case study: Heater Controller */}
-      <section>
-        <HeaterControllerSection />
-      </section>
-
-      {/* 8. Video demos — dark bg */}
-      <section>
-        <VideoSection />
-      </section>
-
-      {/* 9. Products gallery */}
       <section ref={sections.products}>
         <ProductsSection
           products={products}
@@ -119,28 +64,17 @@ function HomePage() {
         />
       </section>
 
-      {/* 10. Testimonials */}
-      <section>
-        <TestimonialsSection />
-      </section>
+      <section><TestimonialsSection /></section>
 
-      {/* 11. Blog */}
-      <section ref={sections.blog} id="blog-section">
-        <Blog />
-      </section>
+      <section ref={sections.blog} id="blog-section"><Blog /></section>
+      <section ref={sections.contact}><ContactSection /></section>
 
-      {/* 12. Contact */}
-      <section ref={sections.contact}>
-        <ContactSection />
-      </section>
-
-      {/* Footer (includes newsletter) */}
       <Footer />
     </div>
   );
 }
 
-function CVPageWrapper() {
+function PageWithChrome({ children }: { children: React.ReactNode }) {
   const sections = {
     home: useRef<HTMLElement>(null),
     about: useRef<HTMLElement>(null),
@@ -154,27 +88,7 @@ function CVPageWrapper() {
   return (
     <div className="min-h-screen bg-kindofwhite font-domine">
       <MyNavbar sections={sections} />
-      <CVPage />
-      <Footer />
-    </div>
-  );
-}
-
-function BlogPostPageWrapper() {
-  const sections = {
-    home: useRef<HTMLElement>(null),
-    about: useRef<HTMLElement>(null),
-    products: useRef<HTMLElement>(null),
-    demoproducts: useRef<HTMLElement>(null),
-    services: useRef<HTMLElement>(null),
-    blog: useRef<HTMLElement>(null),
-    contact: useRef<HTMLElement>(null),
-  };
-
-  return (
-    <div className="min-h-screen bg-kindofwhite font-domine">
-      <MyNavbar sections={sections} />
-      <BlogPostPage />
+      {children}
       <Footer />
     </div>
   );
@@ -184,8 +98,17 @@ export default function App() {
   return (
     <Routes>
       <Route path="/" element={<HomePage />} />
-      <Route path="/cv" element={<CVPageWrapper />} />
-      <Route path="/blog/:slug" element={<BlogPostPageWrapper />} />
+      <Route path="/cv" element={<PageWithChrome><CVPage /></PageWithChrome>} />
+      <Route path="/blog/:slug" element={<PageWithChrome><BlogPostPage /></PageWithChrome>} />
+      <Route path="/products" element={<PageWithChrome><ProductsPage /></PageWithChrome>} />
+
+      <Route path="/admin/login" element={<AdminLogin />} />
+      <Route path="/admin" element={<ProtectedAdmin><AdminDashboard /></ProtectedAdmin>} />
+      <Route path="/admin/products" element={<ProtectedAdmin><AdminProductsList /></ProtectedAdmin>} />
+      <Route path="/admin/products/new" element={<ProtectedAdmin><AdminProductEditor mode="new" /></ProtectedAdmin>} />
+      <Route path="/admin/products/:id/edit" element={<ProtectedAdmin><AdminProductEditor mode="edit" /></ProtectedAdmin>} />
+      <Route path="/admin/subscribers" element={<ProtectedAdmin><AdminSubscribers /></ProtectedAdmin>} />
     </Routes>
   );
 }
+

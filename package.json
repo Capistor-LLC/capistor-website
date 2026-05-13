@@ -17,6 +17,7 @@
     "@mui/styled-engine": "^7.3.3",
     "@mui/x-tree-view": "^8.13.1",
     "@radix-ui/react-slot": "^1.2.3",
+    "@supabase/supabase-js": "^2.105.4",
     "amqplib": "^0.10.9",
     "axios": "^1.12.2",
     "bootstrap": "^5.3.8",

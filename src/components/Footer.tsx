@@ -1,45 +1,64 @@
 import { motion } from "framer-motion";
-import { useState, useEffect } from "react";
-import { useForm, ValidationError } from "@formspree/react";
+import { FormEvent, useState } from "react";
+import { supabase } from "../lib/supabase";
 
 function NewsletterInline() {
-  const [state, handleSubmit] = useForm("xbljdwvk");
-  const [showSuccess, setShowSuccess] = useState(false);
+  const [email, setEmail] = useState("");
+  const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (state.succeeded) {
-      setShowSuccess(true);
-      const timer = setTimeout(() => setShowSuccess(false), 4000);
-      return () => clearTimeout(timer);
+  const onSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!email.trim()) return;
+    setStatus("submitting");
+    setErrorMsg(null);
+
+    const { error } = await supabase.from("subscribers").insert({
+      email: email.trim().toLowerCase(),
+      source: "footer-newsletter",
+    });
+
+    if (error) {
+      // 23505 = unique violation — already subscribed; treat as success.
+      if (error.code === "23505") {
+        setStatus("success");
+        return;
+      }
+      setStatus("error");
+      setErrorMsg(error.message);
+      return;
     }
-  }, [state.succeeded]);
+    setStatus("success");
+  };
 
-  if (showSuccess) {
+  if (status === "success") {
     return (
-      <p className="text-kindofwhite/70 font-fransisco text-sm">
+      <p className="text-kindofwhite/70 font-fransisco text-sm mt-3">
         ✓ Subscribed! We'll keep you updated.
       </p>
     );
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex gap-2 mt-3">
+    <form onSubmit={onSubmit} className="flex gap-2 mt-3">
       <input
         type="email"
-        name="email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
         required
         placeholder="your@email.com"
         className="flex-1 px-3 py-2 rounded-lg bg-kindofwhite/10 border border-kindofwhite/20 text-kindofwhite font-fransisco text-sm placeholder-kindofwhite/40 focus:outline-none focus:border-kindofwhite/40 min-w-0"
       />
-      <input type="hidden" name="_source" value="footer-newsletter" />
       <button
         type="submit"
-        disabled={state.submitting}
+        disabled={status === "submitting"}
         className="px-4 py-2 rounded-lg bg-kindofwhite text-sexyblue font-futura font-bold text-sm whitespace-nowrap hover:bg-capistor-100 transition-colors disabled:opacity-60"
       >
-        {state.submitting ? "..." : "Subscribe"}
+        {status === "submitting" ? "..." : "Subscribe"}
       </button>
-      <ValidationError prefix="Email" field="email" errors={state.errors} />
+      {status === "error" && errorMsg && (
+        <p className="text-red-300 font-fransisco text-xs absolute mt-12">{errorMsg}</p>
+      )}
     </form>
   );
 }

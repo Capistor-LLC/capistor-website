@@ -1,6 +1,7 @@
 import { RefObject, useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../lib/useAuth";
 
 interface NavbarProps {
   sections: {
@@ -17,10 +18,14 @@ interface NavbarProps {
 const navLinks: { label: string; section: keyof NavbarProps["sections"] }[] = [
   { label: "Home", section: "home" },
   { label: "Services", section: "services" },
-  { label: "Projects", section: "products" },
-  { label: "Blog", section: "blog" },
   { label: "About", section: "about" },
   { label: "Contact", section: "contact" },
+];
+
+// Page-level links that route to separate pages
+const pageLinks: { label: string; to: string }[] = [
+  { label: "Projects", to: "/products" },
+  { label: "Blog", to: "/blog" },
 ];
 
 export default function MyNavbar({ sections }: NavbarProps) {
@@ -29,6 +34,7 @@ export default function MyNavbar({ sections }: NavbarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  const { isAdmin } = useAuth();
 
   const scrollToSection = (section: keyof typeof sections) => {
     if (location.pathname === "/" && sections[section].current) {
@@ -106,19 +112,38 @@ export default function MyNavbar({ sections }: NavbarProps) {
           />
 
           {/* Desktop links */}
-          <div className="hidden sm:flex items-center space-x-6">
+          <div className="hidden sm:flex items-center space-x-5">
             {navLinks.map(({ label, section }) => (
               <a
                 key={section}
                 href={`#${section}`}
                 onClick={(e) => { e.preventDefault(); scrollToSection(section); }}
                 className={`font-futura text-white hover:text-capistor-400 transition-colors duration-200 text-sm ${
-                  activeSection === section ? "font-bold" : ""
+                  activeSection === section && location.pathname === "/" ? "font-bold" : ""
                 }`}
               >
                 {label}
               </a>
             ))}
+            {pageLinks.map(({ label, to }) => (
+              <Link
+                key={to}
+                to={to}
+                className={`font-futura text-white hover:text-capistor-400 transition-colors duration-200 text-sm ${
+                  location.pathname.startsWith(to) ? "font-bold" : ""
+                }`}
+              >
+                {label}
+              </Link>
+            ))}
+            {isAdmin && (
+              <Link
+                to="/admin"
+                className="font-futura text-capistor-300 hover:text-white transition-colors duration-200 text-sm border border-white/20 rounded-md px-2.5 py-0.5"
+              >
+                Admin
+              </Link>
+            )}
           </div>
 
           {/* Mobile hamburger */}
@@ -158,12 +183,33 @@ export default function MyNavbar({ sections }: NavbarProps) {
                     href={`#${section}`}
                     onClick={(e) => { e.preventDefault(); scrollToSection(section); }}
                     className={`text-white font-futura hover:text-capistor-400 px-4 py-2.5 rounded-lg transition-colors ${
-                      activeSection === section ? "font-bold bg-white/5" : ""
+                      activeSection === section && location.pathname === "/" ? "font-bold bg-white/5" : ""
                     }`}
                   >
                     {label}
                   </a>
                 ))}
+                {pageLinks.map(({ label, to }) => (
+                  <Link
+                    key={to}
+                    to={to}
+                    onClick={() => setIsOpen(false)}
+                    className={`text-white font-futura hover:text-capistor-400 px-4 py-2.5 rounded-lg transition-colors ${
+                      location.pathname.startsWith(to) ? "font-bold bg-white/5" : ""
+                    }`}
+                  >
+                    {label}
+                  </Link>
+                ))}
+                {isAdmin && (
+                  <Link
+                    to="/admin"
+                    onClick={() => setIsOpen(false)}
+                    className="text-capistor-300 font-futura hover:text-white px-4 py-2.5 rounded-lg transition-colors"
+                  >
+                    Admin
+                  </Link>
+                )}
               </motion.div>
             )}
           </AnimatePresence>
