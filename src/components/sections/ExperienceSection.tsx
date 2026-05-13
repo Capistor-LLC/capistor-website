@@ -20,7 +20,7 @@ const stats = [
 
 export default function ExperienceSection() {
   return (
-    <section className="min-h-screen flex items-center bg-sexyblue py-20">
+    <section className="min-h-screen flex items-center bg-sexyblue py-14 sm:py-20">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl w-full">
         <div className="flex flex-col items-center text-center">
           <motion.div

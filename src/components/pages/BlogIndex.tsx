@@ -52,15 +52,15 @@ export default function BlogIndex() {
         url="/blog"
       />
       {/* Hero */}
-      <section className="pt-32 pb-12 lg:pt-40 lg:pb-16 px-6 border-b border-gray-100">
+      <section className="pt-28 pb-10 sm:pt-32 sm:pb-12 lg:pt-40 lg:pb-16 px-5 sm:px-6 border-b border-gray-100">
         <div className="max-w-3xl mx-auto">
-          <p className="text-gray-400 font-futura text-xs uppercase tracking-[0.25em] mb-4">
+          <p className="text-gray-400 font-futura text-[11px] sm:text-xs uppercase tracking-[0.18em] sm:tracking-[0.25em] mb-3 sm:mb-4">
             Capistor — Writing
           </p>
-          <h1 className="text-5xl sm:text-6xl lg:text-7xl font-domine font-bold text-black leading-[1.05] tracking-tight mb-4">
+          <h1 className="text-[2.5rem] sm:text-6xl lg:text-7xl font-domine font-bold text-black leading-[1.05] tracking-tight mb-3 sm:mb-4">
             Notes & tutorials
           </h1>
-          <p className="text-gray-500 font-fransisco text-lg sm:text-xl leading-relaxed">
+          <p className="text-gray-500 font-fransisco text-base sm:text-xl leading-relaxed">
             Thoughts on hardware, embedded systems, and the craft of building product —
             written between projects.
           </p>

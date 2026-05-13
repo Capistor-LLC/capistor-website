@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 
 export default function About() {
   return (
-    <section className="min-h-screen flex items-center bg-kindofwhite py-20">
+    <section className="min-h-screen flex items-center bg-kindofwhite py-14 sm:py-20">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-5xl w-full">
         <div className="flex flex-col items-center text-center">
           <motion.div

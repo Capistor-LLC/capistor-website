@@ -22,7 +22,7 @@ const gallery = [
 
 export default function ProductDetailSection() {
   return (
-    <section className="bg-kindofwhite pt-16 lg:pt-24 pb-16 lg:pb-20 overflow-hidden">
+    <section className="bg-kindofwhite pt-12 sm:pt-16 lg:pt-24 pb-14 sm:pb-16 lg:pb-20 overflow-hidden">
 
       {/* Header — centered */}
       <motion.div
@@ -32,10 +32,10 @@ export default function ProductDetailSection() {
         viewport={{ once: true }}
         transition={{ duration: 0.6 }}
       >
-        <p className="text-sexyblue/35 font-futura text-xs uppercase tracking-[0.25em] mb-4">
+        <p className="text-sexyblue/35 font-futura text-[11px] sm:text-xs uppercase tracking-[0.18em] sm:tracking-[0.25em] mb-3 sm:mb-4">
           Case Study · 01
         </p>
-        <h2 className="text-4xl sm:text-6xl lg:text-7xl xl:text-8xl font-futura font-bold text-black leading-[0.95] tracking-tight">
+        <h2 className="text-[2rem] sm:text-6xl lg:text-7xl xl:text-8xl font-futura font-bold text-black leading-[1] sm:leading-[0.95] tracking-tight">
           Restaurant Table Pager
         </h2>
       </motion.div>
@@ -51,7 +51,7 @@ export default function ProductDetailSection() {
         {gallery.map((item, i) => (
           <motion.div
             key={item.title}
-            className="relative h-[55vh] sm:h-[65vh] lg:h-[75vh] group overflow-hidden"
+            className="relative h-[45vh] min-h-[280px] sm:h-[65vh] lg:h-[75vh] group overflow-hidden"
             style={{
               background:
                 "radial-gradient(ellipse at 50% 45%, #f6f6f6 0%, #dedede 100%)",
@@ -64,7 +64,7 @@ export default function ProductDetailSection() {
             <img
               src={item.image}
               alt={item.alt}
-              className="absolute inset-0 w-full h-full object-contain p-8 sm:p-12 lg:p-16 transition-transform duration-700 ease-out group-hover:scale-[1.04]"
+              className="absolute inset-0 w-full h-full object-contain p-5 sm:p-12 lg:p-16 transition-transform duration-700 ease-out group-hover:scale-[1.04]"
             />
           </motion.div>
         ))}

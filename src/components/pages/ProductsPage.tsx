@@ -54,12 +54,12 @@ export default function ProductsPage() {
         url="/products"
       />
       {/* Hero */}
-      <section className="pt-32 pb-12 lg:pt-40 lg:pb-16 px-6">
+      <section className="pt-28 pb-10 sm:pt-32 sm:pb-12 lg:pt-40 lg:pb-16 px-5 sm:px-6">
         <div className="max-w-7xl mx-auto text-center">
-          <p className="text-sexyblue/35 font-futura text-xs uppercase tracking-[0.25em] mb-4">
+          <p className="text-sexyblue/35 font-futura text-[11px] sm:text-xs uppercase tracking-[0.18em] sm:tracking-[0.25em] mb-3 sm:mb-4">
             Capistor — Projects
           </p>
-          <h1 className="text-5xl sm:text-7xl lg:text-8xl xl:text-9xl font-futura font-bold text-black leading-[0.9] tracking-tight mb-6">
+          <h1 className="text-[2.75rem] sm:text-7xl lg:text-8xl xl:text-9xl font-futura font-bold text-black leading-[0.95] sm:leading-[0.9] tracking-tight mb-5 sm:mb-6">
             Our Work
           </h1>
           <p className="text-sexyblue/60 font-fransisco text-base sm:text-lg max-w-2xl mx-auto">
@@ -143,30 +143,30 @@ function ProductBlock({
 
   const cellHeight =
     imageCount >= 4
-      ? "h-[40vh] sm:h-[50vh] lg:h-[75vh]"
+      ? "h-[32vh] min-h-[200px] sm:h-[50vh] lg:h-[75vh]"
       : imageCount === 1
-        ? "h-[55vh] sm:h-[70vh] lg:h-[80vh]"
-        : "h-[55vh] sm:h-[65vh] lg:h-[75vh]";
+        ? "h-[50vh] min-h-[300px] sm:h-[70vh] lg:h-[80vh]"
+        : "h-[45vh] min-h-[280px] sm:h-[65vh] lg:h-[75vh]";
 
   return (
     <section
       ref={sectionRef}
-      className={`py-16 lg:py-24 overflow-hidden ${
+      className={`py-12 sm:py-16 lg:py-24 overflow-hidden ${
         index % 2 === 1 ? "bg-capistor-50/60" : "bg-kindofwhite"
       }`}
     >
       {/* Title */}
       <motion.div
-        className="max-w-7xl mx-auto px-6 text-center mb-10 lg:mb-14"
+        className="max-w-7xl mx-auto px-5 sm:px-6 text-center mb-8 sm:mb-10 lg:mb-14"
         initial={{ opacity: 0, y: -20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.5 }}
       >
-        <p className="text-sexyblue/35 font-futura text-xs uppercase tracking-[0.25em] mb-3">
+        <p className="text-sexyblue/35 font-futura text-[11px] sm:text-xs uppercase tracking-[0.18em] sm:tracking-[0.25em] mb-2 sm:mb-3">
           Project · {String(index + 1).padStart(2, "0")}
         </p>
-        <h2 className="text-4xl sm:text-6xl lg:text-7xl xl:text-8xl font-futura font-bold text-black leading-[0.95] tracking-tight">
+        <h2 className="text-[2rem] sm:text-6xl lg:text-7xl xl:text-8xl font-futura font-bold text-black leading-[1] sm:leading-[0.95] tracking-tight">
           {product.name}
         </h2>
       </motion.div>

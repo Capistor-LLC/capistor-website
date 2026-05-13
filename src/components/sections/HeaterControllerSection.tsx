@@ -32,7 +32,7 @@ const gallery = [
 
 export default function HeaterControllerSection() {
   return (
-    <section className="bg-capistor-50 pt-16 lg:pt-24 pb-16 lg:pb-20 overflow-hidden">
+    <section className="bg-capistor-50 pt-12 sm:pt-16 lg:pt-24 pb-14 sm:pb-16 lg:pb-20 overflow-hidden">
 
       {/* Header — centered */}
       <motion.div
@@ -42,10 +42,10 @@ export default function HeaterControllerSection() {
         viewport={{ once: true }}
         transition={{ duration: 0.6 }}
       >
-        <p className="text-sexyblue/35 font-futura text-xs uppercase tracking-[0.25em] mb-4">
+        <p className="text-sexyblue/35 font-futura text-[11px] sm:text-xs uppercase tracking-[0.18em] sm:tracking-[0.25em] mb-3 sm:mb-4">
           Case Study · 02
         </p>
-        <h2 className="text-4xl sm:text-6xl lg:text-7xl xl:text-8xl font-futura font-bold text-black leading-[0.95] tracking-tight">
+        <h2 className="text-[2rem] sm:text-6xl lg:text-7xl xl:text-8xl font-futura font-bold text-black leading-[1] sm:leading-[0.95] tracking-tight">
           Heater Controller PCB
         </h2>
       </motion.div>
@@ -61,7 +61,7 @@ export default function HeaterControllerSection() {
         {gallery.map((item, i) => (
           <motion.div
             key={item.title}
-            className="relative h-[40vh] sm:h-[50vh] lg:h-[75vh] group overflow-hidden"
+            className="relative h-[32vh] min-h-[200px] sm:h-[50vh] lg:h-[75vh] group overflow-hidden"
             style={{
               background:
                 "radial-gradient(ellipse at 50% 45%, #ffffff 0%, #e6e6e6 100%)",
@@ -74,7 +74,7 @@ export default function HeaterControllerSection() {
             <img
               src={item.image}
               alt={item.alt}
-              className="absolute inset-0 w-full h-full object-contain p-5 sm:p-8 lg:p-10 transition-transform duration-700 ease-out group-hover:scale-[1.04]"
+              className="absolute inset-0 w-full h-full object-contain p-3 sm:p-8 lg:p-10 transition-transform duration-700 ease-out group-hover:scale-[1.04]"
             />
           </motion.div>
         ))}

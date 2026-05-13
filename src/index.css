@@ -17,8 +17,14 @@
 .blog-prose {
   color: #2a2a2a;
   font-family: "Domine", Georgia, serif;
-  font-size: 1.15rem;
-  line-height: 1.75;
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
+@media (min-width: 640px) {
+  .blog-prose {
+    font-size: 1.15rem;
+    line-height: 1.75;
+  }
 }
 .blog-prose > * + * { margin-top: 1.4em; }
 .blog-prose h1,

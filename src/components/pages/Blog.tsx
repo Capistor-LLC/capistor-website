@@ -20,7 +20,7 @@ export default function BlogSection() {
   }, []);
 
   return (
-    <section className="min-h-screen bg-kindofwhite py-20 flex items-center">
+    <section className="min-h-screen bg-kindofwhite py-14 sm:py-20 flex items-center">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-5xl w-full">
         <motion.div
           className="flex items-end justify-between mb-12"

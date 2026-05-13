@@ -33,7 +33,7 @@ const services = [
 
 export default function Service() {
   return (
-    <section className="min-h-screen flex items-center bg-kindofwhite py-20">
+    <section className="min-h-screen flex items-center bg-kindofwhite py-14 sm:py-20">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl w-full">
 
         {/* Heading */}

@@ -89,7 +89,7 @@ export default function BlogPost() {
         publishedTime={post.published_at ?? undefined}
         tags={post.tags}
       />
-      <article className="max-w-3xl mx-auto px-6 pt-32 pb-20 lg:pt-40">
+      <article className="max-w-3xl mx-auto px-5 sm:px-6 pt-24 sm:pt-32 pb-16 sm:pb-20 lg:pt-40">
 
         {/* Back link */}
         <Link
@@ -114,7 +114,7 @@ export default function BlogPost() {
 
         {/* Title */}
         <motion.h1
-          className="text-4xl sm:text-5xl lg:text-6xl font-domine font-bold text-black leading-[1.1] tracking-tight mb-4"
+          className="text-[2.25rem] sm:text-5xl lg:text-6xl font-domine font-bold text-black leading-[1.1] tracking-tight mb-3 sm:mb-4"
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
@@ -123,7 +123,7 @@ export default function BlogPost() {
         </motion.h1>
 
         {post.subtitle && (
-          <p className="text-xl sm:text-2xl text-gray-500 font-fransisco leading-snug mb-8">
+          <p className="text-lg sm:text-2xl text-gray-500 font-fransisco leading-snug mb-6 sm:mb-8">
             {post.subtitle}
           </p>
         )}

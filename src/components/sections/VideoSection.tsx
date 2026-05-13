@@ -18,7 +18,7 @@ export default function VideoSection() {
   const [selectedVideo, setSelectedVideo] = useState(0);
 
   return (
-    <section className="bg-sexyblue py-20">
+    <section className="bg-sexyblue py-14 sm:py-20">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl w-full">
         <motion.div
           className="text-center mb-12"
