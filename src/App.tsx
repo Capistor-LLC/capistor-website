@@ -19,6 +19,7 @@ import HeaterControllerSection from "./components/sections/HeaterControllerSecti
 import HowItWorksSection from "./components/sections/HowItWorksSection";
 import ContactSection from "./components/sections/ContactSection";
 import VideoSection from "./components/sections/VideoSection";
+import VideoTestimonialSection from "./components/sections/VideoTestimonialSection";
 import TestimonialsSection from "./components/sections/TestimonialsSection";
 import Seo from "./components/ui/Seo";
 import { useProductsFromDb } from "./utils/useProductsFromDb";
@@ -65,6 +66,7 @@ function HomePage() {
       <MyNavbar sections={sections} />
 
       <section ref={sections.home}><Home /></section>
+      <section><VideoTestimonialSection /></section>
       <section ref={sections.services}><Services /></section>
       <section ref={sections.about}><About /></section>
 
@@ -89,7 +91,7 @@ function HomePage() {
       <section><TestimonialsSection /></section>
 
       <section ref={sections.blog} id="blog-section"><Blog /></section>
-      <section ref={sections.contact}><ContactSection /></section>
+      <section ref={sections.contact} id="contact-section"><ContactSection /></section>
 
       <Footer />
     </div>
