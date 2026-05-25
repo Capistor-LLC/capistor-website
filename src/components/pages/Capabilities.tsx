@@ -273,7 +273,7 @@ const featuredProjects: FeaturedProject[] = [
 
 export default function Capabilities() {
     return (
-        <section className="min-h-screen flex items-center bg-kindofwhite py-14 sm:py-20">
+        <section className="min-h-screen bg-kindofwhite font-domine pt-16 pb-8">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl w-full">
                 {/* Hero Section */}
                 <motion.div
@@ -426,19 +426,24 @@ export default function Capabilities() {
                                 viewport={{ once: true }}
                                 transition={{ duration: 0.5, delay: index * 0.08 }}
                             >
-                                <div className="grid grid-cols-1 lg:grid-cols-3 gap-0">
+                                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                                     {/* Images */}
-                                    <div className="lg:col-span-1 h-72 lg:h-96 grid grid-cols-2 gap-0 overflow-hidden bg-capistor-50">
-                                        <img
-                                            src={project.image1}
-                                            alt={`${project.title} top view`}
-                                            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                                        />
-                                        <img
-                                            src={project.image2}
-                                            alt={`${project.title} bottom view`}
-                                            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                                        />
+                                    <div className="lg:col-span-1 h-72 lg:h-96 grid grid-cols-2 gap-4 p-4 rounded-xl bg-capistor-50">
+                                        <div className="overflow-hidden rounded-md border border-capistor-200/60">
+                                            <img
+                                                src={project.image1}
+                                                alt={`${project.title} top view`}
+                                                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                                            />
+                                        </div>
+
+                                        <div className="overflow-hidden rounded-md border border-capistor-200/60">
+                                            <img
+                                                src={project.image2}
+                                                alt={`${project.title} bottom view`}
+                                                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                                            />
+                                        </div>
                                     </div>
 
                                     {/* Content */}
