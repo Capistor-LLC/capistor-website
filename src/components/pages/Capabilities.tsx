@@ -6,6 +6,16 @@ interface CapabilityCategory {
     icon: string;
 }
 
+interface FeaturedProject {
+    title: string;
+    description: string;
+    meta: string;
+    image1: string;
+    image2: string;
+    repoUrl: string;
+    highlights: string[];
+}
+
 const capabilities: CapabilityCategory[] = [
     {
         title: "Microcontrollers",
@@ -153,6 +163,114 @@ const processSteps = [
     },
 ];
 
+const featuredProjects: FeaturedProject[] = [
+    {
+        title: "Dynaboard — Button Controller",
+        meta: "STM32F103 · USB-C power + data · 102 components · 4-layer board",
+        description:
+            "Professional-grade input interface for live performance, production control, and industrial systems. Dynaboard delivers rock-solid multi-button matrix scanning, seamless USB integration, and support for external button arrays.",
+        image1: "https://raw.githubusercontent.com/manhoosbilli1/dynaboard-button-controller/main/reports/board-3d.png",
+        image2: "https://raw.githubusercontent.com/manhoosbilli1/dynaboard-button-controller/main/reports/board-3d-back.png",
+        repoUrl: "https://github.com/manhoosbilli1/dynaboard-button-controller",
+        highlights: [
+            "STM32F103C8T6 — main MCU (ARM Cortex-M3, 72 MHz)",
+            "74LVC2G241 — dual buffer for clean digital output signaling",
+            "LD1117 5 V + AMS1117 3.3 V — dual LDO rails",
+            "BSS138 ×3 — small-signal level shifters (3.3 V ↔ 5 V)",
+        ],
+    },
+    {
+        title: "Stereo Audio Amplifier + Router",
+        meta: "Analog signal path · Low-noise design · 4-layer board",
+        description:
+            "Studio-quality audio routing for embedded devices. This board handles multiple line inputs, switches between sources transparently, and delivers clean 150 mW stereo headphone output.",
+        image1: "https://raw.githubusercontent.com/manhoosbilli1/tpa6110-stereo-amp-input-router/main/reports/board-3d.png",
+        image2: "https://raw.githubusercontent.com/manhoosbilli1/tpa6110-stereo-amp-input-router/main/reports/board-3d-back.png",
+        repoUrl: "https://github.com/manhoosbilli1/tpa6110-stereo-amp-input-router",
+        highlights: [
+            "TPA6110A2DGN — 150 mW stereo audio amp",
+            "74AHC1G66 — automotive-grade analog switch (source select)",
+            "TLV9001 + dual op-amp — rail-to-rail signal conditioning",
+            "BAV99 — input clamping diodes",
+        ],
+    },
+    {
+        title: "High-Power LED Dimmer (Analog)",
+        meta: "No MCU required · 5× parallel MOSFETs · Instant-on · Fully analog",
+        description:
+            "Zero-delay, rock-solid LED dimming with zero firmware risk. This 100% analog design ensures your LEDs fire instantly with no boot time and no software failure modes.",
+        image1: "https://raw.githubusercontent.com/manhoosbilli1/led-dimmer-pot-controller/main/reports/board-3d.png",
+        image2: "https://raw.githubusercontent.com/manhoosbilli1/led-dimmer-pot-controller/main/reports/board-3d-back.png",
+        repoUrl: "https://github.com/manhoosbilli1/led-dimmer-pot-controller",
+        highlights: [
+            "TLC555CDR — PWM oscillator",
+            "LM358 ×3 — op-amps for pot-to-duty conversion + gate drive shaping",
+            "IRF540N ×5 — N-channel power MOSFETs in parallel",
+            "L7805 — 5 V control rail",
+        ],
+    },
+    {
+        title: "QX RP2040 Controller Carrier",
+        meta: "Raspberry Pi Pico · 12 V input · Dual solenoid drivers · Full control stack",
+        description:
+            "Turn your Pico into a complete control system. Pre-built power regulation, industrial-grade driver outputs, and everything you need for LCD displays, temperature sensing, and solenoid control.",
+        image1: "https://raw.githubusercontent.com/manhoosbilli1/qx-rp2040-carrier/main/reports/board-3d.png",
+        image2: "https://raw.githubusercontent.com/manhoosbilli1/qx-rp2040-carrier/main/reports/board-3d-back.png",
+        repoUrl: "https://github.com/manhoosbilli1/qx-rp2040-carrier",
+        highlights: [
+            "MP1584EN-LF-Z — 3 A step-down buck converter",
+            "L7805 — 5 V linear rail for clean analog I/O",
+            "SMBJ18A — 18 V TVS on the supply input",
+            "LCD / rotary switch / button / DS18B20 / dual solenoid connectors",
+        ],
+    },
+    {
+        title: "Smart Cube — Multi-Board Flex Assembly",
+        meta: "nRF52832 BLE · BMI270 IMU · Complex interconnects · 3D form factor",
+        description:
+            "A showcase in hardware complexity: a 3D sensor cube where every face independently measures acceleration and orientation. Demonstrates advanced multi-board integration and flexible PCB routing.",
+        image1: "https://raw.githubusercontent.com/manhoosbilli1/smart-cube-multi-pcb-flex-assembly/main/reports/board-3d.png",
+        image2: "https://raw.githubusercontent.com/manhoosbilli1/smart-cube-multi-pcb-flex-assembly/main/reports/board-3d-back.png",
+        repoUrl: "https://github.com/manhoosbilli1/smart-cube-multi-pcb-flex-assembly",
+        highlights: [
+            "nRF52832 — Nordic BLE MCU (ARM Cortex-M4F)",
+            "BMI270 — Bosch 6-axis IMU (accel + gyro)",
+            "74HC4051 ×3 — 8-channel analog muxes (24 sensor inputs)",
+            "2450AT18A100E — ceramic chip antenna",
+        ],
+    },
+    {
+        title: "AC Enclosure Tamper Alarm",
+        meta: "ATmega328 · Automatic AC/battery switchover · Precision monitoring",
+        description:
+            "Military-grade security monitoring for industrial enclosures. When AC fails, this board instantly switches to backup battery without dropping power. The watchdog that never sleeps.",
+        image1: "https://raw.githubusercontent.com/manhoosbilli1/atmega328-enclosure-tamper-alarm/main/reports/board-3d.png",
+        image2: "https://raw.githubusercontent.com/manhoosbilli1/atmega328-enclosure-tamper-alarm/main/reports/board-3d-back.png",
+        repoUrl: "https://github.com/manhoosbilli1/atmega328-enclosure-tamper-alarm",
+        highlights: [
+            "ATmega328-A — main MCU",
+            "LTC4412 — ideal-diode PowerPath (AC ↔ battery)",
+            "LTC2960 — precision voltage supervisor",
+            "LM5158-Q1 — automotive boost converter (backup rail)",
+        ],
+    },
+    {
+        title: "Battery-Powered Heater Controller",
+        meta: "ATtiny · 10 A high-current switching · Flexible battery configs",
+        description:
+            "Portable heating on demand. This compact controller handles demanding heater loads on battery power, supports parallel/series cell configurations, and gives users visual feedback with RGB status.",
+        image1: "https://raw.githubusercontent.com/manhoosbilli1/heater-controller-rev-a/main/reports/board-3d.png",
+        image2: "https://raw.githubusercontent.com/manhoosbilli1/heater-controller-rev-a/main/reports/board-3d-back.png",
+        repoUrl: "https://github.com/manhoosbilli1/heater-controller-rev-a",
+        highlights: [
+            "ATtiny — main MCU (in hierarchical sub-sheet)",
+            "CSD17578Q3A — 30 V, 100 A, 1.8 mΩ N-MOSFET (10 A heater switching)",
+            "WS2812B — RGB status LED",
+            "USB-C charging (power-only, 6-pin)",
+        ],
+    },
+];
+
 export default function Capabilities() {
     return (
         <section className="min-h-screen flex items-center bg-kindofwhite py-14 sm:py-20">
@@ -281,6 +399,91 @@ export default function Capabilities() {
 
                                 {/* Accent line */}
                                 <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-black via-sexyblue to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                            </motion.div>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Featured Projects Section */}
+                <div className="mt-20">
+                    <motion.h2
+                        className="text-3xl sm:text-4xl font-futura font-bold text-black mb-10"
+                        initial={{ opacity: 0, y: -20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.5, delay: 0.1 }}
+                    >
+                        Featured Projects
+                    </motion.h2>
+
+                    <div className="space-y-8">
+                        {featuredProjects.map((project, index) => (
+                            <motion.div
+                                key={index}
+                                className="group bg-white rounded-2xl overflow-hidden border border-capistor-300/40 transition-all duration-300 hover:shadow-xl"
+                                initial={{ opacity: 0, y: 30 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ duration: 0.5, delay: index * 0.08 }}
+                            >
+                                <div className="grid grid-cols-1 lg:grid-cols-3 gap-0">
+                                    {/* Images */}
+                                    <div className="lg:col-span-1 h-72 lg:h-96 grid grid-cols-2 gap-0 overflow-hidden bg-capistor-50">
+                                        <img
+                                            src={project.image1}
+                                            alt={`${project.title} top view`}
+                                            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                                        />
+                                        <img
+                                            src={project.image2}
+                                            alt={`${project.title} bottom view`}
+                                            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                                        />
+                                    </div>
+
+                                    {/* Content */}
+                                    <div className="lg:col-span-2 p-8 sm:p-10 flex flex-col justify-between">
+                                        <div>
+                                            <h3 className="text-2xl sm:text-3xl font-futura font-bold text-black mb-2">
+                                                {project.title}
+                                            </h3>
+                                            <p className="text-sexyblue/60 text-sm sm:text-base font-fransisco mb-4">
+                                                {project.meta}
+                                            </p>
+                                            <p className="text-sexyblue/80 text-base sm:text-lg font-fransisco mb-6 leading-relaxed">
+                                                {project.description}
+                                            </p>
+
+                                            {/* Highlights */}
+                                            <ul className="space-y-2 mb-6">
+                                                {project.highlights.map((highlight, hIndex) => (
+                                                    <motion.li
+                                                        key={hIndex}
+                                                        className="text-sexyblue text-sm sm:text-base font-fransisco flex items-start"
+                                                        initial={{ opacity: 0, x: -10 }}
+                                                        whileInView={{ opacity: 1, x: 0 }}
+                                                        viewport={{ once: true }}
+                                                        transition={{ duration: 0.3, delay: hIndex * 0.05 }}
+                                                    >
+                                                        <span className="text-black font-bold mr-3">•</span>
+                                                        <span><strong>{highlight.split(" — ")[0]}</strong> — {highlight.split(" — ")[1]}</span>
+                                                    </motion.li>
+                                                ))}
+                                            </ul>
+                                        </div>
+
+                                        <motion.a
+                                            href={project.repoUrl}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="inline-block bg-black text-white px-6 py-3 rounded-lg font-futura font-bold transition-all duration-200 hover:bg-sexyblue w-fit"
+                                            whileHover={{ scale: 1.05 }}
+                                            whileTap={{ scale: 0.95 }}
+                                        >
+                                            View Repository →
+                                        </motion.a>
+                                    </div>
+                                </div>
                             </motion.div>
                         ))}
                     </div>
