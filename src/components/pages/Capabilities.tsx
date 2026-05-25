@@ -426,10 +426,10 @@ export default function Capabilities() {
                                 viewport={{ once: true }}
                                 transition={{ duration: 0.5, delay: index * 0.08 }}
                             >
-                                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                                    {/* Images */}
-                                    <div className="lg:col-span-1 h-72 lg:h-96 grid grid-cols-2 gap-4 p-4 rounded-xl bg-capistor-50">
-                                        <div className="overflow-hidden rounded-md border border-capistor-200/60">
+                                <div className="grid grid-cols-1 gap-6">
+                                    {/* Full-width images row (primary visual) */}
+                                    <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-6 p-4 lg:p-6">
+                                        <div className="overflow-hidden rounded-lg border border-capistor-200/60 h-72 lg:h-[520px]">
                                             <img
                                                 src={project.image1}
                                                 alt={`${project.title} top view`}
@@ -437,7 +437,7 @@ export default function Capabilities() {
                                             />
                                         </div>
 
-                                        <div className="overflow-hidden rounded-md border border-capistor-200/60">
+                                        <div className="overflow-hidden rounded-lg border border-capistor-200/60 h-72 lg:h-[520px]">
                                             <img
                                                 src={project.image2}
                                                 alt={`${project.title} bottom view`}
@@ -446,8 +446,8 @@ export default function Capabilities() {
                                         </div>
                                     </div>
 
-                                    {/* Content */}
-                                    <div className="lg:col-span-2 p-8 sm:p-10 flex flex-col justify-between">
+                                    {/* Content below images */}
+                                    <div className="p-8 sm:p-10 flex flex-col justify-between">
                                         <div>
                                             <h3 className="text-2xl sm:text-3xl font-futura font-bold text-black mb-2">
                                                 {project.title}
