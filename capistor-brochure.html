@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Capistor — Hardware Engineering Capabilities</title>
+  <style>
+    :root {
+      --ink: #0f2f2f;
+      --muted: #667c7c;
+      --accent: #0d9488;
+      --bg: #f8faf9;
+      --card: #ffffff;
+      --border: #d4e4e3;
+      --tag-bg: #d0f4f1;
+      --tag-ink: #0a6e68;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      color: var(--ink);
+      background: var(--bg);
+      line-height: 1.55;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 32px 24px;
+    }
+
+    header {
+      text-align: center;
+      padding: 64px 24px 32px;
+      border-bottom: 2px solid var(--accent);
+      margin-bottom: 48px;
+      background: linear-gradient(135deg, rgba(13, 148, 136, 0.05) 0%, rgba(13, 148, 136, 0.02) 100%);
+    }
+
+    header h1 {
+      font-size: 3.2rem;
+      margin: 0 0 12px;
+      letter-spacing: -0.02em;
+      font-weight: 700;
+    }
+
+    header .tagline {
+      color: var(--muted);
+      font-size: 1.25rem;
+      max-width: 700px;
+      margin: 0 auto;
+      font-weight: 500;
+    }
+
+    header .contact {
+      margin-top: 18px;
+      font-size: 0.95rem;
+      color: var(--muted);
+    }
+
+    header .contact a {
+      color: var(--accent);
+      text-decoration: none;
+      margin: 0 6px;
+    }
+
+    h2 {
+      font-size: 2rem;
+      margin: 56px 0 28px;
+      padding-bottom: 12px;
+      border-bottom: 3px solid var(--accent);
+      font-weight: 700;
+    }
+
+    h3 {
+      font-size: 1.3rem;
+      margin: 0 0 10px;
+      font-weight: 600;
+    }
+
+    p {
+      margin: 0 0 12px;
+    }
+
+    /* Capability matrix */
+    .matrix {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    .cap {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px 16px;
+    }
+
+    .cap .label {
+      font-size: 0.85rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 600;
+    }
+
+    .cap .items {
+      margin-top: 6px;
+    }
+
+    .cap .tag {
+      display: inline-block;
+      background: var(--tag-bg);
+      color: var(--tag-ink);
+      font-size: 0.82rem;
+      padding: 3px 8px;
+      border-radius: 4px;
+      margin: 2px 4px 2px 0;
+      font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    }
+
+    /* Project cards */
+    .project {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 0;
+      margin-bottom: 48px;
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0;
+      break-inside: avoid;
+      transition: box-shadow 0.3s ease, transform 0.3s ease;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+    }
+
+    .project:hover {
+      box-shadow: 0 12px 32px rgba(13, 148, 136, 0.12);
+      transform: translateY(-2px);
+    }
+
+    .project.alternate {
+      grid-template-columns: 1fr;
+    }
+
+    .project .renders {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      height: 320px;
+      overflow: hidden;
+    }
+
+    .project .renders img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border: none;
+      background: linear-gradient(135deg, #e0f2f1 0%, #b2dfdb 100%);
+    }
+
+    .project .info {
+      padding: 32px;
+    }
+
+    .project .info h3 a {
+      color: var(--ink);
+      text-decoration: none;
+      font-size: 1.4rem;
+    }
+
+    .project .info h3 a:hover {
+      color: var(--accent);
+    }
+
+    .project .info .meta {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin: 10px 0 16px;
+      font-weight: 500;
+    }
+
+    .project .info p {
+      color: var(--ink);
+      line-height: 1.7;
+      margin-bottom: 14px;
+    }
+
+    .project .info ul {
+      margin: 12px 0;
+      padding-left: 20px;
+    }
+
+    .project .info li {
+      margin-bottom: 6px;
+      color: var(--ink);
+    }
+
+    .project .repo-link {
+      display: inline-block;
+      margin-top: 16px;
+      padding: 10px 18px;
+      color: white;
+      background: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.95rem;
+      border-radius: 8px;
+      transition: background 0.2s ease;
+    }
+
+    .project .repo-link:hover {
+      background: #0a7c72;
+    }
+
+    footer {
+      margin-top: 80px;
+      padding: 40px 0;
+      border-top: 2px solid var(--border);
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.95rem;
+      background: linear-gradient(135deg, rgba(13, 148, 136, 0.03) 0%, transparent 100%);
+    }
+
+    @media (max-width: 720px) {
+      header h1 {
+        font-size: 2.4rem;
+      }
+
+      header .tagline {
+        font-size: 1.05rem;
+      }
+
+      h2 {
+        font-size: 1.6rem;
+        margin: 40px 0 20px;
+      }
+
+      .project .renders {
+        height: 240px;
+      }
+
+      .project .info {
+        padding: 20px;
+      }
+
+      .cap {
+        padding: 12px 14px;
+      }
+    }
+
+    @media print {
+      body {
+        background: white;
+      }
+
+      .project {
+        break-inside: avoid;
+        box-shadow: none;
+      }
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-size: 16px;
+    }
+
+    .container {
+      animation: fadeIn 0.6s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    p {
+      color: var(--ink);
+    }
+
+    .cap .tag {
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    .cap .tag:hover {
+      background: var(--accent);
+      color: white;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <h1>Capistor</h1>
+    <p class="tagline">From concept to production: custom electronics, schematic design, PCB layout, and
+      manufacturing-ready hardware. We build everything from single-board prototypes to complex multi-PCB flex
+      assemblies.</p>
+    <p class="contact">
+      <a href="mailto:shoaib.mustafa7@hotmail.com">shoaib.mustafa7@hotmail.com</a> ·
+      <a href="https://capistor.com">capistor.com</a> ·
+      <a href="https://github.com/manhoosbilli1">github.com/manhoosbilli1</a>
+    </p>
+  </header>
+
+  <div class="container">
+
+    <h2>Capabilities at a glance</h2>
+    <div class="matrix">
+      <div class="cap">
+        <div class="label">Microcontrollers</div>
+        <div class="items">
+          <span class="tag">ESP32-WROVER</span>
+          <span class="tag">ESP32-S3</span>
+          <span class="tag">ESP32-C3</span>
+          <span class="tag">STM32F1</span>
+          <span class="tag">nRF52832</span>
+          <span class="tag">RP2040</span>
+          <span class="tag">ATmega328</span>
+          <span class="tag">ATtiny3216</span>
+          <span class="tag">ATtiny24A</span>
+        </div>
+      </div>
+      <div class="cap">
+        <div class="label">Connectivity</div>
+        <div class="items">
+          <span class="tag">USB-C (2.0)</span>
+          <span class="tag">Bluetooth / BLE</span>
+          <span class="tag">Wi-Fi</span>
+          <span class="tag">4G Cellular (AIR780E)</span>
+          <span class="tag">RS-485 / Modbus (isolated)</span>
+          <span class="tag">RJ45 tethered</span>
+          <span class="tag">UART / I2C / SPI</span>
+        </div>
+      </div>
+      <div class="cap">
+        <div class="label">Power management</div>
+        <div class="items">
+          <span class="tag">Buck-boost (TPS63020/63070)</span>
+          <span class="tag">LiPo charging (MCP73831/73871)</span>
+          <span class="tag">PowerPath (LM66200, LTC4412)</span>
+          <span class="tag">Fuel gauge (MAX17048)</span>
+          <span class="tag">Boost (LM5158)</span>
+          <span class="tag">Voltage supervisor (LTC2960)</span>
+          <span class="tag">High-current MOSFET switching (10 A+)</span>
+        </div>
+      </div>
+      <div class="cap">
+        <div class="label">Sensors / I/O</div>
+        <div class="items">
+          <span class="tag">3-axis accel (LIS3DH)</span>
+          <span class="tag">6-axis IMU (BMI270)</span>
+          <span class="tag">1-Wire temp (DS18B20)</span>
+          <span class="tag">8-ch analog mux (74HC4051)</span>
+          <span class="tag">Optocoupler isolation (PC817)</span>
+          <span class="tag">Digital isolation (ISO7762, Si8642)</span>
+        </div>
+      </div>
+      <div class="cap">
+        <div class="label">User interface</div>
+        <div class="items">
+          <span class="tag">Addressable RGB (WS2812B, SK6812)</span>
+          <span class="tag">OLED displays</span>
+          <span class="tag">Haptic motor drivers (DRV2605)</span>
+          <span class="tag">Tactile buttons + slide switches</span>
+          <span class="tag">Multi-button matrix (HID)</span>
+          <span class="tag">Joysticks / rotary encoders</span>
+        </div>
+      </div>
+      <div class="cap">
+        <div class="label">Mechanical / form factor</div>
+        <div class="items">
+          <span class="tag">Multi-board flex assemblies</span>
+          <span class="tag">Wearable (necklace, dongle)</span>
+          <span class="tag">RPi HAT form factor</span>
+          <span class="tag">Ceramic chip antennas</span>
+          <span class="tag">FPC interconnects (0.25 mm)</span>
+          <span class="tag">4-layer stackups</span>
+        </div>
+      </div>
+      <div class="cap">
+        <div class="label">EMC / protection</div>
+        <div class="items">
+          <span class="tag">ESD diodes (ESD441, SP0503)</span>
+          <span class="tag">TVS (SMBJ, SMBJ24A)</span>
+          <span class="tag">Reverse-polarity (Schottky)</span>
+          <span class="tag">Galvanic isolation domains</span>
+          <span class="tag">EMC analysis (kicad-happy)</span>
+        </div>
+      </div>
+      <div class="cap">
+        <div class="label">Manufacturing</div>
+        <div class="items">
+          <span class="tag">JLCPCB / LCSC sourcing</span>
+          <span class="tag">BOM with LCSC codes</span>
+          <span class="tag">Gerber / drill / pick-and-place</span>
+          <span class="tag">STEP for mechanical integration</span>
+          <span class="tag">kibot CI for build artifacts</span>
+        </div>
+      </div>
+    </div>
+
+    <h2>Featured boards</h2>
+
+    <div class="project">
+      <div class="renders">
+        <img src="https://raw.githubusercontent.com/manhoosbilli1/dynaboard-button-controller/main/reports/board-3d.png"
+          alt="Dynaboard top">
+        <img
+          src="https://raw.githubusercontent.com/manhoosbilli1/dynaboard-button-controller/main/reports/board-3d-back.png"
+          alt="Dynaboard bottom">
+      </div>
+      <div class="info">
+        <h3><a href="https://github.com/manhoosbilli1/dynaboard-button-controller">Dynaboard — Button Controller</a>
+        </h3>
+        <div class="meta">STM32F103 · USB-C power + data · 102 components · 4-layer board</div>
+        <p>Professional-grade input interface for live performance, production control, and industrial systems.
+          Dynaboard delivers rock-solid multi-button matrix scanning, seamless USB integration, and support for external
+          button arrays. Built for reliability where failure isn't an option.</p>
+        <ul>
+          <li><strong>STM32F103C8T6</strong> — main MCU (ARM Cortex-M3, 72 MHz)</li>
+          <li><strong>74LVC2G241</strong> — dual buffer for clean digital output signaling</li>
+          <li><strong>LD1117 5 V + AMS1117 3.3 V</strong> — dual LDO rails</li>
+          <li><strong>BSS138 ×3</strong> — small-signal level shifters (3.3 V ↔ 5 V)</li>
+          <li><strong>USB-C (16-pin)</strong> — power + data</li>
+        </ul>
+        <a class="repo-link" href="https://github.com/manhoosbilli1/dynaboard-button-controller">View repository →</a>
+      </div>
+    </div>
+
+    <div class="project">
+      <div class="renders">
+        <img
+          src="https://raw.githubusercontent.com/manhoosbilli1/tpa6110-stereo-amp-input-router/main/reports/board-3d.png"
+          alt="Audio router top">
+        <img
+          src="https://raw.githubusercontent.com/manhoosbilli1/tpa6110-stereo-amp-input-router/main/reports/board-3d-back.png"
+          alt="Audio router bottom">
+      </div>
+      <div class="info">
+        <h3><a href="https://github.com/manhoosbilli1/tpa6110-stereo-amp-input-router">Stereo Audio Amplifier +
+            Router</a></h3>
+        <div class="meta">Analog signal path · Low-noise design · 4-layer board</div>
+        <p>Studio-quality audio routing for embedded devices. This board handles multiple line inputs, switches between
+          sources transparently, and delivers clean 150 mW stereo headphone output. Built for audio professionals who
+          demand transparent signal integrity.</p>
+        <ul>
+          <li><strong>TPA6110A2DGN</strong> — 150 mW stereo audio amp</li>
+          <li><strong>74AHC1G66</strong> — automotive-grade analog switch (source select)</li>
+          <li><strong>TLV9001 + dual op-amp</strong> — rail-to-rail signal conditioning</li>
+          <li><strong>BAV99</strong> — input clamping diodes</li>
+          <li>Fuse-protected supply</li>
+        </ul>
+        <a class="repo-link" href="https://github.com/manhoosbilli1/tpa6110-stereo-amp-input-router">View repository
+          →</a>
+      </div>
+    </div>
+
+    <div class="project">
+      <div class="renders">
+        <img src="https://raw.githubusercontent.com/manhoosbilli1/led-dimmer-pot-controller/main/reports/board-3d.png"
+          alt="LED dimmer top">
+        <img
+          src="https://raw.githubusercontent.com/manhoosbilli1/led-dimmer-pot-controller/main/reports/board-3d-back.png"
+          alt="LED dimmer bottom">
+      </div>
+      <div class="info">
+        <h3><a href="https://github.com/manhoosbilli1/led-dimmer-pot-controller">High-Power LED Dimmer (Analog)</a></h3>
+        <div class="meta">No MCU required · 5× parallel MOSFETs · Instant-on · Fully analog</div>
+        <p>Zero-delay, rock-solid LED dimming with zero firmware risk. This 100% analog design ensures your LEDs fire
+          instantly with no boot time and no software failure modes. Perfect for theatrical lighting, emergency systems,
+          and mission-critical applications where reliability is non-negotiable.</p>
+        <ul>
+          <li><strong>TLC555CDR</strong> — PWM oscillator</li>
+          <li><strong>LM358 ×3</strong> — op-amps for pot-to-duty conversion + gate drive shaping</li>
+          <li><strong>IRF540N ×5</strong> — N-channel power MOSFETs in parallel</li>
+          <li><strong>L7805</strong> — 5 V control rail</li>
+        </ul>
+        <a class="repo-link" href="https://github.com/manhoosbilli1/led-dimmer-pot-controller">View repository →</a>
+      </div>
+    </div>
+
+    <div class="project">
+      <div class="renders">
+        <img src="https://raw.githubusercontent.com/manhoosbilli1/qx-rp2040-carrier/main/reports/board-3d.png"
+          alt="QX carrier top">
+        <img src="https://raw.githubusercontent.com/manhoosbilli1/qx-rp2040-carrier/main/reports/board-3d-back.png"
+          alt="QX carrier bottom">
+      </div>
+      <div class="info">
+        <h3><a href="https://github.com/manhoosbilli1/qx-rp2040-carrier">QX RP2040 Controller Carrier</a></h3>
+        <div class="meta">Raspberry Pi Pico · 12 V input · Dual solenoid drivers · Full control stack</div>
+        <p>Turn your Pico into a complete control system. Pre-built power regulation, industrial-grade driver outputs,
+          and everything you need for LCD displays, temperature sensing, and solenoid control. Deploy faster, prototype
+          smarter.</p>
+        <ul>
+          <li><strong>MP1584EN-LF-Z</strong> — 3 A step-down buck converter</li>
+          <li><strong>L7805</strong> — 5 V linear rail for clean analog I/O</li>
+          <li><strong>SMBJ18A</strong> — 18 V TVS on the supply input</li>
+          <li>LCD / rotary switch / button / DS18B20 / dual solenoid output connectors</li>
+        </ul>
+        <a class="repo-link" href="https://github.com/manhoosbilli1/qx-rp2040-carrier">View repository →</a>
+      </div>
+    </div>
+
+    <div class="project">
+      <div class="renders">
+        <img
+          src="https://raw.githubusercontent.com/manhoosbilli1/smart-cube-multi-pcb-flex-assembly/main/reports/board-3d.png"
+          alt="Smart Cube top">
+        <img
+          src="https://raw.githubusercontent.com/manhoosbilli1/smart-cube-multi-pcb-flex-assembly/main/reports/board-3d-back.png"
+          alt="Smart Cube bottom">
+      </div>
+      <div class="info">
+        <h3><a href="https://github.com/manhoosbilli1/smart-cube-multi-pcb-flex-assembly">Smart Cube — Multi-Board Flex
+            Assembly</a></h3>
+        <div class="meta">nRF52832 BLE · BMI270 IMU · Complex interconnects · 3D form factor</div>
+        <p>A showcase in hardware complexity: a 3D sensor cube where every face independently measures acceleration and
+          orientation. Demonstrates advanced multi-board integration, flexible PCB routing, and wireless sensor fusion.
+          Push your form factor beyond traditional boards.</p>
+        <ul>
+          <li><strong>nRF52832</strong> — Nordic BLE MCU (ARM Cortex-M4F)</li>
+          <li><strong>BMI270</strong> — Bosch 6-axis IMU (accel + gyro)</li>
+          <li><strong>74HC4051 ×3</strong> — 8-channel analog muxes (24 sensor inputs)</li>
+          <li><strong>2450AT18A100E</strong> — ceramic chip antenna</li>
+          <li>32 MHz HFXO + 32.768 kHz LFXO crystals</li>
+          <li><strong>FH64MA-7S</strong> — 0.25 mm-pitch FPC connectors</li>
+        </ul>
+        <a class="repo-link" href="https://github.com/manhoosbilli1/smart-cube-multi-pcb-flex-assembly">View repository
+          →</a>
+      </div>
+    </div>
+
+    <div class="project">
+      <div class="renders">
+        <img
+          src="https://raw.githubusercontent.com/manhoosbilli1/atmega328-enclosure-tamper-alarm/main/reports/board-3d.png"
+          alt="Tamper alarm top">
+        <img
+          src="https://raw.githubusercontent.com/manhoosbilli1/atmega328-enclosure-tamper-alarm/main/reports/board-3d-back.png"
+          alt="Tamper alarm bottom">
+      </div>
+      <div class="info">
+        <h3><a href="https://github.com/manhoosbilli1/atmega328-enclosure-tamper-alarm">AC Enclosure Tamper Alarm</a>
+        </h3>
+        <div class="meta">ATmega328 · Automatic AC/battery switchover · Precision monitoring</div>
+        <p>Military-grade security monitoring for industrial enclosures. When AC fails, this board instantly switches to
+          backup battery without dropping power. Monitors every rail and alerts the instant anything goes wrong. The
+          watchdog that never sleeps.</p>
+        <ul>
+          <li><strong>ATmega328-A</strong> — main MCU</li>
+          <li><strong>LTC4412</strong> — ideal-diode PowerPath (AC ↔ battery)</li>
+          <li><strong>LTC2960</strong> — precision voltage supervisor</li>
+          <li><strong>LM5158-Q1</strong> — automotive boost converter (backup rail)</li>
+          <li><strong>TPS62933</strong> — low-Iq buck for long standby</li>
+          <li><strong>DMN10H220L + FDC610PZ</strong> — complementary N/P MOSFET load switching</li>
+          <li><strong>74LVC1G00</strong> — debounce / input logic</li>
+        </ul>
+        <a class="repo-link" href="https://github.com/manhoosbilli1/atmega328-enclosure-tamper-alarm">View repository
+          →</a>
+      </div>
+    </div>
+
+    <div class="project">
+      <div class="renders">
+        <img src="https://raw.githubusercontent.com/manhoosbilli1/heater-controller-rev-a/main/reports/board-3d.png"
+          alt="Heater controller top">
+        <img
+          src="https://raw.githubusercontent.com/manhoosbilli1/heater-controller-rev-a/main/reports/board-3d-back.png"
+          alt="Heater controller bottom">
+      </div>
+      <div class="info">
+        <h3><a href="https://github.com/manhoosbilli1/heater-controller-rev-a">Battery-Powered Heater Controller</a>
+        </h3>
+        <div class="meta">ATtiny · 10 A high-current switching · Flexible battery configs</div>
+        <p>Portable heating on demand. This compact controller handles demanding heater loads on battery power, supports
+          parallel/series cell configurations, and gives users visual feedback with RGB status. Perfect for wearables,
+          field equipment, and outdoor gear.</p>
+        <ul>
+          <li><strong>ATtiny</strong> — main MCU (in hierarchical sub-sheet)</li>
+          <li><strong>CSD17578Q3A</strong> — 30 V, 100 A, 1.8 mΩ N-MOSFET (10 A heater switching, low conduction loss)
+          </li>
+          <li><strong>WS2812B</strong> — RGB status LED</li>
+          <li><strong>USB-C charging</strong> (power-only, 6-pin)</li>
+          <li>Dual battery taps for series/parallel cell configurations</li>
+        </ul>
+        <a class="repo-link" href="https://github.com/manhoosbilli1/heater-controller-rev-a">View repository →</a>
+      </div>
+    </div>
+
+    <h2>Process</h2>
+    <ol>
+      <li><strong>Requirements + constraints</strong> — Understand your mechanical envelope, power budget, regulatory
+        needs (CE/FCC), and unit-cost targets. No surprises, no scope creep.</li>
+      <li><strong>Schematic capture</strong> — KiCad 10 or EasyEDA Pro. Component selection with multiple sources and
+        fallbacks built in from day one.</li>
+      <li><strong>Component sourcing</strong> — LCSC + JLCPCB sourcing with production-ready BOMs and verified
+        alternatives for supply-chain resilience.</li>
+      <li><strong>PCB layout</strong> — Controlled impedance, EMC-aware grounding, thermal relief, and mechanical
+        fit-checks with 3D STEP models.</li>
+      <li><strong>Pre-fab verification</strong> — DRC clean, EMC analysis, thermal simulation, and
+        design-for-manufacture review before a single board is cut.</li>
+      <li><strong>Fab + assembly</strong> — JLCPCB prototypes with full CI pipelines. Scale to qualified contract
+        manufacturers for volume production.</li>
+      <li><strong>Firmware + integration</strong> — When scope includes software: Wi-Fi, BLE, 4G connectivity, cloud
+        back-ends (Next.js + Prisma), and mobile companion apps.</li>
+    </ol>
+
+    <footer>
+      <p>© Capistor · Shoaib Mustafa · <a href="mailto:shoaib.mustafa7@hotmail.com">shoaib.mustafa7@hotmail.com</a> · <a
+          href="https://capistor.com">capistor.com</a></p>
+    </footer>
+
+  </div>
+</body>
+
+</html>

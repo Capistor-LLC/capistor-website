@@ -8,6 +8,7 @@ import ProductsSection from "./components/sections/ProductsSection";
 import Footer from "./components/Footer";
 import Services from "./components/pages/Services";
 import Blog from "./components/pages/Blog";
+import Capabilities from "./components/pages/Capabilities";
 import CVPage from "./components/pages/cv/page";
 import ProductsPage from "./components/pages/ProductsPage";
 import BlogIndex from "./components/pages/BlogIndex";
@@ -25,15 +26,15 @@ import Seo from "./components/ui/Seo";
 import { useProductsFromDb } from "./utils/useProductsFromDb";
 
 // Lazy-load all admin code so it doesn't ship to public visitors
-const AdminLogin       = lazy(() => import("./components/admin/AdminLogin"));
-const AdminDashboard   = lazy(() => import("./components/admin/AdminDashboard"));
+const AdminLogin = lazy(() => import("./components/admin/AdminLogin"));
+const AdminDashboard = lazy(() => import("./components/admin/AdminDashboard"));
 const AdminProductsList = lazy(() => import("./components/admin/AdminProductsList"));
 const AdminProductEditor = lazy(() => import("./components/admin/AdminProductEditor"));
-const AdminBlogList    = lazy(() => import("./components/admin/AdminBlogList"));
-const AdminBlogEditor  = lazy(() => import("./components/admin/AdminBlogEditor"));
-const AdminSeries      = lazy(() => import("./components/admin/AdminSeries"));
+const AdminBlogList = lazy(() => import("./components/admin/AdminBlogList"));
+const AdminBlogEditor = lazy(() => import("./components/admin/AdminBlogEditor"));
+const AdminSeries = lazy(() => import("./components/admin/AdminSeries"));
 const AdminSubscribers = lazy(() => import("./components/admin/AdminSubscribers"));
-const ProtectedAdmin   = lazy(() => import("./components/admin/ProtectedAdmin"));
+const ProtectedAdmin = lazy(() => import("./components/admin/ProtectedAdmin"));
 
 function HomePage() {
   const sections = {
@@ -139,6 +140,7 @@ export default function App() {
     <HelmetProvider>
       <Routes>
         <Route path="/" element={<HomePage />} />
+        <Route path="/capabilities" element={<PageWithChrome><Capabilities /></PageWithChrome>} />
         <Route path="/cv" element={<PageWithChrome><CVPage /></PageWithChrome>} />
         <Route path="/blog" element={<PageWithChrome><BlogIndex /></PageWithChrome>} />
         <Route path="/blog/:slug" element={<PageWithChrome><BlogPost /></PageWithChrome>} />

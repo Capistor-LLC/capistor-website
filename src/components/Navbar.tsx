@@ -24,6 +24,7 @@ const navLinks: { label: string; section: keyof NavbarProps["sections"] }[] = [
 
 // Page-level links that route to separate pages
 const pageLinks: { label: string; to: string }[] = [
+  { label: "Capabilities", to: "/capabilities" },
   { label: "Projects", to: "/products" },
   { label: "Blog", to: "/blog" },
 ];
@@ -118,9 +119,8 @@ export default function MyNavbar({ sections }: NavbarProps) {
                 key={section}
                 href={`#${section}`}
                 onClick={(e) => { e.preventDefault(); scrollToSection(section); }}
-                className={`font-futura text-white hover:text-capistor-400 transition-colors duration-200 text-sm ${
-                  activeSection === section && location.pathname === "/" ? "font-bold" : ""
-                }`}
+                className={`font-futura text-white hover:text-capistor-400 transition-colors duration-200 text-sm ${activeSection === section && location.pathname === "/" ? "font-bold" : ""
+                  }`}
               >
                 {label}
               </a>
@@ -129,9 +129,8 @@ export default function MyNavbar({ sections }: NavbarProps) {
               <Link
                 key={to}
                 to={to}
-                className={`font-futura text-white hover:text-capistor-400 transition-colors duration-200 text-sm ${
-                  location.pathname.startsWith(to) ? "font-bold" : ""
-                }`}
+                className={`font-futura text-white hover:text-capistor-400 transition-colors duration-200 text-sm ${location.pathname.startsWith(to) ? "font-bold" : ""
+                  }`}
               >
                 {label}
               </Link>
@@ -182,9 +181,8 @@ export default function MyNavbar({ sections }: NavbarProps) {
                     key={section}
                     href={`#${section}`}
                     onClick={(e) => { e.preventDefault(); scrollToSection(section); }}
-                    className={`text-white font-futura hover:text-capistor-400 px-4 py-2.5 rounded-lg transition-colors ${
-                      activeSection === section && location.pathname === "/" ? "font-bold bg-white/5" : ""
-                    }`}
+                    className={`text-white font-futura hover:text-capistor-400 px-4 py-2.5 rounded-lg transition-colors ${activeSection === section && location.pathname === "/" ? "font-bold bg-white/5" : ""
+                      }`}
                   >
                     {label}
                   </a>
@@ -194,9 +192,8 @@ export default function MyNavbar({ sections }: NavbarProps) {
                     key={to}
                     to={to}
                     onClick={() => setIsOpen(false)}
-                    className={`text-white font-futura hover:text-capistor-400 px-4 py-2.5 rounded-lg transition-colors ${
-                      location.pathname.startsWith(to) ? "font-bold bg-white/5" : ""
-                    }`}
+                    className={`text-white font-futura hover:text-capistor-400 px-4 py-2.5 rounded-lg transition-colors ${location.pathname.startsWith(to) ? "font-bold bg-white/5" : ""
+                      }`}
                   >
                     {label}
                   </Link>
