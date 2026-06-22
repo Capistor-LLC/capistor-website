@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 export default function HeroSection() {
   const [scrollOpacity, setScrollOpacity] = useState(1);
   const [scrollY, setScrollY] = useState(0);
+  const [reducedMotion, setReducedMotion] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -18,17 +19,46 @@ export default function HeroSection() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Respect users who prefer reduced motion — show a still poster instead of the looping video.
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const update = () => setReducedMotion(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
+
   return (
     <section className="relative w-full h-[100svh] min-h-[600px] overflow-hidden bg-black">
-      {/* Background image — center on mobile (portrait), left-top on desktop */}
+      {/* Background showcase — looping PCB reveal in the same slot as the former hero image */}
       <div
-        className="absolute inset-0 bg-cover bg-no-repeat bg-center sm:bg-[position:left_top]"
+        className="absolute inset-0"
         style={{
-          backgroundImage: "url('/rendered_v5_draft.webp')",
           opacity: scrollOpacity,
           transform: `translateY(${Math.min(scrollY * 0.3, window.innerHeight * 0.5)}px)`,
         }}
-      />
+      >
+        {reducedMotion ? (
+          <img
+            src="/videos/atmega-hero-poster.webp"
+            alt="Capistor custom-designed circular PCB"
+            className="w-full h-full object-cover object-center"
+          />
+        ) : (
+          <video
+            className="w-full h-full object-cover object-center"
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="auto"
+            poster="/videos/atmega-hero-poster.webp"
+            aria-hidden="true"
+          >
+            <source src="/videos/atmega-hero.mp4" type="video/mp4" />
+          </video>
+        )}
+      </div>
 
       {/* Heavier mobile overlay so text remains readable on busy crops */}
       <div
