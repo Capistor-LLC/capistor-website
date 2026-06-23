@@ -77,7 +77,7 @@ function RedesignNav() {
         WebkitBackdropFilter: "blur(10px)",
       }}
     >
-      <div style={{ maxWidth: 1320, margin: "0 auto", padding: "18px 48px", display: "flex", alignItems: "center", gap: 40 }}>
+      <div className="rd-px" style={{ maxWidth: 1320, margin: "0 auto", padding: "18px 48px", display: "flex", alignItems: "center", gap: 40 }}>
         <a href="#top" style={{ display: "flex", alignItems: "center", gap: 12, textDecoration: "none", color: navInk, transition: "color .5s ease" }}>
           <img src="/redesign/logo.png" alt="Capistor" style={{ width: 26, height: 26, filter: dark ? "brightness(0) invert(1)" : "none" }} />
           <span style={{ fontWeight: 500, fontSize: 17, letterSpacing: "0.16em" }}>CAPISTOR</span>
@@ -149,7 +149,7 @@ export default function HomeRedesign() {
 
       {/* ===== HERO ===== */}
       <section id="top" style={{ position: "relative", minHeight: "100svh", background: "#070707", overflow: "hidden", display: "flex", alignItems: "center", padding: "96px 0 64px" }}>
-        <div style={{ position: "relative", zIndex: 2, maxWidth: 1320, margin: "0 auto", padding: "0 48px", width: "100%" }}>
+        <div className="rd-px" style={{ position: "relative", zIndex: 2, maxWidth: 1320, margin: "0 auto", padding: "0 48px", width: "100%" }}>
           <div className="hero-wrap">
             <div className="hero-copy" data-reveal>
               <div style={{ fontSize: 12, letterSpacing: "0.42em", color: "rgba(243,239,232,.65)", fontWeight: 400, marginBottom: 36 }}>
@@ -174,16 +174,16 @@ export default function HomeRedesign() {
         </div>
 
         <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, zIndex: 2, borderTop: "1px solid rgba(243,239,232,.16)", background: "rgba(7,7,7,.4)" }}>
-          <div style={{ maxWidth: 1320, margin: "0 auto", padding: "18px 48px", display: "flex", flexWrap: "wrap", gap: 34, fontSize: 11, letterSpacing: "0.24em", color: "rgba(243,239,232,.5)" }}>
+          <div className="rd-px" style={{ maxWidth: 1320, margin: "0 auto", padding: "18px 48px", display: "flex", flexWrap: "wrap", gap: 34, fontSize: 11, letterSpacing: "0.24em", color: "rgba(243,239,232,.5)" }}>
             <span>1500+ BOARDS DESIGNED</span><span>EU · US · UAE</span><span>IOT · INDUSTRIAL · FOOD-SERVICE</span>
           </div>
         </div>
       </section>
 
       {/* ===== STATEMENT + CAPABILITIES ===== */}
-      <section id="capabilities" style={{ background: "#f3efe8", padding: "140px 0 130px" }}>
-        <div style={{ maxWidth: 1320, margin: "0 auto", padding: "0 48px" }}>
-          <div data-reveal style={{ display: "grid", gridTemplateColumns: "1fr 1.15fr", gap: 80, alignItems: "start", marginBottom: 110 }}>
+      <section id="capabilities" className="rd-pad" style={{ background: "#f3efe8", padding: "140px 0 130px" }}>
+        <div className="rd-px" style={{ maxWidth: 1320, margin: "0 auto", padding: "0 48px" }}>
+          <div className="rd-statement" data-reveal style={{ display: "grid", gridTemplateColumns: "1fr 1.15fr", gap: 80, alignItems: "start", marginBottom: 110 }}>
             <div style={{ fontSize: 12, letterSpacing: "0.34em", color: "#8a8276", paddingTop: 14 }}>WHAT WE DO</div>
             <h2 style={{ fontWeight: 200, fontSize: "clamp(28px,3.4vw,52px)", lineHeight: 1.18, letterSpacing: "-0.01em", color: "#1a1813" }}>
               We take an idea and return a manufacturable product — the schematic, the board, the firmware, the enclosure, and the documentation to build it at scale.
@@ -208,7 +208,7 @@ export default function HomeRedesign() {
         <img src="/redesign/macro-render.webp" alt="Capistor mixed-signal control board" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", opacity: 0.95 }} />
         <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top,rgba(8,8,8,.94) 0%,rgba(8,8,8,.2) 50%,rgba(8,8,8,.45) 100%)" }} />
         <div style={{ position: "absolute", inset: 0, background: "linear-gradient(105deg,rgba(8,8,8,.55) 0%,rgba(8,8,8,0) 55%)" }} />
-        <div data-reveal style={{ position: "relative", zIndex: 2, maxWidth: 1320, margin: "0 auto", width: "100%", padding: "0 48px 120px" }}>
+        <div className="rd-px rd-featured-copy" data-reveal style={{ position: "relative", zIndex: 2, maxWidth: 1320, margin: "0 auto", width: "100%", padding: "0 48px 120px" }}>
           <div style={{ fontSize: 12, letterSpacing: "0.34em", color: "rgba(243,239,232,.6)", marginBottom: 26 }}>FEATURED BUILD</div>
           <h2 style={{ fontWeight: 200, fontSize: "clamp(32px,5vw,76px)", lineHeight: 1.05, letterSpacing: "-0.015em", color: "#f5f2ec", maxWidth: 900 }}>Engineered to the last component.</h2>
           <p style={{ fontWeight: 300, fontSize: "clamp(15px,1.4vw,19px)", lineHeight: 1.65, color: "rgba(243,239,232,.68)", marginTop: 28, maxWidth: 540 }}>
@@ -218,9 +218,9 @@ export default function HomeRedesign() {
       </section>
 
       {/* ===== SELECTED WORK ===== */}
-      <section id="work" style={{ background: "#f3efe8", padding: "140px 0 130px" }}>
-        <div style={{ maxWidth: 1320, margin: "0 auto", padding: "0 48px" }}>
-          <div data-reveal style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 64 }}>
+      <section id="work" className="rd-pad" style={{ background: "#f3efe8", padding: "140px 0 130px" }}>
+        <div className="rd-px" style={{ maxWidth: 1320, margin: "0 auto", padding: "0 48px" }}>
+          <div className="rd-work-head" data-reveal style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 64 }}>
             <div>
               <div style={{ fontSize: 12, letterSpacing: "0.34em", color: "#8a8276", marginBottom: 22 }}>SELECTED WORK</div>
               <h2 style={{ fontWeight: 200, fontSize: "clamp(30px,3.6vw,56px)", lineHeight: 1.08, letterSpacing: "-0.01em", color: "#1a1813", maxWidth: 620 }}>Boards designed for clients,<br />shipped into the field.</h2>
@@ -228,7 +228,7 @@ export default function HomeRedesign() {
             <a href="#contact" className="ul-link" style={{ textDecoration: "none", color: "#1a1813", fontSize: 12, letterSpacing: "0.24em", fontWeight: 500, paddingBottom: 10 }}>ALL PROJECTS</a>
           </div>
 
-          <div data-reveal style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
+          <div className="rd-work-grid" data-reveal style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
             {work.map((w) => (
               <div key={w.n} className="tile" style={{ cursor: "pointer" }}>
                 <div style={{ position: "relative", aspectRatio: "4/3", overflow: "hidden", background: w.bg }}>
@@ -248,11 +248,11 @@ export default function HomeRedesign() {
       </section>
 
       {/* ===== PROCESS + STATS ===== */}
-      <section style={{ background: "#ebe6dd", padding: "130px 0" }}>
-        <div style={{ maxWidth: 1320, margin: "0 auto", padding: "0 48px" }}>
+      <section className="rd-pad" style={{ background: "#ebe6dd", padding: "130px 0" }}>
+        <div className="rd-px" style={{ maxWidth: 1320, margin: "0 auto", padding: "0 48px" }}>
           <div data-reveal style={{ fontSize: 12, letterSpacing: "0.34em", color: "#8a8276", marginBottom: 64 }}>HOW WE WORK</div>
 
-          <div data-reveal style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 0, marginBottom: 120 }}>
+          <div className="rd-process-grid" data-reveal style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 0, marginBottom: 120 }}>
             {process.map((p) => (
               <div key={p.n} style={{ padding: "0 32px 0 0", borderLeft: "1px solid #d3ccbe", paddingLeft: 28 }}>
                 <div style={{ fontSize: 13, letterSpacing: "0.2em", color: "#a89f90", marginBottom: 28 }}>{p.n}</div>
@@ -262,7 +262,7 @@ export default function HomeRedesign() {
             ))}
           </div>
 
-          <div data-reveal style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 0, borderTop: "1px solid #d3ccbe" }}>
+          <div className="rd-stats-grid" data-reveal style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 0, borderTop: "1px solid #d3ccbe" }}>
             {stats.map((s) => (
               <div key={s.label} style={{ padding: "48px 32px 0 0" }}>
                 <div style={{ fontWeight: 200, fontSize: "clamp(40px,4.5vw,68px)", lineHeight: 1, letterSpacing: "-0.02em", color: "#1a1813" }}>{s.num}</div>
@@ -274,8 +274,8 @@ export default function HomeRedesign() {
       </section>
 
       {/* ===== REVIEWS (real, from Fiverr) ===== */}
-      <section id="reviews" style={{ background: "#0b0b0a", padding: "140px 0 130px" }}>
-        <div data-reveal style={{ maxWidth: 1320, margin: "0 auto", padding: "0 48px", display: "flex", justifyContent: "space-between", alignItems: "flex-end", gap: 48, flexWrap: "wrap", marginBottom: 72 }}>
+      <section id="reviews" className="rd-pad" style={{ background: "#0b0b0a", padding: "140px 0 130px" }}>
+        <div className="rd-px" data-reveal style={{ maxWidth: 1320, margin: "0 auto", padding: "0 48px", display: "flex", justifyContent: "space-between", alignItems: "flex-end", gap: 48, flexWrap: "wrap", marginBottom: 72 }}>
           <div>
             <div style={{ fontSize: 12, letterSpacing: "0.34em", color: "rgba(243,239,232,.5)", marginBottom: 24 }}>CLIENT REVIEWS</div>
             <h2 style={{ fontWeight: 200, fontSize: "clamp(30px,3.6vw,56px)", lineHeight: 1.08, letterSpacing: "-0.01em", color: "#f5f2ec", maxWidth: 560 }}>Trusted by founders and<br />engineers worldwide.</h2>
@@ -303,7 +303,7 @@ export default function HomeRedesign() {
           ))}
         </div>
 
-        <div data-reveal style={{ maxWidth: 1320, margin: "0 auto", padding: "0 48px", marginTop: 44 }}>
+        <div className="rd-px" data-reveal style={{ maxWidth: 1320, margin: "0 auto", padding: "0 48px", marginTop: 44 }}>
           <p style={{ fontSize: 13, letterSpacing: "0.04em", color: "rgba(243,239,232,.45)", lineHeight: 1.6 }}>
             Verified reviews for Capistor&apos;s lead engineer, Shoaib Mustafa, on Fiverr.{" "}
             <a href={FIVERR_URL} target="_blank" rel="noopener noreferrer" className="ul-link" style={{ color: "rgba(243,239,232,.8)", textDecoration: "none" }}>Read all 27 →</a>
@@ -312,10 +312,10 @@ export default function HomeRedesign() {
       </section>
 
       {/* ===== CONTACT ===== */}
-      <section id="contact" style={{ background: "#f3efe8", padding: "150px 0 130px" }}>
-        <div data-reveal style={{ maxWidth: 1320, margin: "0 auto", padding: "0 48px" }}>
+      <section id="contact" className="rd-pad" style={{ background: "#f3efe8", padding: "150px 0 130px" }}>
+        <div className="rd-px" data-reveal style={{ maxWidth: 1320, margin: "0 auto", padding: "0 48px" }}>
           <div style={{ fontSize: 12, letterSpacing: "0.34em", color: "#8a8276", marginBottom: 40 }}>START A PROJECT</div>
-          <div style={{ display: "grid", gridTemplateColumns: "1.3fr 1fr", gap: 80, alignItems: "end" }}>
+          <div className="rd-contact-grid" style={{ display: "grid", gridTemplateColumns: "1.3fr 1fr", gap: 80, alignItems: "end" }}>
             <h2 style={{ fontWeight: 200, fontSize: "clamp(36px,5.2vw,84px)", lineHeight: 1.03, letterSpacing: "-0.02em", color: "#1a1813" }}>Tell us what<br />you want to build.</h2>
             <div style={{ paddingBottom: 14 }}>
               <p style={{ fontWeight: 300, fontSize: 17, lineHeight: 1.7, color: "#6f685c", marginBottom: 34 }}>Send the brief, the constraints, or just the idea. We&apos;ll come back with a path to a manufacturable product.</p>
@@ -328,7 +328,7 @@ export default function HomeRedesign() {
 
       {/* ===== FOOTER ===== */}
       <footer style={{ background: "#0b0b0a", padding: "70px 0 44px" }}>
-        <div style={{ maxWidth: 1320, margin: "0 auto", padding: "0 48px" }}>
+        <div className="rd-px" style={{ maxWidth: 1320, margin: "0 auto", padding: "0 48px" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 40, paddingBottom: 54, borderBottom: "1px solid rgba(243,239,232,.14)" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
               <img src="/redesign/logo.png" alt="Capistor" style={{ width: 26, height: 26, filter: "brightness(0) invert(1)", opacity: 0.9 }} />

@@ -72,15 +72,43 @@ html { scroll-behavior: smooth; }
   background: rgba(243, 239, 232, .14);
 }
 
+/* ============================================================
+   Responsive — the design is desktop-first. These blocks only
+   fire at mobile/tablet widths and override the inline desktop
+   values via marker classes; desktop rendering is untouched.
+   ============================================================ */
 @media (max-width: 860px) {
   .home-rd .hero-wrap { grid-template-columns: 1fr; gap: 24px; }
   .home-rd .hero-media { height: 40vh; min-height: 240px; order: 2; }
   .home-rd .hero-copy { order: 1; }
-  .home-rd .rev-grid { grid-template-columns: 1fr; }
+
+  .home-rd .rev-grid { grid-template-columns: repeat(2, 1fr); }
+  .home-rd .rd-statement { grid-template-columns: 1fr !important; gap: 18px !important; margin-bottom: 56px !important; }
+  .home-rd .rd-contact-grid { grid-template-columns: 1fr !important; gap: 32px !important; align-items: start !important; }
+  .home-rd .rd-process-grid { grid-template-columns: 1fr 1fr !important; gap: 44px 0 !important; margin-bottom: 72px !important; }
+  .home-rd .rd-work-head { flex-wrap: wrap !important; gap: 20px !important; }
 }
 
-/* keep the fixed nav usable on small screens (design is desktop-first):
-   drop the in-page anchor links, keep the logo + primary CTA */
 @media (max-width: 640px) {
+  /* drop the in-page anchor links, keep the logo + primary CTA */
   .home-rd .nav-links { display: none !important; }
+
+  /* tighten the 48px gutters */
+  .home-rd .rd-px { padding-left: 22px !important; padding-right: 22px !important; }
+
+  /* trim the generous vertical rhythm */
+  .home-rd .rd-pad { padding-top: 80px !important; padding-bottom: 80px !important; }
+  .home-rd .rd-featured-copy { padding-bottom: 64px !important; }
+
+  /* stack the remaining multi-column blocks */
+  .home-rd .rd-work-grid { grid-template-columns: 1fr !important; gap: 40px !important; }
+  .home-rd .cap-row { grid-template-columns: 1fr !important; gap: 6px !important; padding: 26px 0 !important; }
+  .home-rd .cap-row:hover { padding-left: 0; }
+}
+
+@media (max-width: 560px) {
+  .home-rd .rev-grid { grid-template-columns: 1fr; }
+  .home-rd .rd-process-grid { grid-template-columns: 1fr !important; gap: 30px 0 !important; }
+  .home-rd .rd-stats-grid { grid-template-columns: 1fr !important; }
+  .home-rd .rd-stats-grid > div { padding: 30px 0 0 0 !important; }
 }
