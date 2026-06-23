@@ -1,10 +1,11 @@
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function HeroSection() {
   const [scrollOpacity, setScrollOpacity] = useState(1);
   const [scrollY, setScrollY] = useState(0);
   const [reducedMotion, setReducedMotion] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -28,6 +29,16 @@ export default function HeroSection() {
     return () => mq.removeEventListener("change", update);
   }, []);
 
+  // Force the muted property and kick off playback on mount. Safari/iOS apply
+  // React's `muted` prop inconsistently, so without this the hero can refuse to
+  // autoplay and show a play button instead.
+  useEffect(() => {
+    const v = videoRef.current;
+    if (!v) return;
+    v.muted = true;
+    v.play().catch(() => {});
+  }, [reducedMotion]);
+
   return (
     <section className="relative w-full h-[100svh] min-h-[600px] overflow-hidden bg-black">
       {/* Background showcase — looping PCB reveal in the same slot as the former hero image */}
@@ -46,6 +57,7 @@ export default function HeroSection() {
           />
         ) : (
           <video
+            ref={videoRef}
             className="w-full h-full object-cover object-center"
             autoPlay
             loop

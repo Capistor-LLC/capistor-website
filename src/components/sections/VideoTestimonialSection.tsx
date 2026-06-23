@@ -1,9 +1,19 @@
 import { motion } from "framer-motion";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function VideoTestimonialSection() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [muted, setMuted] = useState(true);
+
+  // Force the muted property and start playback on mount. React's `muted` prop
+  // isn't reliably honored by Safari/iOS, which otherwise blocks autoplay and
+  // shows a play button over the poster.
+  useEffect(() => {
+    const v = videoRef.current;
+    if (!v) return;
+    v.muted = true;
+    v.play().catch(() => {});
+  }, []);
 
   const toggleMute = () => {
     const v = videoRef.current;

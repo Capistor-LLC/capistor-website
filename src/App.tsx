@@ -21,6 +21,7 @@ import HowItWorksSection from "./components/sections/HowItWorksSection";
 import ContactSection from "./components/sections/ContactSection";
 import VideoSection from "./components/sections/VideoSection";
 import VideoTestimonialSection from "./components/sections/VideoTestimonialSection";
+import ShowcaseSection from "./components/sections/ShowcaseSection";
 import TestimonialsSection from "./components/sections/TestimonialsSection";
 import Seo from "./components/ui/Seo";
 import { useProductsFromDb } from "./utils/useProductsFromDb";
@@ -70,6 +71,8 @@ function HomePage() {
       <section><VideoTestimonialSection /></section>
       <section ref={sections.services}><Services /></section>
       <section ref={sections.about}><About /></section>
+
+      <section><ShowcaseSection /></section>
 
       <section><ExperienceSection /></section>
       <section><HowItWorksSection /></section>
