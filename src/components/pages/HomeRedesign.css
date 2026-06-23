@@ -1,0 +1,86 @@
+/* Capistor home — redesign from Claude Design handoff (scoped under .home-rd) */
+
+html { scroll-behavior: smooth; }
+
+.home-rd {
+  font-family: "Jost", sans-serif;
+  background: #0b0b0a;
+  color: #16140f;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+.home-rd *,
+.home-rd *::before,
+.home-rd *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* quiet fade-up reveals — applied via JS so content stays visible if JS never runs */
+.home-rd .reveal {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity 1.1s cubic-bezier(.22, .61, .21, 1), transform 1.1s cubic-bezier(.22, .61, .21, 1);
+}
+.home-rd .reveal.in { opacity: 1; transform: none; }
+
+.home-rd .tile img { transition: transform 1.3s cubic-bezier(.22, .61, .21, 1); }
+.home-rd .tile:hover img { transform: scale(1.045); }
+
+.home-rd .ul-link { position: relative; }
+.home-rd .ul-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -3px;
+  height: 1px;
+  width: 100%;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .5s cubic-bezier(.22, .61, .21, 1);
+}
+.home-rd .ul-link:hover::after { transform: scaleX(1); }
+
+.home-rd .cap-row { transition: padding-left .5s cubic-bezier(.22, .61, .21, 1); }
+.home-rd .cap-row:hover { padding-left: 14px; }
+
+.home-rd .hero-wrap {
+  display: grid;
+  grid-template-columns: 1fr 1.08fr;
+  gap: 32px;
+  align-items: center;
+  width: 100%;
+}
+.home-rd .hero-media {
+  position: relative;
+  height: 86vh;
+  min-height: 480px;
+  overflow: hidden;
+}
+.home-rd .hero-media video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  -webkit-mask-image: radial-gradient(circle at 52% 47%, #000 38%, rgba(0, 0, 0, .55) 62%, transparent 82%);
+  mask-image: radial-gradient(circle at 52% 47%, #000 38%, rgba(0, 0, 0, .55) 62%, transparent 82%);
+}
+
+.home-rd .rev-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: rgba(243, 239, 232, .14);
+}
+
+@media (max-width: 860px) {
+  .home-rd .hero-wrap { grid-template-columns: 1fr; gap: 24px; }
+  .home-rd .hero-media { height: 40vh; min-height: 240px; order: 2; }
+  .home-rd .hero-copy { order: 1; }
+  .home-rd .rev-grid { grid-template-columns: 1fr; }
+}
+
+/* keep the fixed nav usable on small screens (design is desktop-first):
+   drop the in-page anchor links, keep the logo + primary CTA */
+@media (max-width: 640px) {
+  .home-rd .nav-links { display: none !important; }
+}
