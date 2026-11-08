@@ -1,14 +1,13 @@
 // Supabase Edge Function: send-blog-email
 //
 // Sends a published blog post to all confirmed subscribers via Resend.
-// Verifies the caller is the admin (matches VITE_ADMIN_EMAIL / ADMIN_EMAIL secret).
+// Verifies the caller has a verified email, staff membership, and aal2 assurance.
 //
 // Deploy:
 //   supabase functions deploy send-blog-email --project-ref mqzxzvesyjfftddquxik
 //
 // Required Supabase secrets (set via dashboard or CLI):
 //   RESEND_API_KEY  — from https://resend.com/api-keys
-//   ADMIN_EMAIL     — shoaib@capistor.com (the whitelisted admin)
 //   SITE_URL        — https://capistor.com (used in email links)
 //   FROM_EMAIL      — e.g. "Capistor <hello@capistor.com>" (must be a verified Resend domain)
 
@@ -29,7 +28,6 @@ Deno.serve(async (req) => {
     const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
     const SERVICE_ROLE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
-    const ADMIN_EMAIL = (Deno.env.get("ADMIN_EMAIL") ?? "").toLowerCase();
     const SITE_URL = Deno.env.get("SITE_URL") ?? "https://capistor.com";
     const FROM_EMAIL = Deno.env.get("FROM_EMAIL") ?? "onboarding@resend.dev";
     const REPLY_TO = Deno.env.get("REPLY_TO_EMAIL") ?? null;
@@ -40,14 +38,34 @@ Deno.serve(async (req) => {
 
     // ── Verify caller is admin ──
     const authHeader = req.headers.get("Authorization") ?? "";
-    const token = authHeader.replace(/^Bearer\s+/i, "");
+    const token = authHeader.match(/^Bearer ([A-Za-z0-9._-]+)$/i)?.[1];
     if (!token) return json({ error: "Missing auth token" }, 401);
 
     const userClient = createClient(SUPABASE_URL, SERVICE_ROLE);
     const { data: userResp, error: userErr } = await userClient.auth.getUser(token);
     if (userErr || !userResp.user) return json({ error: "Invalid session" }, 401);
-    const callerEmail = (userResp.user.email ?? "").toLowerCase();
-    if (callerEmail !== ADMIN_EMAIL) return json({ error: "Not authorized" }, 403);
+    if (!userResp.user.email_confirmed_at) {
+      return json({ error: "A verified account is required" }, 401);
+    }
+
+    // getUser validates the token signature before its assurance claim is used.
+    let payload: { aal?: unknown };
+    try {
+      const encodedPayload = token.split(".")[1];
+      if (!encodedPayload) throw new Error("Missing JWT payload");
+      const base64 = encodedPayload.replace(/-/g, "+").replace(/_/g, "/");
+      payload = JSON.parse(atob(base64.padEnd(Math.ceil(base64.length / 4) * 4, "=")));
+    } catch {
+      return json({ error: "Invalid session" }, 401);
+    }
+    if (payload.aal !== "aal2") return json({ error: "MFA verification required" }, 403);
+
+    const { data: staff, error: staffErr } = await userClient
+      .from("staff_members")
+      .select("user_id")
+      .eq("user_id", userResp.user.id)
+      .maybeSingle();
+    if (staffErr || !staff) return json({ error: "Not authorized" }, 403);
 
     // ── Body ──
     const { post_id } = await req.json();

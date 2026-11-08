@@ -1,6 +1,14 @@
-import { ChangeEvent, ClipboardEvent, DragEvent, useEffect, useRef, useState } from "react";
+import {
+  ChangeEvent,
+  ClipboardEvent,
+  DragEvent,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import MDEditor from "@uiw/react-md-editor";
+import { api } from "../../commerce/api";
 import { supabase, DbBlogSeries } from "../../lib/supabase";
 import { deriveExcerpt, deriveReadingMinutes, slugify } from "../../lib/blog";
 import AdminLayout from "./AdminLayout";
@@ -92,7 +100,9 @@ export default function AdminBlogEditor({ mode }: { mode: Mode }) {
       setError(`Cover upload failed: ${upErr.message}`);
       return;
     }
-    const { data: pub } = supabase.storage.from("blog-images").getPublicUrl(path);
+    const { data: pub } = supabase.storage
+      .from("blog-images")
+      .getPublicUrl(path);
     setCoverUrl(pub.publicUrl);
     if (coverInputRef.current) coverInputRef.current.value = "";
   };
@@ -110,7 +120,9 @@ export default function AdminBlogEditor({ mode }: { mode: Mode }) {
       setError(`Image upload failed: ${upErr.message}`);
       return null;
     }
-    const { data: pub } = supabase.storage.from("blog-images").getPublicUrl(path);
+    const { data: pub } = supabase.storage
+      .from("blog-images")
+      .getPublicUrl(path);
     return pub.publicUrl;
   };
 
@@ -138,7 +150,7 @@ export default function AdminBlogEditor({ mode }: { mode: Mode }) {
 
   const onDropImages = async (e: DragEvent<HTMLDivElement>) => {
     const files = Array.from(e.dataTransfer?.files ?? []).filter((f) =>
-      f.type.startsWith("image/")
+      f.type.startsWith("image/"),
     );
     if (files.length === 0) return;
     e.preventDefault();
@@ -184,7 +196,9 @@ export default function AdminBlogEditor({ mode }: { mode: Mode }) {
       series_id: seriesId,
       series_position: seriesPosition,
       published_at:
-        willBePublished && !publishedAt ? new Date().toISOString() : publishedAt,
+        willBePublished && !publishedAt
+          ? new Date().toISOString()
+          : publishedAt,
     };
 
     setSaving(true);
@@ -210,6 +224,20 @@ export default function AdminBlogEditor({ mode }: { mode: Mode }) {
         setIsPublished(willBePublished);
         setInfo("Saved.");
       }
+      if (willBePublished || wasPublished) {
+        try {
+          const rebuilt = await api<{ configured: boolean }>("rebuild", {});
+          setInfo(
+            rebuilt.configured
+              ? "Saved. Public HTML rebuild requested."
+              : "Saved. Public pages are updated in the app; deploy the site to refresh indexable HTML.",
+          );
+        } catch {
+          setInfo(
+            "Saved. Public HTML rebuild needs attention in deployment settings.",
+          );
+        }
+      }
     } catch (e: any) {
       setError(e.message ?? String(e));
     } finally {
@@ -226,7 +254,8 @@ export default function AdminBlogEditor({ mode }: { mode: Mode }) {
       setError("Publish the post before sending.");
       return;
     }
-    if (!confirm("Send this post to all subscribers? This can't be undone.")) return;
+    if (!confirm("Send this post to all subscribers? This can't be undone."))
+      return;
 
     setSending(true);
     setError(null);
@@ -253,7 +282,7 @@ export default function AdminBlogEditor({ mode }: { mode: Mode }) {
     } catch (e: any) {
       setError(
         `Send failed: ${e.message}. ` +
-          "Make sure the send-blog-email edge function is deployed and RESEND_API_KEY is set in Supabase secrets."
+          "Make sure the send-blog-email edge function is deployed and RESEND_API_KEY is set in Supabase secrets.",
       );
     } finally {
       setSending(false);
@@ -321,15 +350,20 @@ export default function AdminBlogEditor({ mode }: { mode: Mode }) {
       )}
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-
         {/* ── Left: meta panel ── */}
         <div className="lg:col-span-1 space-y-5">
           {/* Cover */}
           <div className="p-4 rounded-2xl border border-capistor-200/70 bg-white">
-            <p className="font-futura font-bold text-black mb-2 text-sm">Cover image</p>
+            <p className="font-futura font-bold text-black mb-2 text-sm">
+              Cover image
+            </p>
             {coverUrl ? (
               <div className="relative aspect-[16/9] rounded-lg overflow-hidden bg-capistor-50 mb-2">
-                <img src={coverUrl} alt="Cover" className="w-full h-full object-cover" />
+                <img
+                  src={coverUrl}
+                  alt="Cover"
+                  className="w-full h-full object-cover"
+                />
                 <button
                   onClick={() => setCoverUrl(null)}
                   className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/60 text-white text-sm hover:bg-black"
@@ -411,7 +445,9 @@ export default function AdminBlogEditor({ mode }: { mode: Mode }) {
                   type="number"
                   value={seriesPosition ?? ""}
                   onChange={(e) =>
-                    setSeriesPosition(e.target.value ? Number(e.target.value) : null)
+                    setSeriesPosition(
+                      e.target.value ? Number(e.target.value) : null,
+                    )
                   }
                   placeholder="Position in series"
                   className="mt-2 w-full px-3 py-1.5 rounded-md border border-capistor-300/40 bg-kindofwhite text-black font-fransisco text-xs focus:outline-none focus:ring-1 focus:ring-sexyblue"
@@ -472,7 +508,11 @@ export default function AdminBlogEditor({ mode }: { mode: Mode }) {
               disabled={sending || !id || !isPublished}
               className="w-full px-3 py-2 rounded-md bg-sexyblue text-kindofwhite font-futura text-xs hover:bg-capistor-600 transition-colors disabled:opacity-60"
             >
-              {sending ? "Sending…" : emailSentAt ? "Send again" : "Send to subscribers"}
+              {sending
+                ? "Sending…"
+                : emailSentAt
+                  ? "Send again"
+                  : "Send to subscribers"}
             </button>
             <p className="text-sexyblue/30 font-fransisco text-[10px] mt-2">
               Requires Resend API key + edge function setup. See SETUP-ADMIN.md.
@@ -515,8 +555,12 @@ export default function AdminBlogEditor({ mode }: { mode: Mode }) {
 
           <p className="text-sexyblue/35 font-fransisco text-xs">
             Markdown · code blocks, $math$, $$blocks$$, tables, links.
-            <strong className="text-sexyblue/60"> Drag images into the editor or paste from clipboard</strong> —
-            they auto-upload to Supabase Storage and the markdown is inserted at the end of the post.
+            <strong className="text-sexyblue/60">
+              {" "}
+              Drag images into the editor or paste from clipboard
+            </strong>{" "}
+            — they auto-upload to Supabase Storage and the markdown is inserted
+            at the end of the post.
           </p>
         </div>
       </div>

@@ -1,22 +1,23 @@
 import { createClient } from "@supabase/supabase-js";
+import { supabaseFetch } from "./supabaseFetch";
 
 const url = import.meta.env.VITE_SUPABASE_URL as string;
 const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string;
 
-if (!url || !anonKey) {
-  console.warn(
-    "[supabase] Missing VITE_SUPABASE_URL or VITE_SUPABASE_ANON_KEY. " +
-      "Set them in .env.local. See .env.example."
-  );
-}
-
-export const supabase = createClient(url ?? "", anonKey ?? "", {
-  auth: {
-    persistSession: true,
-    autoRefreshToken: true,
-    detectSessionInUrl: true,
+export const hasSupabase = !!url && !!anonKey;
+export const supabase = createClient(
+  url || "https://unconfigured.invalid",
+  anonKey || "unconfigured",
+  {
+    global: { fetch: supabaseFetch },
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true,
+      flowType: "pkce",
+    },
   },
-});
+);
 
 export const ADMIN_EMAIL =
   (import.meta.env.VITE_ADMIN_EMAIL as string | undefined)?.toLowerCase() ??
