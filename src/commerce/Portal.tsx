@@ -389,6 +389,8 @@ export function OrderPage() {
                     <p>
                       {o.item_snapshot.kind === "digital"
                         ? "Your purchase is governed by the saved customer terms and product licence under Scope."
+                        : o.item_snapshot.agreement_required === false
+                          ? "This consultation is covered by the customer terms accepted at checkout. No separate NDA or contract is required for this service."
                         : "Your project-specific agreements are being prepared. Confidential uploads remain closed until the NDA is signed by both parties."}
                     </p>
                   </div>

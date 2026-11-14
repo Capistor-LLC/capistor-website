@@ -1,5 +1,6 @@
 import type { OrderDetail } from "./types";
 import { api } from "./api";
+import { useCatalog } from "./context";
 type Props = {
   data: OrderDetail;
   run: (work: () => Promise<unknown>) => Promise<void>;
@@ -7,6 +8,7 @@ type Props = {
 };
 export function AdminOrderTools({ data, run, busy }: Props) {
   const o = data.order;
+  const { sandbox } = useCatalog();
   return (
     <section className="panel admin-form">
       <p className="eyebrow">ADMINISTRATOR CONTROLS</p>
@@ -243,6 +245,7 @@ export function AdminOrderTools({ data, run, busy }: Props) {
       <hr />
       <details>
         <summary>Reconcile a bank transfer</summary>
+        {sandbox && <p role="status">Bank settlement is unavailable in the sandbox. Complete a Stripe test payment from the order’s Payment tab to test the paid-order workflow.</p>}
         <p className="micro">
           Confirm cleared funds in the business bank account. A screenshot or
           client receipt is not proof of settlement. Do not use this for Stripe
@@ -288,7 +291,7 @@ export function AdminOrderTools({ data, run, busy }: Props) {
               the correct order reference.
             </span>
           </label>
-          <button className="button" disabled={busy}>
+          <button className="button" disabled={busy || sandbox}>
             Confirm bank settlement
           </button>
         </form>

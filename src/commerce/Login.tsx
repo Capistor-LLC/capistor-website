@@ -18,6 +18,7 @@ export default function Login() {
   const [params] = useSearchParams();
   const navigate = useNavigate();
   const next = safeNext(params.get("next"));
+  const recovering = params.get("recovery") === "1";
   const [error, setError] = useState("");
   const [sent, setSent] = useState(false);
   const [mode, setMode] = useState<
@@ -30,9 +31,9 @@ export default function Login() {
     secret?: string;
   } | null>(null);
   useEffect(() => {
-    if (!loading && user && (!next.startsWith("/admin") || isAdmin))
+    if (!recovering && !loading && user && (!next.startsWith("/admin") || isAdmin))
       navigate(next, { replace: true });
-  }, [loading, user, isAdmin, next, navigate]);
+  }, [loading, user, isAdmin, next, navigate, recovering]);
   async function login(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setBusy(true);
@@ -52,7 +53,7 @@ export default function Login() {
       });
     else if (mode === "reset")
       result = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo,
+        redirectTo: `${redirectTo}&recovery=1`,
       });
     else
       result = await supabase.auth.signInWithOtp({
@@ -157,6 +158,22 @@ export default function Login() {
           </Notice>
         ) : loading ? (
           <p>Checking your account…</p>
+        ) : recovering && user ? (
+          <form className="stack-form" onSubmit={async (e) => {
+            e.preventDefault(); setBusy(true); setError("");
+            const fields = new FormData(e.currentTarget);
+            const password = String(fields.get("new_password"));
+            if (password !== fields.get("confirm_password")) { setError("Passwords do not match."); setBusy(false); return; }
+            const result = await supabase.auth.updateUser({ password });
+            setBusy(false);
+            if (result.error) setError(result.error.message);
+            else navigate(next, {replace:true});
+          }}>
+            <h2>Set your new password</h2>
+            <label>New password<input name="new_password" type="password" minLength={12} autoComplete="new-password" required /></label>
+            <label>Confirm password<input name="confirm_password" type="password" minLength={12} autoComplete="new-password" required /></label>
+            <button className="button" disabled={busy}>Save new password</button>
+          </form>
         ) : user ? (
           <>
             <h2>

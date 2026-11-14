@@ -219,7 +219,18 @@ export async function createOrder(ctx: Context, body: unknown) {
       p_files: assets.map((a) => a.id),
     }),
   );
+  await issueInitialAgreements(ctx, orderId);
   return { id: orderId };
+}
+// Approved templates are filled from the frozen order, then exposed immediately.
+// A custom quote's contract stays private until its final scope and price exist.
+// Company signatures remain explicit and are never fabricated by automation.
+async function issueInitialAgreements(ctx: Context, orderId: string) {
+  const order = await getOrder(ctx, orderId);
+  let query = ctx.db.from("order_documents").update({ status: "issued" })
+    .eq("order_id", orderId).eq("version", 1).eq("status", "draft");
+  if (order.item_snapshot.requires_quote) query = query.eq("kind", "nda");
+  check(await query);
 }
 const fileColumns =
   "id,filename,size_bytes,sha256,status,version_label,created_at,review_note,uploaded_by";
