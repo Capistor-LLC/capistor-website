@@ -131,7 +131,7 @@ export default function Login() {
     if (error) {
       setError(error.message);
       setBusy(false);
-    } else window.location.assign(next);
+    } else setBusy(false);
   }
   return (
     <div className="page-wrap narrow">

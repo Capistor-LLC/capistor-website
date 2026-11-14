@@ -9,6 +9,7 @@ import {
   Services,
   Shop,
   ItemPage,
+  CheckoutPage,
   About,
   Legal,
   Work,
@@ -62,6 +63,7 @@ export default function App({
               <Route path="/services/:slug" element={wrap(<ItemPage />)} />
               <Route path="/shop" element={wrap(<Shop />)} />
               <Route path="/shop/:slug" element={wrap(<ItemPage />)} />
+              <Route path="/checkout/:slug" element={wrap(<CheckoutPage />)} />
               <Route path="/work" element={wrap(<Work />)} />
               <Route path="/about" element={wrap(<About />)} />
               <Route path="/legal/:kind" element={wrap(<Legal />)} />

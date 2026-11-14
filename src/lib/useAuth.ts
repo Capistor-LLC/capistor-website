@@ -8,6 +8,7 @@ export function useAuth() {
   const [role, setRole] = useState<string | null>(null);
   const [aal, setAal] = useState("aal1");
   const [rolesLoading, setRolesLoading] = useState(false);
+  const [checkedToken, setCheckedToken] = useState<string | null>(null);
   useEffect(() => {
     if (!hasSupabase) {
       setLoading(false);
@@ -58,12 +59,15 @@ export function useAuth() {
         /* Role checks fail closed; the server still verifies every action. */
       })
       .finally(() => {
-        if (active) setRolesLoading(false);
+        if (active) {
+          setCheckedToken(session.access_token);
+          setRolesLoading(false);
+        }
       });
     return () => {
       active = false;
     };
-  }, [session]);
+  }, [session?.access_token, session?.user.id]);
   return {
     session,
     user: session?.user ?? null,
@@ -71,7 +75,7 @@ export function useAuth() {
     role,
     isAdmin: isStaff && aal === "aal2",
     aal,
-    loading: loading || rolesLoading,
+    loading: loading || rolesLoading || (!!session && checkedToken !== session.access_token),
     signOut: () => supabase.auth.signOut(),
   };
 }

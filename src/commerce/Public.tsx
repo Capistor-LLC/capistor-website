@@ -482,7 +482,8 @@ export function ItemPage() {
           {item.kind === "digital" ? (
             <section>
               <h2>Usage licence · version {item.version}</h2>
-              <p className="prose-text">{item.license_text}</p>
+              <p>Use and modify the files for your own personal or internal company projects. Ownership stays with Capistor; resale and redistribution are not permitted.</p>
+              <details><summary>Read the full product licence</summary><p className="prose-text">{item.license_text}</p></details>
             </section>
           ) : item.booking_required ? (
             <section>
@@ -548,7 +549,7 @@ export function ItemPage() {
           {available &&
           business.legal_approved &&
           (item.checkout_enabled || item.requires_quote) ? (
-            <OrderForm item={item} />
+            <ButtonLink to={`/checkout/${item.slug}`}>{item.requires_quote ? "Request a quote" : "Continue to checkout"}</ButtonLink>
           ) : (
             <>
               <Notice>
@@ -581,6 +582,12 @@ export function ItemPage() {
       </div>
     </div>
   );
+}
+export function CheckoutPage() {
+  const { slug } = useParams();
+  const { items, available, business, loading } = useCatalog();
+  const item = items.find((entry) => entry.slug === slug);
+  return <div className="page-wrap narrow"><PageIntro label="SECURE ORDER" title="Your order details" /><p>1. Details → 2. Agreements → 3. Payment → 4. Delivery or booking</p>{loading ? <p>Loading…</p> : item && available && business.legal_approved && (item.checkout_enabled || item.requires_quote) ? <><h2>{item.title}</h2><p>{money(item.price_minor, item.currency)}{item.requires_quote ? " starting price; final quote before payment" : ""}</p><OrderForm item={item} /></> : <Notice>This item is not available for checkout yet.</Notice>}</div>;
 }
 function OrderForm({ item }: { item: ShopItem }) {
   const { user, loading } = useAuth();
@@ -630,7 +637,7 @@ function OrderForm({ item }: { item: ShopItem }) {
   if (!user)
     return (
       <ButtonLink
-        to={`/login?next=${encodeURIComponent(`/${item.kind === "service" ? "services" : "shop"}/${item.slug}`)}`}
+        to={`/login?next=${encodeURIComponent(`/checkout/${item.slug}`)}`}
       >
         Sign in to start
       </ButtonLink>
@@ -696,7 +703,7 @@ function OrderForm({ item }: { item: ShopItem }) {
       {item.kind === "digital" && (
         <label className="checkbox">
           <input name="license" type="checkbox" required />
-          <span>I accept the usage licence shown on this page.</span>
+          <span>I accept the product licence: personal or internal company use and modification only; no resale or redistribution.<details><summary>Full licence terms</summary><p className="prose-text">{item.license_text}</p></details></span>
         </label>
       )}
       <label className="checkbox">
