@@ -68,7 +68,7 @@ export const REFUND_POLICY = `REFUND AND QUALITY GUARANTEE POLICY
 Effective date: 14 November 2026
 
 OUR PROMISE
-Capistor stands behind the engineering it delivers. A verified engineering flaw introduced by Capistor is corrected, remade or replaced without charge. If it cannot be corrected within a reasonable period, the affected design fee is refunded in full. If that flaw makes the complete integrated Capistor order substantially unusable for its agreed purpose, the complete Capistor order may be refunded in full.
+Capistor stands behind the engineering it delivers. A verified engineering flaw introduced by Capistor is corrected, remade or replaced without charge. If it cannot be corrected within a reasonable period, you receive a 100% refund of the affected design fee. If that flaw makes the complete integrated Capistor order substantially unusable for its agreed purpose, you may receive a 100% refund of the complete Capistor order.
 
 PHYSICAL PCBS AND ASSEMBLIES
 Every physical PCB supplied by Capistor must pass the quality-control steps recorded for the order before dispatch. Depending on scope, those steps may include visual inspection, dimensional checks, continuity and short-circuit checks, power-rail checks, programming and agreed functional tests. The order history identifies the checks performed; a check not listed is not represented as completed.
