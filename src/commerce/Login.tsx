@@ -1,7 +1,7 @@
 import { useEffect, useState, FormEvent } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { supabase, hasSupabase } from "../lib/supabase";
+import { supabase, hasSupabase, enabledSignInProviders } from "../lib/supabase";
 import { useAuth } from "../lib/useAuth";
 import { Notice, PageIntro } from "./Shell";
 import { api } from "./api";
@@ -25,6 +25,12 @@ export default function Login() {
     "signin" | "signup" | "reset" | "magic"
   >("signin");
   const [busy, setBusy] = useState(false);
+  const [providers, setProviders] = useState({google:false, apple:false});
+  useEffect(() => {
+    let active = true;
+    enabledSignInProviders().then((result) => {if (active) setProviders(result);}).catch(() => { /* Email sign-in remains available if discovery fails. */ });
+    return () => {active = false;};
+  }, []);
   const [factor, setFactor] = useState<{
     id: string;
     qr?: string;
@@ -145,8 +151,7 @@ export default function Login() {
         title="One place for your project."
       >
         <p>
-          Agreements, progress, private files and payment records. Use Google,
-          Apple, or your email and password.
+          Agreements, progress, private files and payment records. Sign in to manage your orders securely.
         </p>
       </PageIntro>
       <div className="login-card">
@@ -266,20 +271,20 @@ export default function Login() {
         ) : (
           <>
             <div className="oauth-grid">
-              <button
+              {providers.google && <button
                 className="button secondary"
                 disabled={busy}
                 onClick={() => void oauth("google")}
               >
                 Continue with Google
-              </button>
-              <button
+              </button>}
+              {providers.apple && <button
                 className="button secondary"
                 disabled={busy}
                 onClick={() => void oauth("apple")}
               >
                 Continue with Apple
-              </button>
+              </button>}
             </div>
             <div className="login-divider"><span>or use email</span></div>
             <form onSubmit={login} className="stack-form">

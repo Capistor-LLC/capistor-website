@@ -10,6 +10,15 @@ const anonKey =
   import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 export const hasSupabase = !!supabaseUrl && !!anonKey;
+export async function enabledSignInProviders(): Promise<{google: boolean; apple: boolean}> {
+  if (!hasSupabase) return {google:false, apple:false};
+  const response = await fetch(`${supabaseUrl}/auth/v1/settings`, {
+    headers: {apikey: anonKey}, signal: AbortSignal.timeout(8000),
+  });
+  if (!response.ok) throw new Error('Could not check sign-in providers');
+  const settings = await response.json();
+  return {google: settings.external?.google === true, apple: settings.external?.apple === true};
+}
 export const supabase = createClient(
   supabaseUrl || "https://unconfigured.invalid",
   anonKey || "unconfigured",

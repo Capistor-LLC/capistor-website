@@ -1,4 +1,4 @@
-import type { Appointment } from './types';
+import type { Appointment } from './types.js';
 
 function escapeText(value: string) {
   return value.replace(/\\/g, '\\\\').replace(/\r\n|\r|\n/g, '\\n').replace(/;/g, '\\;').replace(/,/g, '\\,');

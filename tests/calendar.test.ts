@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { appointmentCalendar } from '../src/commerce/calendar';
-import type { Appointment } from '../src/commerce/types';
+import { appointmentCalendar } from '../src/commerce/calendar.js';
+import type { Appointment } from '../src/commerce/types.js';
 
 const appointment = {
   id: 'test-appointment', starts_at: '2026-12-01T14:00:00+04:00', ends_at: '2026-12-01T14:45:00+04:00',
