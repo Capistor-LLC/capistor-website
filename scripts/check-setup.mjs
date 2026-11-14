@@ -2,9 +2,19 @@
 import { loadEnv } from "vite";
 const config = { ...loadEnv("development", process.cwd(), ""), ...process.env };
 let incomplete = false;
+const stagingBrowser =
+  config.VITE_PAYMENT_MODE === "test" &&
+  (config.VITE_STAGING_SUPABASE_URL ||
+    config.VITE_STAGING_SUPABASE_ANON_KEY);
+const browserUrlKey = stagingBrowser
+  ? "VITE_STAGING_SUPABASE_URL"
+  : "VITE_SUPABASE_URL";
+const browserKeyKey = stagingBrowser
+  ? "VITE_STAGING_SUPABASE_ANON_KEY"
+  : "VITE_SUPABASE_ANON_KEY";
 for (const key of [
-  "VITE_SUPABASE_URL",
-  "VITE_SUPABASE_ANON_KEY",
+  browserUrlKey,
+  browserKeyKey,
   "SUPABASE_URL",
   "SUPABASE_SERVICE_ROLE_KEY",
   "STRIPE_SECRET_KEY",
@@ -22,8 +32,8 @@ for (const key of [
 }
 if (
   config.SUPABASE_URL &&
-  config.VITE_SUPABASE_URL &&
-  config.SUPABASE_URL !== config.VITE_SUPABASE_URL
+  config[browserUrlKey] &&
+  config.SUPABASE_URL !== config[browserUrlKey]
 ) {
   console.log("ERROR Browser and server must use the same Supabase project.");
   incomplete = true;

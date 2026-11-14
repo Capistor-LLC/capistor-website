@@ -15,7 +15,7 @@ Keep service keys on the server. Set the variables documented in `.env.example`,
 Create a private bucket such as `capistor-private-staging`, with public R2.dev access and custom public domains disabled. Use a bucket-scoped credential permitting the required object read/write/copy/delete operations; do not use an account-wide administrator token. Configure CORS for exact app origins only:
 
 ```json
-[{"AllowedOrigins":["http://127.0.0.1:5173","https://YOUR-PREVIEW-HOST"],"AllowedMethods":["PUT","GET","HEAD"],"AllowedHeaders":["content-type","content-length"],"ExposeHeaders":["etag"],"MaxAgeSeconds":300}]
+[{"AllowedOrigins":["http://127.0.0.1:5173","https://YOUR-PREVIEW-HOST"],"AllowedMethods":["PUT","GET","HEAD"],"AllowedHeaders":["content-type"],"ExposeHeaders":["etag"],"MaxAgeSeconds":300}]
 ```
 
 Use a separate production bucket/credential and production origins at launch. Add a lifecycle rule deleting `staging/` objects after one day. Keep `private/` objects according to the published retention policy. Configure account usage alerts and monitor storage/requests. The API limits upload count and file size; signed object URLs are bearer links and can be replayed until they expire, so infrastructure billing alerts still matter.
