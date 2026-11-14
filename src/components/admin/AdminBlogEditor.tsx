@@ -9,7 +9,7 @@ import {
 import { Link, useNavigate, useParams } from "react-router-dom";
 import MDEditor from "@uiw/react-md-editor";
 import { api } from "../../commerce/api";
-import { supabase, DbBlogSeries } from "../../lib/supabase";
+import { supabase, supabaseUrl, DbBlogSeries } from "../../lib/supabase";
 import { deriveExcerpt, deriveReadingMinutes, slugify } from "../../lib/blog";
 import AdminLayout from "./AdminLayout";
 
@@ -263,8 +263,7 @@ export default function AdminBlogEditor({ mode }: { mode: Mode }) {
     try {
       const { data: sess } = await supabase.auth.getSession();
       const token = sess.session?.access_token;
-      const projectUrl = import.meta.env.VITE_SUPABASE_URL;
-      const res = await fetch(`${projectUrl}/functions/v1/send-blog-email`, {
+      const res = await fetch(`${supabaseUrl}/functions/v1/send-blog-email`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

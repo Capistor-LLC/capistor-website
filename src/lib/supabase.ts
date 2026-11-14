@@ -1,12 +1,17 @@
 import { createClient } from "@supabase/supabase-js";
 import { supabaseFetch } from "./supabaseFetch";
 
-const url = import.meta.env.VITE_SUPABASE_URL as string;
-const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string;
+const useStaging = import.meta.env.VITE_PAYMENT_MODE === "test";
+export const supabaseUrl =
+  (useStaging && import.meta.env.VITE_STAGING_SUPABASE_URL) ||
+  import.meta.env.VITE_SUPABASE_URL;
+const anonKey =
+  (useStaging && import.meta.env.VITE_STAGING_SUPABASE_ANON_KEY) ||
+  import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-export const hasSupabase = !!url && !!anonKey;
+export const hasSupabase = !!supabaseUrl && !!anonKey;
 export const supabase = createClient(
-  url || "https://unconfigured.invalid",
+  supabaseUrl || "https://unconfigured.invalid",
   anonKey || "unconfigured",
   {
     global: { fetch: supabaseFetch },
