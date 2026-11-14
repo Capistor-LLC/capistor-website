@@ -18,6 +18,14 @@ Tested against the deployed staging API with a separate verified customer accoun
 | Available appointment slots | Endpoint responds successfully |
 | Digital product ordering | Blocked: approved sale bundles are missing |
 
-Not yet verified end to end: browser MFA, recovery email delivery and password change, completed Stripe payment/webhook, paid digital download, file upload, booking after payment, refunds, external email/SMS delivery, Google/Apple OAuth. These are not implied by passing unit tests or successful checkout-session creation.
+## Completed-payment follow-up
+
+A Stripe Checkout browser transaction using the sandbox Visa card succeeded for QA order `724f164d-bb4e-406c-b328-747485282da5`. Without manually setting payment status, the provider webhook changed the database order to `paid` / `in_progress` and recorded `Payment confirmed`.
+
+The paid order then passed the booking service: an appointment was created, a repeat request returned the same appointment, and the availability slot became booked. This verifies duplicate-request handling, not a concurrent two-customer race. A labelled appointment one year ahead is a QA fixture and must not be fulfilled.
+
+A labelled, approved QA text file was stored privately in R2. The customer's signed download returned the exact bytes. Another customer's access was rejected. This tests service-order delivery, not a finished digital-product bundle or the upload/quarantine workflow.
+
+Not yet verified end to end: browser MFA, recovery email delivery and password change, paid digital-product entitlement, browser file upload, booking UI, refunds, external email/SMS delivery, Google/Apple OAuth. These are not implied by passing unit tests or successful checkout-session creation.
 
 Production dependencies: live payment configuration, OAuth credentials, messaging/video provider configuration, verified product bundles and business availability. No production payments have been enabled.
