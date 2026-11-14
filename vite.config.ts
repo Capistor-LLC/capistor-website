@@ -9,7 +9,5 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  optimizeDeps: {
-    include: ["@emotion/styled", "@mui/styled-engine"],
-  },
+  server: { host: "127.0.0.1", proxy: { "/api": "http://127.0.0.1:3001" } },
 });
