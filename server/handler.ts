@@ -249,6 +249,7 @@ export default async function handler(
         const b = z
           .object({
             document_id: id,
+            party: z.enum(["client", "company"]).optional(),
             name: text(150),
             sha256: z.string().regex(/^[a-f0-9]{64}$/),
             consent: z.literal(true),
@@ -261,8 +262,11 @@ export default async function handler(
             .eq("id", b.document_id)
             .single(),
         );
-        await getOrder(ctx, d.order_id);
-        if (ctx.isAdmin)
+        const signingOrder = await getOrder(ctx, d.order_id);
+        const party = b.party || (ctx.isAdmin ? "company" : "client");
+        if (party === "client" && signingOrder.client_id !== ctx.user.id)
+          throw new HttpError(403, "Only the customer on this order can sign as client");
+        if (party === "company")
           staffRole(ctx, ["owner", "admin", "sales"]);
         check(
           await ctx.db.rpc("sign_order_document", {
@@ -270,7 +274,7 @@ export default async function handler(
             p_user: ctx.user.id,
             p_name: b.name,
             p_email: ctx.user.email,
-            p_party: ctx.isAdmin ? "company" : "client",
+            p_party: party,
             p_hash: b.sha256,
             p_consent: SIGNING_CONSENT,
           }),

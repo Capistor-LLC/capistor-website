@@ -420,7 +420,8 @@ export function OrderPage() {
                           (s) =>
                             s.document_id === d.id &&
                             s.party === (data.isAdmin ? "company" : "client"),
-                        ) && <SignForm doc={d} busy={busy} run={action} />}
+                        ) && <SignForm doc={d} busy={busy} run={action} party={data.isAdmin ? "company" : "client"} />}
+                      {data.isAdmin && o.client_id === user?.id && d.status === "issued" && latest.includes(d) && !signatures.some((s) => s.document_id === d.id && s.party === "client") && <SignForm doc={d} busy={busy} run={action} party="client" />}
                     </div>
                   ))
                 )}
@@ -916,8 +917,10 @@ function SignForm({
   doc,
   busy,
   run,
+  party,
 }: {
   doc: OrderDocument;
+  party: "client" | "company";
   busy: boolean;
   run: (work: () => Promise<unknown>) => Promise<void>;
 }) {
@@ -930,6 +933,7 @@ function SignForm({
         void run(() =>
           api("sign", {
             document_id: doc.id,
+            party,
             sha256: doc.sha256,
             name: f.get("name"),
             consent: f.get("consent") === "on",
@@ -950,7 +954,7 @@ function SignForm({
         </span>
       </label>
       <button className="button" disabled={busy}>
-        Sign this version
+        Sign this version as {party === "company" ? "Capistor" : "the customer"}
       </button>
     </form>
   );
