@@ -305,7 +305,7 @@ export function OrderPage() {
       <div className="portal-layout">
         <div>
           <div className="tabs" role="tablist" aria-label="Order sections">
-            {["history", "agreements", "files", "scope"].map((t) => (
+            {["history", "agreements", "files", "scope", "support"].map((t) => (
               <button
                 key={t}
                 role="tab"
@@ -422,6 +422,37 @@ export function OrderPage() {
                     </div>
                   ))
                 )}
+                <div className="panel">
+                  <h2>Proposal and decision history</h2>
+                  <p className="micro">
+                    Comments, objections, decisions and document versions stay
+                    dated and cannot be overwritten.
+                  </p>
+                  {data.negotiations.length ? (
+                    <ol className="timeline compact">
+                      {data.negotiations.map((n) => (
+                        <li key={n.id}>
+                          <time dateTime={n.created_at}>{date(n.created_at)}</time>
+                          <h3>
+                            {n.document_kind.toUpperCase()} · {humanStatus(n.event_type)} · {n.actor_party}
+                          </h3>
+                          {n.clause_key && <p><strong>Clause:</strong> {n.clause_key}</p>}
+                          <p>{n.message}</p>
+                          {(n.previous_text || n.proposed_text) && (
+                            <details>
+                              <summary>Compare recorded text</summary>
+                              <TextDifference before={n.previous_text} after={n.proposed_text} />
+                            </details>
+                          )}
+                          {n.decision && <p><strong>Decision:</strong> {n.decision}</p>}
+                        </li>
+                      ))}
+                    </ol>
+                  ) : (
+                    <p className="micro">No objections or decisions recorded yet.</p>
+                  )}
+                  <NegotiationForm orderId={o.id} documents={documents} busy={busy} run={action} />
+                </div>
               </>
             )}
             {tab === "files" && (
@@ -432,7 +463,8 @@ export function OrderPage() {
                     Files are private. New uploads remain quarantined until
                     reviewed. Approved deliverables require confirmed payment.
                   </p>
-                  {o.item_snapshot.kind === "service" && (
+                  {o.item_snapshot.kind === "service" &&
+                    o.item_snapshot.agreement_required !== false && (
                     <>
                       {signed("nda") ? (
                         <Upload
@@ -498,6 +530,36 @@ export function OrderPage() {
                 </details>
               </div>
             )}
+            {tab === "support" && (
+              <div className="panel">
+                <h2>Support, refund or dispute</h2>
+                <p>
+                  Open a dated ticket here or email {business.contact_email} with
+                  {` ${o.reference}`}. The request, decision and outcome remain
+                  with the order.
+                </p>
+                {data.supportCases.map((c) => (
+                  <article className="support-case" key={c.id}>
+                    <p className="eyebrow">{humanStatus(c.case_type)} · {humanStatus(c.status)} · {date(c.created_at)}</p>
+                    <h3>{c.subject}</h3>
+                    <p>{c.detail}</p>
+                    {c.requested_remedy && <p><strong>Requested:</strong> {c.requested_remedy}</p>}
+                    {c.decision && <p><strong>Decision:</strong> {c.decision}</p>}
+                    {data.isAdmin && (
+                      <form className="stack-form" onSubmit={(e) => {
+                        e.preventDefault(); const f = new FormData(e.currentTarget);
+                        void action(() => api("update-support-case", { id: c.id, status: f.get("status"), decision: f.get("decision") || "" }));
+                      }}>
+                        <label>Status<select name="status" defaultValue={c.status}><option>open</option><option>investigating</option><option>waiting_customer</option><option>approved</option><option>resolved</option><option>rejected</option><option>closed</option></select></label>
+                        <label>Decision and outcome<textarea name="decision" defaultValue={c.decision} maxLength={20000} /></label>
+                        <button className="small-button" disabled={busy}>Save ticket decision</button>
+                      </form>
+                    )}
+                  </article>
+                ))}
+                <SupportForm orderId={o.id} busy={busy} run={action} />
+              </div>
+            )}
           </section>
           {data.isAdmin && (
             <AdminOrderTools data={data} run={action} busy={busy} />
@@ -540,6 +602,9 @@ export function OrderPage() {
               </p>
             )}
           </div>
+          {o.item_snapshot.booking_required && o.payment_status === "paid" && (
+            <AppointmentPanel data={data} busy={busy} run={action} />
+          )}
           {o.status === "awaiting_payment" &&
             ["unpaid", "pending"].includes(o.payment_status) &&
             user?.id === o.client_id && (
@@ -637,6 +702,214 @@ export function OrderPage() {
     </div>
   );
 }
+function NegotiationForm({
+  orderId,
+  documents,
+  busy,
+  run,
+}: {
+  orderId: string;
+  documents: OrderDocument[];
+  busy: boolean;
+  run: (work: () => Promise<unknown>) => Promise<void>;
+}) {
+  return (
+    <details>
+      <summary>Add a comment, objection or decision</summary>
+      <form
+        className="stack-form"
+        onSubmit={(e) => {
+          e.preventDefault();
+          const form = e.currentTarget;
+          const f = new FormData(form);
+          const kind = String(f.get("kind"));
+          const current = [...documents].reverse().find((d) => d.kind === kind);
+          void run(async () => {
+            await api("negotiation", {
+              order_id: orderId,
+              document_id: current?.id || null,
+              document_kind: kind,
+              event_type: f.get("event_type"),
+              clause_key: f.get("clause_key") || "",
+              message: f.get("message"),
+              previous_text: "",
+              proposed_text: f.get("proposed_text") || "",
+              decision: f.get("decision") || "",
+            });
+            form.reset();
+          });
+        }}
+      >
+        <div className="form-grid">
+          <label className="field">
+            Document
+            <select name="kind"><option value="contract">Contract</option><option value="nda">NDA</option></select>
+          </label>
+          <label className="field">
+            Entry type
+            <select name="event_type"><option value="commented">Comment</option><option value="objected">Objection</option><option value="accepted">Acceptance</option><option value="decision">Decision</option></select>
+          </label>
+        </div>
+        <label>
+          Clause or subject
+          <input name="clause_key" maxLength={120} placeholder="e.g. 6. Revisions" />
+        </label>
+        <label>
+          Comment or reason
+          <textarea name="message" required maxLength={10000} />
+        </label>
+        <label>
+          Proposed replacement text (optional)
+          <textarea name="proposed_text" maxLength={40000} />
+        </label>
+        <label>
+          Recorded decision (optional)
+          <textarea name="decision" maxLength={10000} />
+        </label>
+        <button className="button secondary" disabled={busy}>Record entry</button>
+      </form>
+    </details>
+  );
+}
+function TextDifference({ before, after }: { before: string; after: string }) {
+  const oldLines = before.split("\n");
+  const newLines = after.split("\n");
+  let start = 0;
+  while (start < oldLines.length && start < newLines.length && oldLines[start] === newLines[start]) start++;
+  let oldEnd = oldLines.length - 1;
+  let newEnd = newLines.length - 1;
+  while (oldEnd >= start && newEnd >= start && oldLines[oldEnd] === newLines[newEnd]) {
+    oldEnd--; newEnd--;
+  }
+  const contextStart = Math.max(0, start - 2);
+  const contextOldEnd = Math.min(oldLines.length, oldEnd + 3);
+  const contextNewEnd = Math.min(newLines.length, newEnd + 3);
+  return (
+    <div className="document-diff">
+      <div><h4>Previous</h4><pre className="document-text diff-old">{oldLines.slice(contextStart, contextOldEnd).join("\n") || "No previous text"}</pre></div>
+      <div><h4>Proposed</h4><pre className="document-text diff-new">{newLines.slice(contextStart, contextNewEnd).join("\n") || "No proposed text"}</pre></div>
+    </div>
+  );
+}
+
+function SupportForm({
+  orderId,
+  busy,
+  run,
+}: {
+  orderId: string;
+  busy: boolean;
+  run: (work: () => Promise<unknown>) => Promise<void>;
+}) {
+  return (
+    <details>
+      <summary>Open a new ticket</summary>
+      <form
+        className="stack-form"
+        onSubmit={(e) => {
+          e.preventDefault();
+          const form = e.currentTarget;
+          const f = new FormData(form);
+          void run(async () => {
+            await api("support-case", {
+              order_id: orderId,
+              case_type: f.get("case_type"),
+              subject: f.get("subject"),
+              detail: f.get("detail"),
+              requested_remedy: f.get("remedy") || "",
+            });
+            form.reset();
+          });
+        }}
+      >
+        <label>
+          Ticket type
+          <select name="case_type">
+            <option value="support">General support</option>
+            <option value="engineering_flaw">Engineering flaw guarantee</option>
+            <option value="return">Return or physical PCB problem</option>
+            <option value="refund">Refund request</option>
+            <option value="dispute">Dispute</option>
+          </select>
+        </label>
+        <label>Subject<input name="subject" required maxLength={200} /></label>
+        <label>What happened?<textarea name="detail" required maxLength={20000} /></label>
+        <label>Preferred remedy<textarea name="remedy" maxLength={5000} placeholder="Correction, replacement or refund" /></label>
+        <button className="button" disabled={busy}>Open ticket</button>
+      </form>
+    </details>
+  );
+}
+
+function AppointmentPanel({
+  data,
+  busy,
+  run,
+}: {
+  data: OrderDetail;
+  busy: boolean;
+  run: (work: () => Promise<unknown>) => Promise<void>;
+}) {
+  const [slots, setSlots] = useState<
+    { id: string; starts_at: string; ends_at: string }[]
+  >([]);
+  const [loaded, setLoaded] = useState(false);
+  useEffect(() => {
+    if (data.appointment || loaded) return;
+    setLoaded(true);
+    api<{ id: string; starts_at: string; ends_at: string }[]>(
+      "available-slots",
+      undefined,
+      { id: data.order.id },
+    )
+      .then(setSlots)
+      .catch(() => setSlots([]));
+  }, [data.appointment, data.order.id, loaded]);
+  if (data.appointment)
+    return (
+      <div className="panel appointment-card">
+        <p className="eyebrow">YOUR CONSULTATION</p>
+        <h2>{date(data.appointment.starts_at)}</h2>
+        <p>{Intl.DateTimeFormat().resolvedOptions().timeZone} · {humanStatus(data.appointment.status)}</p>
+        {data.appointment.meeting_url ? (
+          <a className="button full" href={data.appointment.meeting_url} target="_blank" rel="noreferrer">Join call <Arrow /></a>
+        ) : (
+          <Notice>The joining link will appear here and in your notification before the appointment.</Notice>
+        )}
+      </div>
+    );
+  return (
+    <div className="panel appointment-card">
+      <p className="eyebrow">BOOK YOUR CALL</p>
+      <h2>Choose an available time.</h2>
+      {slots.length ? (
+        <div className="slot-list">
+          {slots.map((slot) => (
+            <button
+              key={slot.id}
+              className="small-button"
+              disabled={busy}
+              onClick={() =>
+                void run(() =>
+                  api("book-appointment", {
+                    order_id: data.order.id,
+                    slot_id: slot.id,
+                    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                  }),
+                )
+              }
+            >
+              {date(slot.starts_at)}
+            </button>
+          ))}
+        </div>
+      ) : (
+        <Notice>New appointment times are being added. You will be notified when a slot opens.</Notice>
+      )}
+    </div>
+  );
+}
+
 function SignForm({
   doc,
   busy,

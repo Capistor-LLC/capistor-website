@@ -21,6 +21,8 @@ export type ShopItem = {
   published: boolean;
   checkout_enabled: boolean;
   requires_quote: boolean;
+  agreement_required: boolean;
+  booking_required: boolean;
 };
 export type Order = {
   id: string;
@@ -32,6 +34,8 @@ export type Order = {
   company: string;
   billing_address: string;
   brief: string;
+  phone_e164: string;
+  marketing_phone_consent: boolean;
   status: string;
   payment_status: string;
   total_minor: number;
@@ -98,7 +102,75 @@ export type OrderDetail = {
     created_at: string;
   }[];
   downloads: ProjectFile[];
+  negotiations: NegotiationEvent[];
+  appointment: Appointment | null;
+  supportCases: SupportCase[];
   isAdmin: boolean;
+};
+export type NegotiationEvent = {
+  id: string;
+  document_kind: "nda" | "contract";
+  document_id: string | null;
+  event_type: "proposed" | "commented" | "objected" | "accepted" | "decision";
+  actor_party: "client" | "company";
+  clause_key: string;
+  message: string;
+  previous_text: string;
+  proposed_text: string;
+  decision: string;
+  created_at: string;
+};
+export type Appointment = {
+  id: string;
+  order_id: string;
+  client_id: string;
+  starts_at: string;
+  ends_at: string;
+  timezone: string;
+  meeting_url: string;
+  status: string;
+  created_at: string;
+};
+export type SupportCase = {
+  id: string;
+  order_id: string;
+  case_type: string;
+  status: string;
+  subject: string;
+  detail: string;
+  requested_remedy: string;
+  decision: string;
+  created_at: string;
+  updated_at: string;
+};
+export type StaffMember = {
+  user_id: string;
+  email: string;
+  display_name: string;
+  role: "owner" | "admin" | "sales" | "engineer" | "support" | "editor";
+  active: boolean;
+  created_at: string;
+};
+export type CustomerSummary = {
+  user_id: string;
+  email: string;
+  full_name: string;
+  company: string;
+  phone_e164: string;
+  phone_verified_at: string | null;
+  marketing_phone_consent_at: string | null;
+  created_at: string;
+  last_seen_at: string | null;
+  visits: number;
+  product_views: number;
+  checkout_starts: number;
+  checkout_abandoned: number;
+  last_dropoff_stage: string;
+  recent_products: string[];
+  orders: number;
+  paid_orders: number;
+  refunds: number;
+  disputes: number;
 };
 export type Business = {
   legal_name: string;

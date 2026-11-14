@@ -14,7 +14,7 @@ export async function authenticate(authorization: string | undefined) {
   const staff = check(
     await db
       .from("staff_members")
-      .select("user_id")
+      .select("user_id,role,active")
       .eq("user_id", data.user.id)
       .maybeSingle(),
   );
@@ -22,7 +22,8 @@ export async function authenticate(authorization: string | undefined) {
     db,
     user: data.user,
     aal: String(payload.aal ?? "aal1"),
-    isAdmin: !!staff && payload.aal === "aal2",
+    role: staff?.active ? String(staff.role) : null,
+    isAdmin: !!staff?.active && payload.aal === "aal2",
   };
   const allowed = check(
     await db.rpc("consume_api_limit", {
@@ -38,4 +39,9 @@ export async function authenticate(authorization: string | undefined) {
 export type Context = Awaited<ReturnType<typeof authenticate>>;
 export function administrator(ctx: Context) {
   assertAdmin(ctx.isAdmin, ctx.aal);
+}
+export function staffRole(ctx: Context, allowed: string[]) {
+  administrator(ctx);
+  if (!ctx.role || !allowed.includes(ctx.role))
+    throw new HttpError(403, "Your staff role does not allow this action");
 }

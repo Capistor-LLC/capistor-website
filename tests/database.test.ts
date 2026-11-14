@@ -97,6 +97,9 @@ beforeAll(async () => {
   );
   await db.exec(readFileSync("supabase/migrations/0002_commerce.sql", "utf8"));
   await db.exec(readFileSync("supabase/migrations/0003_blog.sql", "utf8"));
+  await db.exec(
+    readFileSync("supabase/migrations/0004_commerce_operations.sql", "utf8"),
+  );
   item = String((await row("select id from shop_items limit 1")).id);
 }, 30000);
 afterAll(async () => {

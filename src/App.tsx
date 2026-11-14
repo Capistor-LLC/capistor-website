@@ -83,6 +83,12 @@ export default function App({
               />
               <Route path="/login" element={wrap(<Login />)} />
               <Route
+                path="/staff"
+                element={
+                  <Navigate to="/login?next=%2Fadmin%2Fcommerce" replace />
+                }
+              />
+              <Route
                 path="/admin/login"
                 element={
                   <Navigate to="/login?next=%2Fadmin%2Fcommerce" replace />

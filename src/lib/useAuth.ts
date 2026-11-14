@@ -5,6 +5,7 @@ export function useAuth() {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [isStaff, setStaff] = useState(false);
+  const [role, setRole] = useState<string | null>(null);
   const [aal, setAal] = useState("aal1");
   const [rolesLoading, setRolesLoading] = useState(false);
   useEffect(() => {
@@ -33,6 +34,7 @@ export function useAuth() {
   useEffect(() => {
     let active = true;
     setStaff(false);
+    setRole(null);
     setAal("aal1");
     setRolesLoading(false);
     if (!session) return;
@@ -40,14 +42,15 @@ export function useAuth() {
     Promise.all([
       supabase
         .from("staff_members")
-        .select("user_id")
+        .select("user_id,role,active")
         .eq("user_id", session.user.id)
         .maybeSingle(),
       supabase.auth.mfa.getAuthenticatorAssuranceLevel(),
     ])
       .then(([staff, assurance]) => {
         if (active) {
-          setStaff(!!staff.data);
+          setStaff(!!staff.data?.active);
+          setRole(staff.data?.active ? staff.data.role : null);
           setAal(assurance.data?.currentLevel || "aal1");
         }
       })
@@ -65,6 +68,7 @@ export function useAuth() {
     session,
     user: session?.user ?? null,
     isStaff,
+    role,
     isAdmin: isStaff && aal === "aal2",
     aal,
     loading: loading || rolesLoading,

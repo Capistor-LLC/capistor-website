@@ -42,6 +42,7 @@ export function checkoutParameters(
     customer_email: email,
     customer_creation: "always",
     billing_address_collection: "required",
+    phone_number_collection: { enabled: true },
     tax_id_collection: { enabled: true },
     // Fixed contractual currency and total; adaptive conversion is deliberately disabled.
     adaptive_pricing: { enabled: false },

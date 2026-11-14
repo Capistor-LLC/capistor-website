@@ -2,7 +2,7 @@
 
 ## What is implemented
 
-The new storefront, editable service/digital product catalogue, verified client login, MFA-protected business workspace, order history and exports, versioned NDA/contracts, private-file workflows, and Stripe/bank/optional BTCPay integrations are on `codex/storefront-client-portal`. The home hero uses the existing 3840×2160 PCB close-up with CSS edge blending. Suggested service prices are USD 99, 249, and 750 starting price; change these in the workspace. No invented digital products are offered for sale.
+The new storefront, editable service/digital product catalogue, password and social-provider-ready client login, MFA-protected staff workspace, order history and exports, versioned NDA/contracts, negotiation records, support/dispute tickets, consultation calendar, private-file workflows, and Stripe/bank/optional BTCPay integrations are on `codex/storefront-client-portal`. Suggested service prices are USD 99, 249, and 750 starting price; change these in the workspace. Three preview products are included at USD 79, 29 and 59. Their visuals and file lists are examples: replace and approve the final private bundles before enabling product checkout.
 
 This is a connected staging build, **not a completed live payment launch**. On 14 November 2026, `capistor-staging` was migrated and connected to the protected Vercel Preview, the private `capistor-private-staging` R2 bucket was connected with a bucket-scoped credential and exact-origin CORS, and a Stripe sandbox webhook was registered. Production variables and the production Supabase project were not changed. Test keys remain Preview-only.
 
@@ -18,14 +18,14 @@ The following migrations were applied successfully, in order:
 
 The exact Preview `/login` callback plus `127.0.0.1` and `localhost` development callbacks are allowlisted. The Site URL is the protected branch Preview. Back up and inspect the existing production schema before any production migration. Never rerun 0001 after 0002 on an established installation: 0002 replaces the legacy admin helper with the MFA version.
 
-Email login is available, but configure your own SMTP sender before inviting clients. Sign in with your owner email and enable/test TOTP. Because no owner existed when migrations ran, execute this once after the verified owner account exists:
+Email/password and email-link login are available, but configure your own SMTP sender before inviting clients. Google and Apple buttons require their provider credentials in Supabase. The designated owner is `krish.shoaib55@gmail.com`. Sign in with that verified account, choose **Activate owner workspace**, and enable/test TOTP. Migration 0004 also promotes that exact verified account when it already exists. The equivalent manual recovery query is:
 
 ```sql
-insert into public.staff_members(user_id)
-select id from auth.users
-where lower(email) = 'shoaib@capistor.com'
-  and email_confirmed_at is not null
-on conflict do nothing;
+insert into public.staff_members(user_id,email,display_name,role,active)
+select id,lower(email),'Shoaib Mustafa','owner',true from auth.users
+where lower(email) = 'krish.shoaib55@gmail.com'
+and email_confirmed_at is not null
+on conflict(user_id) do update set role='owner',active=true;
 ```
 
 Refresh the site and open `/admin/commerce`; enroll an authenticator when prompted. Keep its recovery arrangements outside the source repository. Clients do not need staff access.
@@ -58,7 +58,9 @@ In `/admin/commerce`:
 
 - Set company information, a verified registry link, and an appropriately redacted licence. Your real portrait and original Fiverr profile are already used.
 - Set final service prices, turnaround assumptions, scope and exclusions.
-- Complete and review terms, privacy, refund policy, NDA and project-contract templates. Resolve all placeholders before approval. Project-specific drafts require owner review and both signatures; the app does not promise legal enforceability.
+- The customer terms, privacy policy, refund/quality guarantee, mutual NDA and engineering-services template are populated and versioned. Have the final production wording reviewed for Capistor's precise licence, tax position and target customer jurisdictions before live launch. Project-specific documents remain reviewable and versioned; objections and decisions are immutable.
+- Configure Supabase Google and Apple OAuth clients, a production SMTP sender, an SMS provider for active phone verification, and a meeting provider if call links must be generated automatically. Until those providers are connected, the staff calendar records appointments and staff can add the meeting URL.
+- Replace the three preview product bundles with the final private releases, make sale-source repositories private, scan/approve each R2 bundle, and only then enable product checkout.
 - Add your real digital files, screenshots, compatible software, versions, licence and prices. Upload and approve files before enabling product checkout.
 - Add a Vercel deploy hook as `VERCEL_DEPLOY_HOOK` if you want the workspace's **Publish page updates** button and blog publishing to rebuild search-visible pages.
 

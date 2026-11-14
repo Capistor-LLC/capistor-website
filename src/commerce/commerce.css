@@ -295,6 +295,29 @@
   margin-right: 18px;
   color: #8b9787;
 }
+.guarantee-strip {
+  margin: 0 4.5%;
+  padding: 34px 38px;
+  display: grid;
+  grid-template-columns: minmax(260px, 0.8fr) minmax(320px, 1.2fr) auto;
+  gap: 35px;
+  align-items: center;
+  color: #e9f1e6;
+  background: var(--green);
+}
+.guarantee-strip h2 {
+  margin-top: 8px;
+  font-size: 27px;
+}
+.guarantee-strip .eyebrow,
+.guarantee-strip p {
+  color: #c8d8c3;
+}
+.guarantee-strip .text-link {
+  color: white;
+  border-color: #8fad88;
+  white-space: nowrap;
+}
 .section {
   padding: 88px 4.5%;
 }
@@ -718,6 +741,39 @@
   line-height: 1.85;
   color: var(--muted);
 }
+.policy-document {
+  max-width: 780px;
+  margin: 0 auto 55px;
+  color: var(--muted);
+  line-height: 1.85;
+}
+.policy-document h2 {
+  color: var(--ink);
+  font-size: 30px;
+  margin: 10px 0 12px;
+}
+.policy-document h3 {
+  color: var(--ink);
+  font-size: 19px;
+  margin: 38px 0 10px;
+  letter-spacing: -0.01em;
+}
+.policy-document p,
+.policy-document ul {
+  margin: 0 0 18px;
+  white-space: pre-line;
+}
+.policy-document ul {
+  padding-left: 22px;
+}
+.policy-document .policy-date {
+  color: var(--green);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding-bottom: 25px;
+  border-bottom: 1px solid var(--line);
+}
 .order-card {
   background: #e9eddf;
   padding: 28px;
@@ -738,6 +794,22 @@
   font-size: 12px;
   gap: 15px;
   margin: 26px 0;
+}
+.order-trust {
+  display: grid;
+  gap: 8px;
+  padding: 16px 0 22px;
+  border-top: 1px solid var(--line);
+  font-size: 11px;
+}
+.order-trust strong {
+  color: var(--green);
+  font-size: 12px;
+}
+.order-trust span::before {
+  content: "✓";
+  color: var(--green);
+  margin-right: 8px;
 }
 .order-card dd {
   margin: 0;
@@ -884,6 +956,48 @@
 .login-card img {
   max-width: 220px;
 }
+.oauth-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.oauth-grid .button {
+  justify-content: center;
+  padding-inline: 12px;
+}
+.login-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--muted);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin: 24px 0;
+}
+.login-divider::before,
+.login-divider::after {
+  content: "";
+  height: 1px;
+  background: var(--line);
+  flex: 1;
+}
+.login-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 15px;
+  margin-top: 18px;
+}
+.login-options button {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: var(--green);
+  text-decoration: underline;
+  font: inherit;
+  font-size: 11px;
+  cursor: pointer;
+}
 .portal-heading {
   display: flex;
   justify-content: space-between;
@@ -907,6 +1021,87 @@
   text-transform: uppercase;
   letter-spacing: 0.08em;
   border: 1px solid #ced9c2;
+}
+.timeline.compact li {
+  padding-bottom: 20px;
+}
+.diff-old {
+  border-left: 3px solid #a85d57;
+  background: #fff3f1;
+}
+.diff-new {
+  border-left: 3px solid #5f875c;
+  background: #f0f7ec;
+}
+.document-diff {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 15px;
+}
+.document-diff h4 {
+  margin-bottom: 7px;
+}
+.support-case,
+.appointment-row {
+  border-top: 1px solid var(--line);
+  padding: 22px 0;
+}
+.support-case:first-of-type,
+.appointment-row:first-of-type {
+  margin-top: 18px;
+}
+.appointment-card h2 {
+  font-size: 26px;
+  margin: 10px 0;
+}
+.slot-list {
+  display: grid;
+  gap: 8px;
+  margin-top: 18px;
+}
+.slot-list button {
+  text-align: left;
+}
+.staff-list {
+  display: grid;
+  gap: 1px;
+  background: var(--line);
+  margin: 25px 0;
+}
+.staff-row {
+  display: grid;
+  grid-template-columns: minmax(200px, 1fr) auto auto;
+  align-items: center;
+  gap: 20px;
+  background: var(--paper);
+  padding: 16px;
+}
+.customer-table-wrap {
+  overflow: auto;
+  margin-top: 24px;
+}
+.customer-table {
+  width: 100%;
+  min-width: 900px;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+.customer-table th,
+.customer-table td {
+  border-bottom: 1px solid var(--line);
+  padding: 15px 12px;
+  text-align: left;
+  vertical-align: top;
+}
+.customer-table th {
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 9px;
+}
+.calendar-admin {
+  grid-template-columns: minmax(0, 1.2fr) minmax(300px, 0.8fr);
 }
 .orders-list {
   border-top: 1px solid var(--line);
@@ -1312,6 +1507,12 @@
     flex-direction: column;
     gap: 12px;
   }
+  .guarantee-strip {
+    margin: 0;
+    padding: 30px 5%;
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
   .principles span {
     margin-right: 12px;
   }
@@ -1525,6 +1726,11 @@
   }
   .login-card {
     padding: 25px;
+  }
+  .oauth-grid,
+  .staff-row,
+  .document-diff {
+    grid-template-columns: 1fr;
   }
   .file-row {
     flex-direction: column;

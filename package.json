@@ -13,6 +13,7 @@
     "typecheck": "tsc --noEmit && tsc -p tsconfig.server.json",
     "test": "vitest run tests",
     "check:setup": "node scripts/check-setup.mjs",
+    "seed:commerce": "node --env-file=.env.local --import tsx scripts/seed-commerce.ts",
     "lint:commerce": "eslint server src/commerce api tests --max-warnings 0"
   },
   "dependencies": {

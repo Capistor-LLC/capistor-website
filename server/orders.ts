@@ -50,7 +50,11 @@ export async function agreementsReady(
   kind?: string,
 ) {
   const order = await getOrder(ctx, orderId);
-  if (order.item_snapshot.kind === "digital") return true;
+  if (
+    order.item_snapshot.kind === "digital" ||
+    order.item_snapshot.agreement_required === false
+  )
+    return true;
   const docs = check(
     await ctx.db
       .from("order_documents")
@@ -127,6 +131,7 @@ export async function createOrder(ctx: Context, body: unknown) {
   );
   if (
     item.kind === "service" &&
+    item.agreement_required !== false &&
     !["nda", "contract"].every((k) => templates.some((t) => t.id === k))
   )
     throw new HttpError(409, "Service agreements are not available yet");
@@ -146,17 +151,20 @@ export async function createOrder(ctx: Context, body: unknown) {
     id: randomUUID(),
     reference: `CAP-${randomUUID().replaceAll("-", "").slice(0, 10).toUpperCase()}`,
     client_id: ctx.user.id,
+    client_email: ctx.user.email || "",
     item_id: item.id,
     item_snapshot: item,
     client_name: b.client_name,
     company: b.company,
     billing_address: b.billing_address,
     brief: b.brief,
+    phone_e164: b.phone_e164,
+    marketing_phone_consent: b.marketing_phone_consent,
     request_key: b.request_key,
     total_minor: totalFor(item.price_minor, item.tax_bps),
     currency: item.currency,
     status:
-      item.kind === "digital"
+      item.kind === "digital" || item.agreement_required === false
         ? "awaiting_payment"
         : item.requires_quote
           ? "scoping"
@@ -164,6 +172,10 @@ export async function createOrder(ctx: Context, body: unknown) {
     accepted_terms:
       settings.terms + "\n\nREFUND POLICY\n" + settings.refund_policy,
     accepted_license: item.license_text,
+    terms_sha256: sha256(settings.terms),
+    privacy_sha256: sha256(settings.privacy),
+    refund_sha256: sha256(settings.refund_policy),
+    license_sha256: item.license_text ? sha256(item.license_text) : "",
   };
   const values = {
     company_name: settings.legal_name,
@@ -171,6 +183,14 @@ export async function createOrder(ctx: Context, body: unknown) {
     client_name: b.client_name,
     client_company: b.company || "Individual",
     client_address: b.billing_address,
+    client_email: ctx.user.email || "Verified account email",
+    effective_date: new Intl.DateTimeFormat("en-GB", {
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
+      timeZone: "Asia/Dubai",
+    }).format(new Date()),
+    support_email: settings.contact_email,
     reference: order.reference,
     project_title: item.title,
     scope: item.scope,
@@ -181,7 +201,7 @@ export async function createOrder(ctx: Context, body: unknown) {
     brief: b.brief,
   };
   const documents =
-    item.kind === "service"
+    item.kind === "service" && item.agreement_required !== false
       ? templates.map((t) => {
           const content = renderTemplate(t.body, values);
           return {
@@ -205,7 +225,16 @@ const fileColumns =
   "id,filename,size_bytes,sha256,status,version_label,created_at,review_note,uploaded_by";
 export async function detail(ctx: Context, orderId: string) {
   const order = await getOrder(ctx, orderId);
-  const [events, files, allDocuments, payments, entitlements] =
+  const [
+    events,
+    files,
+    allDocuments,
+    payments,
+    entitlements,
+    negotiationsResult,
+    appointmentResult,
+    supportResult,
+  ] =
     await Promise.all([
       allRows((from, to) =>
         ctx.db
@@ -251,6 +280,21 @@ export async function detail(ctx: Context, orderId: string) {
           .order("file_id")
           .range(from, to),
       ),
+      ctx.db
+        .from("document_negotiation_events")
+        .select("*")
+        .eq("order_id", orderId)
+        .order("created_at"),
+      ctx.db
+        .from("appointments")
+        .select("*")
+        .eq("order_id", orderId)
+        .maybeSingle(),
+      ctx.db
+        .from("support_cases")
+        .select("*")
+        .eq("order_id", orderId)
+        .order("created_at"),
     ]);
   const documents = allDocuments.filter(
     (d) => ctx.isAdmin || d.status !== "draft",
@@ -291,6 +335,9 @@ export async function detail(ctx: Context, orderId: string) {
     signatures,
     payments,
     downloads,
+    negotiations: check(negotiationsResult),
+    appointment: check(appointmentResult),
+    supportCases: check(supportResult),
     isAdmin: ctx.isAdmin,
   };
 }

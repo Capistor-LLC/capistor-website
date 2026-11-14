@@ -25,6 +25,38 @@ export async function api<T>(
     throw new Error(payload.error || "The request could not be completed.");
   return payload as T;
 }
+export async function trackJourney(
+  event_type:
+    | "visit"
+    | "product_view"
+    | "product_click"
+    | "checkout_start"
+    | "checkout_details"
+    | "checkout_abandoned"
+    | "policy_view"
+    | "login",
+  item_id?: string,
+  metadata: Record<string, string> = {},
+) {
+  try {
+    if (localStorage.getItem("capistor-analytics-consent") !== "granted") return;
+    let anonymous_id = localStorage.getItem("capistor-anonymous-id");
+    if (!anonymous_id) {
+      anonymous_id = crypto.randomUUID();
+      localStorage.setItem("capistor-anonymous-id", anonymous_id);
+    }
+    await api("track", {
+      consent: true,
+      anonymous_id,
+      event_type,
+      path: window.location.pathname,
+      item_id: item_id || null,
+      metadata,
+    });
+  } catch {
+    /* Optional analytics must never interrupt the customer journey. */
+  }
+}
 export async function exportRecord(
   id: string,
   format: "json" | "csv",

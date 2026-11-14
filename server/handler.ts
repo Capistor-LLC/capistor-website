@@ -1,6 +1,6 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { z, ZodError } from "zod";
-import { authenticate, administrator } from "./auth.js";
+import { authenticate, staffRole } from "./auth.js";
 import { database, check } from "./runtime.js";
 import { HttpError, id, text, csvCell } from "./policy.js";
 import { createOrder, detail, getOrder, event } from "./orders.js";
@@ -18,6 +18,20 @@ import {
 } from "./admin.js";
 import { taxReadiness } from "./stripe-checkout.js";
 import { paymentMode, requestOriginAllowed } from "./environment.js";
+import {
+  addAvailability,
+  availableSlots,
+  bookAppointment,
+  bootstrapOwner,
+  createSupportCase,
+  customerSummaries,
+  listCalendar,
+  listStaff,
+  recordNegotiation,
+  saveStaff,
+  updateAppointment,
+  updateSupportCase,
+} from "./operations.js";
 
 export const SIGNING_CONSENT =
   "I have read this complete document and agree to sign it electronically. I am authorised to sign for the named party. I understand that this signature applies only to the document version and SHA-256 fingerprint shown.";
@@ -29,6 +43,10 @@ const getActions = new Set([
   "admin",
   "tax",
   "item-files",
+  "staff",
+  "customers",
+  "calendar",
+  "available-slots",
 ]);
 async function readBody(req: IncomingMessage) {
   let size = 0;
@@ -75,6 +93,68 @@ export default async function handler(
       else
         await btcWebhook(database(), raw, req.headers["btcpay-sig"] as string);
       return send(200, { received: true });
+    }
+    if (action === "track") {
+      const raw = await readBody(req);
+      let parsed: unknown;
+      try {
+        parsed = JSON.parse(raw.toString());
+      } catch {
+        throw new HttpError(400, "Invalid JSON");
+      }
+      const b = z
+        .object({
+          consent: z.literal(true),
+          anonymous_id: id,
+          event_type: z.enum([
+            "visit",
+            "product_view",
+            "product_click",
+            "checkout_start",
+            "checkout_details",
+            "checkout_abandoned",
+            "policy_view",
+            "login",
+          ]),
+          path: z.string().startsWith("/").max(500),
+          item_id: id.nullable().optional(),
+          metadata: z.record(z.string(), z.string().max(200)).default({}),
+        })
+        .parse(parsed);
+      const db = database();
+      const allowed = check(
+        await db.rpc("consume_api_limit", {
+          p_key: `track:${b.anonymous_id}`,
+          p_limit: 100,
+          p_seconds: 3600,
+        }),
+      );
+      if (!allowed) throw new HttpError(429, "Analytics event limit reached");
+      let userId: string | null = null;
+      const token = req.headers.authorization?.match(/^Bearer ([A-Za-z0-9._-]+)$/)?.[1];
+      if (token) {
+        const verified = await db.auth.getUser(token);
+        if (!verified.error && verified.data.user?.email_confirmed_at)
+          userId = verified.data.user.id;
+      }
+      check(
+        await db.from("customer_events").insert({
+          user_id: userId,
+          anonymous_id: userId ? null : b.anonymous_id,
+          event_type: b.event_type,
+          path: b.path.split("?")[0],
+          item_id: b.item_id || null,
+          metadata: b.metadata,
+        }),
+      );
+      if (userId)
+        check(
+          await db
+            .from("customer_profiles")
+            .update({ last_seen_at: new Date().toISOString() })
+            .eq("user_id", userId),
+        );
+      return send(200, { ok: true });
     }
     if (action === "catalog") {
       const db = database();
@@ -136,6 +216,9 @@ export default async function handler(
       case "create-order":
         result = await createOrder(ctx, body);
         break;
+      case "bootstrap-owner":
+        result = await bootstrapOwner(ctx);
+        break;
       case "payment": {
         const b = z
           .object({
@@ -179,6 +262,8 @@ export default async function handler(
             .single(),
         );
         await getOrder(ctx, d.order_id);
+        if (ctx.isAdmin)
+          staffRole(ctx, ["owner", "admin", "sales"]);
         check(
           await ctx.db.rpc("sign_order_document", {
             p_document: b.document_id,
@@ -250,7 +335,7 @@ export default async function handler(
         return;
       }
       case "rebuild": {
-        administrator(ctx);
+        staffRole(ctx, ["owner", "admin", "editor"]);
         const hook = process.env.VERCEL_DEPLOY_HOOK;
         if (!hook) {
           result = { configured: false };
@@ -293,8 +378,41 @@ export default async function handler(
       case "admin":
         result = await adminData(ctx);
         break;
+      case "staff":
+        result = await listStaff(ctx);
+        break;
+      case "save-staff":
+        result = await saveStaff(ctx, body);
+        break;
+      case "customers":
+        result = await customerSummaries(ctx);
+        break;
+      case "negotiation":
+        result = await recordNegotiation(ctx, body);
+        break;
+      case "calendar":
+        result = await listCalendar(ctx);
+        break;
+      case "add-availability":
+        result = await addAvailability(ctx, body);
+        break;
+      case "available-slots":
+        result = await availableSlots(ctx, queryId());
+        break;
+      case "book-appointment":
+        result = await bookAppointment(ctx, body);
+        break;
+      case "update-appointment":
+        result = await updateAppointment(ctx, body);
+        break;
+      case "support-case":
+        result = await createSupportCase(ctx, body);
+        break;
+      case "update-support-case":
+        result = await updateSupportCase(ctx, body);
+        break;
       case "tax":
-        administrator(ctx);
+        staffRole(ctx, ["owner", "admin"]);
         result = await taxReadiness();
         break;
       case "save-item":
@@ -319,7 +437,7 @@ export default async function handler(
         result = await confirmBank(ctx, body);
         break;
       case "item-files":
-        administrator(ctx);
+        staffRole(ctx, ["owner", "admin", "editor", "engineer"]);
         result = check(
           await ctx.db
             .from("project_files")
@@ -331,7 +449,7 @@ export default async function handler(
         );
         break;
       case "review-file": {
-        administrator(ctx);
+        staffRole(ctx, ["owner", "admin", "engineer"]);
         const b = z
           .object({
             file_id: id,

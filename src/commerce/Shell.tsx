@@ -7,7 +7,7 @@ export function Arrow() {
   return <span aria-hidden="true">↗</span>;
 }
 export default function Shell({ children }: { children: ReactNode }) {
-  const { business, sandbox } = useCatalog();
+  const { business } = useCatalog();
   const [open, setOpen] = useState(false);
   const location = useLocation();
   useEffect(() => {
@@ -59,11 +59,6 @@ export default function Shell({ children }: { children: ReactNode }) {
           </Link>
         </nav>
       </header>
-      {sandbox && (
-        <div className="sandbox-banner" role="status">
-          Preview · Test payments only. Bank transfers and Bitcoin are disabled.
-        </div>
-      )}
       <main id="main">{children}</main>
       <Analytics />
       <footer className="site-footer">
@@ -89,7 +84,7 @@ export default function Shell({ children }: { children: ReactNode }) {
             <Link to="/legal/privacy">Privacy</Link>
             <Link to="/legal/refunds">Refunds</Link>
             <Link to="/about">Company details</Link>
-            <Link to="/admin/commerce">Admin</Link>
+            <Link to="/staff">Staff portal</Link>
             {import.meta.env.VITE_GA_MEASUREMENT_ID &&
               import.meta.env.VITE_GA_MANUAL_ONLY === "true" && (
                 <button

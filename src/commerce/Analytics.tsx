@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
+import { trackJourney } from "./api";
 
 // Enable only after turning off Enhanced Measurement in the GA4 stream.
 const measurement =
@@ -30,12 +31,11 @@ export default function Analytics() {
     return () => window.removeEventListener("analytics:preferences", reset);
   }, []);
   useEffect(() => {
-    if (!measurement || !/^G-[A-Z0-9]+$/.test(measurement)) return;
     const permitted = choice === "granted" && publicPath(location.pathname);
-    (window as unknown as Record<string, unknown>)[
-      `ga-disable-${measurement}`
-    ] = !permitted;
     if (!permitted) return;
+    void trackJourney("visit");
+    if (!measurement || !/^G-[A-Z0-9]+$/.test(measurement)) return;
+    (window as unknown as Record<string, unknown>)[`ga-disable-${measurement}`] = false;
     const w = window as AnalyticsWindow;
     if (!w.gtag) {
       w.dataLayer = w.dataLayer || [];
@@ -70,12 +70,13 @@ export default function Analytics() {
     } catch {
       /* The preference still applies to the current visit. */
     }
-    (window as unknown as Record<string, unknown>)[
-      `ga-disable-${measurement}`
-    ] = value !== "granted";
+    if (measurement)
+      (window as unknown as Record<string, unknown>)[
+        `ga-disable-${measurement}`
+      ] = value !== "granted";
     setChoice(value);
   }
-  if (!measurement || choice || !publicPath(location.pathname)) return null;
+  if (choice || !publicPath(location.pathname)) return null;
   return (
     <aside className="consent-banner" aria-label="Analytics preference">
       <p>

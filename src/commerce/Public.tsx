@@ -1,11 +1,11 @@
-import { useState, FormEvent } from "react";
+import { useEffect, useRef, useState, FormEvent } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import Seo from "../components/ui/Seo";
 import { useAuth } from "../lib/useAuth";
 import { useCatalog } from "./context";
 import { money, ShopItem } from "./types";
 import { FIVERR_URL } from "./catalog";
-import { api } from "./api";
+import { api, trackJourney } from "./api";
 import { Arrow, ButtonLink, Notice, PageIntro } from "./Shell";
 
 function ServiceRows() {
@@ -121,6 +121,23 @@ export function Home() {
         <p>
           <span>03</span> Clear deliverables & records
         </p>
+        <p>
+          <span>04</span> Engineering integrity guarantee
+        </p>
+      </section>
+      <section className="guarantee-strip">
+        <div>
+          <p className="eyebrow">ENGINEERING INTEGRITY GUARANTEE</p>
+          <h2>We take responsibility for the work.</h2>
+        </div>
+        <p>
+          A verified engineering flaw introduced by Capistor is corrected,
+          remade or replaced without charge. If it cannot be corrected, the
+          affected design fee is refunded in full. Physical PCBs supplied by
+          Capistor pass the quality-control steps recorded for the order before
+          dispatch.
+        </p>
+        <Link className="text-link" to="/legal/refunds">Read the guarantee <Arrow /></Link>
       </section>
       <section className="section">
         <div className="section-heading">
@@ -370,7 +387,12 @@ export function Shop() {
       {products.length ? (
         <div className="product-grid">
           {products.map((i) => (
-            <Link to={`/shop/${i.slug}`} className="product-tile" key={i.id}>
+            <Link
+              to={`/shop/${i.slug}`}
+              className="product-tile"
+              key={i.id}
+              onClick={() => void trackJourney("product_click", i.id, { source: "shop_grid" })}
+            >
               {i.image_url ? (
                 <img src={i.image_url} alt={i.title} />
               ) : (
@@ -414,6 +436,9 @@ export function ItemPage() {
   const { slug } = useParams();
   const { items, available, business, loading } = useCatalog();
   const item = items.find((i) => i.slug === slug);
+  useEffect(() => {
+    if (item) void trackJourney("product_view", item.id, { kind: item.kind });
+  }, [item]);
   if (!item)
     return (
       <div className="page-wrap">
@@ -458,6 +483,15 @@ export function ItemPage() {
             <section>
               <h2>Usage licence · version {item.version}</h2>
               <p className="prose-text">{item.license_text}</p>
+            </section>
+          ) : item.booking_required ? (
+            <section>
+              <h2>Book without back-and-forth</h2>
+              <p>
+                Create the order, pay securely, then choose an available call
+                time in your workspace. The appointment, joining link and
+                reminders stay with the order record.
+              </p>
             </section>
           ) : (
             <section>
@@ -505,6 +539,12 @@ export function ItemPage() {
                 : `${item.revision_limit} included round(s)`}
             </dd>
           </dl>
+          <div className="order-trust">
+            <strong>100% engineering-flaw guarantee</strong>
+            <span>Secure payment verification</span>
+            <span>Versioned files and order history</span>
+            {item.kind === "digital" && <span>Files release only after confirmed payment</span>}
+          </div>
           {available &&
           business.legal_approved &&
           (item.checkout_enabled || item.requires_quote) ? (
@@ -548,12 +588,23 @@ function OrderForm({ item }: { item: ShopItem }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [requestKey] = useState(() => crypto.randomUUID());
+  const completed = useRef(false);
+  useEffect(() => {
+    if (user) void trackJourney("checkout_start", item.id, { kind: item.kind });
+    return () => {
+      if (user && !completed.current)
+        void trackJourney("checkout_abandoned", item.id, {
+          stage: "order_details",
+        });
+    };
+  }, [item.id, item.kind, user]);
   async function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setBusy(true);
     setError("");
     const f = new FormData(e.currentTarget);
     try {
+      void trackJourney("checkout_details", item.id, { kind: item.kind });
       const r = await api<{ id: string }>("create-order", {
         item_id: item.id,
         request_key: requestKey,
@@ -561,10 +612,13 @@ function OrderForm({ item }: { item: ShopItem }) {
         company: f.get("company") || "",
         billing_address: f.get("address"),
         brief: f.get("brief"),
+        phone_e164: f.get("phone"),
+        marketing_phone_consent: f.get("marketing_phone") === "on",
         accept_terms: f.get("terms") === "on",
         accept_license:
           item.kind === "digital" ? f.get("license") === "on" : false,
       });
+      completed.current = true;
       navigate(`/portal/orders/${r.id}`);
     } catch (e) {
       setError((e as Error).message);
@@ -601,6 +655,21 @@ function OrderForm({ item }: { item: ShopItem }) {
         />
       </label>
       <label>
+        Active phone number
+        <input
+          type="tel"
+          name="phone"
+          required
+          pattern="\+[1-9][0-9]{7,14}"
+          placeholder="+971501234567"
+          autoComplete="tel"
+        />
+        <span className="micro">
+          Use international format. We use this for appointments, delivery and
+          urgent order updates.
+        </span>
+      </label>
+      <label>
         {item.kind === "digital"
           ? "Intended use"
           : "Non-confidential project brief"}
@@ -630,19 +699,30 @@ function OrderForm({ item }: { item: ShopItem }) {
           <span>I accept the usage licence shown on this page.</span>
         </label>
       )}
+      <label className="checkbox">
+        <input name="marketing_phone" type="checkbox" />
+        <span>
+          Optional: I agree to occasional Capistor offers by phone or message.
+          I can withdraw this at any time. This is not required to order.
+        </span>
+      </label>
       {error && <Notice error>{error}</Notice>}
       <button disabled={busy} className="button full">
         {busy
           ? "Creating your workspace…"
           : item.kind === "digital"
             ? "Review order & pay"
-            : "Create project request"}{" "}
+            : item.booking_required
+              ? "Continue to checkout"
+              : "Create project request"}{" "}
         <Arrow />
       </button>
       <p className="micro">
         {item.kind === "digital"
           ? "You will see payment options before paying."
-          : "No payment yet. Review your agreements first."}
+          : item.booking_required
+            ? "After payment, choose an available call time in your workspace."
+            : "No payment yet. Review your agreements first."}
       </p>
     </form>
   );
@@ -758,6 +838,9 @@ export function About() {
 export function Legal() {
   const { kind } = useParams();
   const { business } = useCatalog();
+  useEffect(() => {
+    if (kind) void trackJourney("policy_view", undefined, { kind });
+  }, [kind]);
   const value =
     kind === "privacy"
       ? business.privacy
@@ -775,7 +858,7 @@ export function Legal() {
       <Seo title={title} url={`/legal/${kind}`} />
       <PageIntro label="CUSTOMER INFORMATION" title={title} />
       {business.legal_approved && value ? (
-        <div className="prose-text">{value}</div>
+        <PolicyText value={value} />
       ) : (
         <Notice>
           These policies are being finalised. Online ordering stays closed until
@@ -788,6 +871,25 @@ export function Legal() {
         </Notice>
       )}
     </div>
+  );
+}
+function PolicyText({ value }: { value: string }) {
+  return (
+    <article className="policy-document">
+      {value.split(/\n\n+/).map((block, index) => {
+        const text = block.trim();
+        if (!text) return null;
+        if (index === 0) return <h2 key={index}>{text}</h2>;
+        if (/^Effective date:/i.test(text))
+          return <p className="policy-date" key={index}>{text}</p>;
+        if (/^(\d+\.\s+)?[A-Z][A-Z0-9, &/’'-]+$/.test(text) && text.length < 120)
+          return <h3 key={index}>{text}</h3>;
+        const lines = text.split("\n");
+        if (lines.every((line) => line.trim().startsWith("•")))
+          return <ul key={index}>{lines.map((line) => <li key={line}>{line.replace(/^\s*•\s*/, "")}</li>)}</ul>;
+        return <p key={index}>{text}</p>;
+      })}
+    </article>
   );
 }
 export function Work() {

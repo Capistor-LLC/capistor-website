@@ -1,7 +1,15 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import type { Business, Order, ShopItem, ProjectFile } from "./types";
+import type {
+  Appointment,
+  Business,
+  CustomerSummary,
+  Order,
+  ProjectFile,
+  ShopItem,
+  StaffMember,
+} from "./types";
 import { money, humanStatus } from "./types";
 import { api } from "./api";
 import { Notice } from "./Shell";
@@ -15,6 +23,7 @@ type AdminData = {
   templates: Template[];
   defaults: { nda: string; contract: string };
   configured: Record<string, boolean>;
+  role: StaffMember["role"];
 };
 type Tax = {
   active: boolean;
@@ -38,6 +47,8 @@ const newItem: ShopItem = {
   delivery_days: 0,
   published: false,
   checkout_enabled: false,
+  agreement_required: false,
+  booking_required: false,
 };
 export default function CommerceAdmin() {
   const [data, setData] = useState<AdminData | null>(null);
@@ -49,7 +60,10 @@ export default function CommerceAdmin() {
   const [files, setFiles] = useState<ProjectFile[]>([]);
   const [tax, setTax] = useState<Tax | null>(null);
   const load = useCallback(async () => {
-    setData(await api<AdminData>("admin"));
+    const loaded = await api<AdminData>("admin");
+    setData(loaded);
+    if (loaded.role === "editor") setTab("products");
+    else if (loaded.role === "support") setTab("orders");
   }, []);
   useEffect(() => {
     load().catch((e) => setError(e.message));
@@ -101,6 +115,24 @@ export default function CommerceAdmin() {
         )}
       </div>
     );
+  const allowedTabs =
+    data.role === "editor"
+      ? ["products"]
+      : data.role === "engineer"
+        ? ["orders", "products", "calendar"]
+        : data.role === "support"
+          ? ["orders", "customers", "calendar"]
+          : data.role === "sales"
+            ? ["orders", "customers", "calendar", "legal templates"]
+            : [
+                "orders",
+                "products",
+                "customers",
+                "calendar",
+                "staff access",
+                "company & payments",
+                "legal templates",
+              ];
   return (
     <div className="page-wrap">
       <Helmet>
@@ -137,13 +169,15 @@ export default function CommerceAdmin() {
           >
             Publish page updates
           </button>
-          <Link className="small-button" to="/admin/blog">
-            Manage blog posts ↗
-          </Link>
+          {["owner", "admin"].includes(data.role) && (
+            <Link className="small-button" to="/admin/blog">
+              Manage blog posts ↗
+            </Link>
+          )}
         </div>
       </header>
       <div className="tabs" role="tablist" aria-label="Business sections">
-        {["orders", "products", "company & payments", "legal templates"].map(
+        {allowedTabs.map(
           (t) => (
             <button
               key={t}
@@ -277,6 +311,9 @@ export default function CommerceAdmin() {
           </div>
         </div>
       )}
+      {tab === "customers" && <CustomersPanel />}
+      {tab === "calendar" && <CalendarPanel />}
+      {tab === "staff access" && <StaffPanel />}
       {tab === "company & payments" && (
         <>
           <div className="panel">
@@ -331,9 +368,10 @@ export default function CommerceAdmin() {
           </Notice>
           <p className="micro">
             Available fields: company_name, company_address, client_name,
-            client_company, client_address, reference, project_title, scope,
-            exclusions, total, delivery_days, revisions, brief. Wrap a field in
-            double braces, for example {"{{client_name}}"}.
+            client_company, client_address, client_email, effective_date,
+            support_email, reference, project_title, scope, exclusions, total,
+            delivery_days, revisions and brief. Wrap a field in double braces,
+            for example {"{{client_name}}"}.
           </p>
           {(["nda", "contract"] as const).map((kind) => {
             const t = data.templates.find((t) => t.id === kind);
@@ -441,6 +479,8 @@ function ItemEditor({
           published: f.get("published") === "on",
           checkout_enabled: f.get("checkout_enabled") === "on",
           requires_quote: f.get("requires_quote") === "on",
+          agreement_required: f.get("agreement_required") === "on",
+          booking_required: f.get("booking_required") === "on",
         });
       }}
     >
@@ -617,6 +657,16 @@ function ItemEditor({
           "Custom service: final scope and price require a quote",
           item.requires_quote,
         ],
+        [
+          "agreement_required",
+          "Require a project NDA and services agreement before payment",
+          item.agreement_required,
+        ],
+        [
+          "booking_required",
+          "This service is a scheduled consultation",
+          item.booking_required,
+        ],
       ].map(([name, label, checked]) => (
         <label className="checkbox" key={String(name)}>
           <input
@@ -762,5 +812,158 @@ function Settings({
         Save business settings
       </button>
     </form>
+  );
+}
+
+function StaffPanel() {
+  const [staff, setStaff] = useState<StaffMember[]>([]);
+  const [error, setError] = useState("");
+  const [notice, setNotice] = useState("");
+  const [busy, setBusy] = useState(false);
+  const load = useCallback(() => {
+    api<StaffMember[]>("staff").then(setStaff).catch((e) => setError(e.message));
+  }, []);
+  useEffect(() => {
+    void load();
+  }, [load]);
+  return (
+    <div className="panel admin-form">
+      <h2>Staff access and permissions</h2>
+      <p>
+        Every staff account needs its own verified login and authenticator.
+        Roles control business access; only the owner can invite, change or
+        disable staff.
+      </p>
+      {error && <Notice error>{error}</Notice>}
+      {notice && <Notice>{notice}</Notice>}
+      <div className="staff-list">
+        {staff.map((s) => (
+          <div className="staff-row" key={s.user_id}>
+            <div><strong>{s.display_name}</strong><p className="micro">{s.email}</p></div>
+            <span className="badge">{s.role}</span>
+            <span>{s.active ? "Active" : "Disabled"}</span>
+          </div>
+        ))}
+      </div>
+      <details>
+        <summary>Invite or update a staff member</summary>
+        <form
+          className="stack-form"
+          onSubmit={(e) => {
+            e.preventDefault();
+            const form = e.currentTarget;
+            const f = new FormData(form);
+            setBusy(true); setError(""); setNotice("");
+            api<{ invited: boolean }>("save-staff", {
+              email: f.get("email"),
+              display_name: f.get("display_name"),
+              role: f.get("role"),
+              active: f.get("active") === "on",
+            })
+              .then((r) => {
+                setNotice(r.invited ? "Invitation sent and access prepared." : "Staff access updated.");
+                form.reset();
+                load();
+              })
+              .catch((e) => setError(e.message))
+              .finally(() => setBusy(false));
+          }}
+        >
+          <div className="form-grid">
+            <label className="field">Full name<input name="display_name" required maxLength={150} /></label>
+            <label className="field">Email<input name="email" type="email" required /></label>
+            <label className="field">Role<select name="role"><option value="admin">Administrator</option><option value="sales">Sales</option><option value="engineer">Engineer</option><option value="support">Support</option><option value="editor">Content editor</option><option value="owner">Owner</option></select></label>
+          </div>
+          <label className="checkbox"><input type="checkbox" name="active" defaultChecked /><span>Access is active</span></label>
+          <button className="button" disabled={busy}>Save staff access</button>
+        </form>
+      </details>
+    </div>
+  );
+}
+
+function CustomersPanel() {
+  const [customers, setCustomers] = useState<CustomerSummary[] | null>(null);
+  const [error, setError] = useState("");
+  useEffect(() => {
+    api<CustomerSummary[]>("customers").then(setCustomers).catch((e) => setError(e.message));
+  }, []);
+  return (
+    <div className="panel admin-form">
+      <h2>Customer profiles and buying journey</h2>
+      <p className="micro">
+        Optional page activity appears only after analytics consent. Operational
+        orders, payments, refunds and disputes are recorded independently.
+      </p>
+      {error && <Notice error>{error}</Notice>}
+      {!customers ? <p>Loading customer profiles…</p> : customers.length ? (
+        <div className="customer-table-wrap">
+          <table className="customer-table">
+            <thead><tr><th>Customer</th><th>Phone</th><th>Journey</th><th>Orders</th><th>Relationship</th></tr></thead>
+            <tbody>{customers.map((c) => (
+              <tr key={c.user_id}>
+                <td><strong>{c.full_name || c.email}</strong><br /><span className="micro">{c.company}<br />{c.email}</span></td>
+                <td>{c.phone_e164 || "Not provided"}<br /><span className="micro">{c.phone_verified_at ? "Verified" : "Not SMS-verified"}{c.marketing_phone_consent_at ? " · marketing opted in" : ""}</span></td>
+                <td>{c.visits} visits<br />{c.product_views} product views<br />{c.checkout_starts} checkout starts<br />{c.checkout_abandoned} drop-offs{c.last_dropoff_stage ? ` at ${humanStatus(c.last_dropoff_stage)}` : ""}{c.recent_products.length ? <><br /><span className="micro">Recent: {c.recent_products.join(", ")}</span></> : null}</td>
+                <td>{c.orders} total<br />{c.paid_orders} paid<br />{c.refunds} refunds · {c.disputes} disputes</td>
+                <td>Since {date(c.created_at)}<br /><span className="micro">Last seen {c.last_seen_at ? date(c.last_seen_at) : "not recorded"}</span></td>
+              </tr>
+            ))}</tbody>
+          </table>
+        </div>
+      ) : <p>No customer profiles yet.</p>}
+    </div>
+  );
+}
+
+function CalendarPanel() {
+  const [calendar, setCalendar] = useState<{ slots: { id: string; starts_at: string; ends_at: string; status: string }[]; appointments: Appointment[] } | null>(null);
+  const [error, setError] = useState("");
+  const [notice, setNotice] = useState("");
+  const [busy, setBusy] = useState(false);
+  const load = useCallback(() => api<{ slots: { id: string; starts_at: string; ends_at: string; status: string }[]; appointments: Appointment[] }>("calendar").then(setCalendar).catch((e) => setError(e.message)), []);
+  useEffect(() => {
+    void load();
+  }, [load]);
+  return (
+    <div className="admin-grid calendar-admin">
+      <div className="panel admin-form">
+        <h2>Upcoming consultations</h2>
+        {error && <Notice error>{error}</Notice>}
+        {notice && <Notice>{notice}</Notice>}
+        {calendar?.appointments.length ? calendar.appointments.map((a) => (
+          <article className="appointment-row" key={a.id}>
+            <p className="eyebrow">{date(a.starts_at)} · {humanStatus(a.status)}</p>
+            <p>Order <Link to={`/portal/orders/${a.order_id}`}>{a.order_id.slice(0, 8)}…</Link></p>
+            <form className="stack-form" onSubmit={(e) => {
+              e.preventDefault(); const f = new FormData(e.currentTarget); setBusy(true);
+              api("update-appointment", { id: a.id, meeting_url: f.get("meeting_url") || "", status: f.get("status"), notes: f.get("notes") || "" })
+                .then(() => { setNotice("Appointment updated."); load(); })
+                .catch((e) => setError(e.message)).finally(() => setBusy(false));
+            }}>
+              <label>Meeting URL<input name="meeting_url" type="url" defaultValue={a.meeting_url} placeholder="https://…" /></label>
+              <label>Status<select name="status" defaultValue={a.status}><option>scheduled</option><option>completed</option><option>cancelled</option><option>no_show</option></select></label>
+              <label>Internal / client-visible notes<textarea name="notes" /></label>
+              <button className="small-button" disabled={busy}>Update appointment</button>
+            </form>
+          </article>
+        )) : <p>No consultations booked.</p>}
+      </div>
+      <div className="panel admin-form">
+        <h2>Publish available times</h2>
+        <form className="stack-form" onSubmit={(e) => {
+          e.preventDefault(); const form = e.currentTarget; const f = new FormData(form); setBusy(true); setError("");
+          api("add-availability", { starts_at: new Date(String(f.get("starts_at"))).toISOString(), ends_at: new Date(String(f.get("ends_at"))).toISOString() })
+            .then(() => { setNotice("Availability published."); form.reset(); load(); })
+            .catch((e) => setError(e.message)).finally(() => setBusy(false));
+        }}>
+          <label>Start<input name="starts_at" type="datetime-local" required /></label>
+          <label>End<input name="ends_at" type="datetime-local" required /></label>
+          <button className="button" disabled={busy}>Add available time</button>
+        </form>
+        <h3>Open and booked slots</h3>
+        {calendar?.slots.map((s) => <p key={s.id}><span className="badge">{s.status}</span> {date(s.starts_at)} – {date(s.ends_at)}</p>)}
+      </div>
+    </div>
   );
 }

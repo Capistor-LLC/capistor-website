@@ -90,6 +90,7 @@ describe("Stripe Checkout architecture", () => {
     expect(p).not.toHaveProperty("payment_method_types");
     expect(p.line_items?.[0].price_data?.unit_amount).toBe(9900);
     expect(p.invoice_creation?.enabled).toBe(true);
+    expect(p.phone_number_collection?.enabled).toBe(true);
     expect(p.payment_intent_data?.metadata?.order_id).toBe("order");
     expect(p.adaptive_pricing?.enabled).toBe(false);
   });

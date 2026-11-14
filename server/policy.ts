@@ -45,6 +45,8 @@ export const itemSchema = z.object({
   published: z.boolean(),
   checkout_enabled: z.boolean(),
   requires_quote: z.boolean(),
+  agreement_required: z.boolean(),
+  booking_required: z.boolean(),
 });
 export const orderSchema = z.object({
   item_id: id,
@@ -53,6 +55,8 @@ export const orderSchema = z.object({
   company: z.string().max(200),
   billing_address: text(2000),
   brief: text(10000),
+  phone_e164: z.string().regex(/^\+[1-9]\d{7,14}$/, "Use an international phone number, for example +971501234567"),
+  marketing_phone_consent: z.boolean(),
   accept_terms: z.literal(true),
   accept_license: z.boolean(),
 });

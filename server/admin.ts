@@ -1,6 +1,6 @@
 import { z } from "zod";
 import type { Context } from "./auth.js";
-import { administrator } from "./auth.js";
+import { administrator, staffRole } from "./auth.js";
 import { check, env } from "./runtime.js";
 import {
   HttpError,
@@ -29,11 +29,20 @@ export async function adminData(ctx: Context) {
   ]);
   return {
     items: check(items),
-    orders: check(orders),
+    orders: ["owner", "admin", "sales", "engineer", "support"].includes(
+      ctx.role || "",
+    )
+      ? check(orders)
+      : [],
     settings: check(settings),
-    templates: check(templates),
+    templates: ["owner", "admin", "sales", "engineer"].includes(
+      ctx.role || "",
+    )
+      ? check(templates)
+      : [],
+    role: ctx.role,
     defaults: { nda: NDA_TEMPLATE, contract: CONTRACT_TEMPLATE },
-    configured: {
+    configured: ["owner", "admin"].includes(ctx.role || "") ? {
       bank: !!process.env.BANK_DETAILS_JSON,
       stripe: !!(
         process.env.STRIPE_SECRET_KEY && process.env.STRIPE_WEBHOOK_SECRET
@@ -50,7 +59,7 @@ export async function adminData(ctx: Context) {
         process.env.R2_ACCESS_KEY_ID &&
         process.env.R2_SECRET_ACCESS_KEY
       ),
-    },
+    } : {},
   };
 }
 function finalized(body: string) {
@@ -63,7 +72,7 @@ function finalized(body: string) {
     );
 }
 export async function saveItem(ctx: Context, body: unknown) {
-  administrator(ctx);
+  staffRole(ctx, ["owner", "admin", "editor"]);
   const b = itemSchema.parse(body);
   if (b.tax_mode !== "manual" && b.tax_bps !== 0)
     throw new HttpError(400, "Only manual tax can have a manual rate");
@@ -138,7 +147,7 @@ const settingsSchema = z.object({
   fiverr_enabled: z.boolean(),
 });
 export async function saveSettings(ctx: Context, body: unknown) {
-  administrator(ctx);
+  staffRole(ctx, ["owner", "admin"]);
   const b = settingsSchema.parse(body);
   if (b.license_url && !b.license_redacted_confirmed)
     throw new HttpError(
@@ -170,7 +179,7 @@ export async function saveSettings(ctx: Context, body: unknown) {
   return { ok: true };
 }
 export async function saveTemplate(ctx: Context, body: unknown) {
-  administrator(ctx);
+  staffRole(ctx, ["owner", "admin"]);
   const b = z
     .object({
       id: z.enum(["nda", "contract"]),
@@ -188,7 +197,7 @@ export async function saveTemplate(ctx: Context, body: unknown) {
   return { ok: true };
 }
 export async function saveDocument(ctx: Context, body: unknown) {
-  administrator(ctx);
+  staffRole(ctx, ["owner", "admin", "sales", "engineer"]);
   const b = z
     .object({
       order_id: id,
@@ -217,7 +226,7 @@ export async function saveDocument(ctx: Context, body: unknown) {
 }
 
 export async function updateOrder(ctx: Context, body: unknown) {
-  administrator(ctx);
+  staffRole(ctx, ["owner", "admin", "engineer", "support"]);
   const b = z
     .object({
       order_id: id,
@@ -259,7 +268,7 @@ export async function updateOrder(ctx: Context, body: unknown) {
 }
 
 export async function quoteOrder(ctx: Context, body: unknown) {
-  administrator(ctx);
+  staffRole(ctx, ["owner", "admin", "sales"]);
   const b = z
     .object({
       order_id: id,
@@ -298,7 +307,7 @@ export async function quoteOrder(ctx: Context, body: unknown) {
 }
 
 export async function confirmBank(ctx: Context, body: unknown) {
-  administrator(ctx);
+  staffRole(ctx, ["owner", "admin"]);
   assertPaymentEnvironment("bank");
   const b = z
     .object({
