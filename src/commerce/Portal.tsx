@@ -9,6 +9,7 @@ import { useCatalog } from "./context";
 import { FIVERR_URL } from "./catalog";
 import { Arrow, ButtonLink, Notice, PageIntro } from "./Shell";
 import { AdminOrderTools } from "./OrderAdmin";
+import { downloadAppointment } from "./calendar";
 export const date = (s: string) =>
   new Date(s).toLocaleString(undefined, {
     dateStyle: "medium",
@@ -857,35 +858,44 @@ function AppointmentPanel({
     { id: string; starts_at: string; ends_at: string }[]
   >([]);
   const [loaded, setLoaded] = useState(false);
+  const [slotError, setSlotError] = useState("");
+  const [slotAttempt, setSlotAttempt] = useState(0);
   useEffect(() => {
-    if (data.appointment || loaded) return;
-    setLoaded(true);
+    if (data.appointment) return;
+    let active = true;
+    setLoaded(false);
+    setSlotError("");
     api<{ id: string; starts_at: string; ends_at: string }[]>(
       "available-slots",
       undefined,
       { id: data.order.id },
     )
-      .then(setSlots)
-      .catch(() => setSlots([]));
-  }, [data.appointment, data.order.id, loaded]);
+      .then((result) => { if (active) setSlots(result); })
+      .catch((error) => { if (active) setSlotError((error as Error).message); })
+      .finally(() => { if (active) setLoaded(true); });
+    return () => { active = false; };
+  }, [data.appointment, data.order.id, slotAttempt]);
   if (data.appointment)
     return (
       <div className="panel appointment-card">
         <p className="eyebrow">YOUR CONSULTATION</p>
         <h2>{date(data.appointment.starts_at)}</h2>
         <p>{Intl.DateTimeFormat().resolvedOptions().timeZone} · {humanStatus(data.appointment.status)}</p>
-        {data.appointment.meeting_url ? (
+        {data.appointment.status === "scheduled" && /^https:\/\//i.test(data.appointment.meeting_url) ? (
           <a className="button full" href={data.appointment.meeting_url} target="_blank" rel="noreferrer">Join call <Arrow /></a>
         ) : (
-          <Notice>The joining link will appear here and in your notification before the appointment.</Notice>
+          <Notice>{data.appointment.status === "cancelled" ? "This appointment has been cancelled. Use the order conversation to arrange a new time." : data.appointment.status === "scheduled" ? "Capistor will add the joining link to this order. Check here before your call, or use the order conversation if you need help." : "This appointment is closed. Its details remain in your order history."}</Notice>
         )}
+        <button className="button secondary full" onClick={() => downloadAppointment(data.appointment!, data.order.reference)}>Download calendar event</button>
+        <p className="micro">Import into Apple Calendar, Google Calendar or Outlook. This is a snapshot; download it again if the appointment changes.</p>
       </div>
     );
   return (
     <div className="panel appointment-card">
       <p className="eyebrow">BOOK YOUR CALL</p>
       <h2>Choose an available time.</h2>
-      {slots.length ? (
+      <p>Times shown in {Intl.DateTimeFormat().resolvedOptions().timeZone}.</p>
+      {!loaded ? <p role="status">Loading available times…</p> : slotError ? <><Notice error>{slotError}</Notice><button className="small-button" onClick={() => setSlotAttempt((value) => value + 1)}>Retry available times</button></> : slots.length ? (
         <div className="slot-list">
           {slots.map((slot) => (
             <button
@@ -909,6 +919,7 @@ function AppointmentPanel({
       ) : (
         <Notice>No appointment times are currently published. Use this order’s conversation to arrange a time with Capistor, or open a support request. Your payment and request remain recorded with this order.</Notice>
       )}
+      {loaded && !slotError && <button className="small-button" disabled={busy} onClick={() => setSlotAttempt((value) => value + 1)}>Refresh available times</button>}
     </div>
   );
 }

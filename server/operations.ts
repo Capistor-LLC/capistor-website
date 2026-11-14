@@ -236,7 +236,10 @@ export async function updateAppointment(ctx: Context, body: unknown) {
   const b = z
     .object({
       id,
-      meeting_url: z.string().url().max(2000).or(z.literal("")),
+      meeting_url: z.string().url().max(2000).refine((value) => {
+        const url = new URL(value);
+        return url.protocol === "https:" && !url.username && !url.password;
+      }, "Use an HTTPS meeting link without embedded credentials").or(z.literal("")),
       status: z.enum(["scheduled", "completed", "cancelled", "no_show"]),
       notes: z.string().max(5000),
     })
