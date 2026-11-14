@@ -907,7 +907,7 @@ function AppointmentPanel({
           ))}
         </div>
       ) : (
-        <Notice>New appointment times are being added. You will be notified when a slot opens.</Notice>
+        <Notice>No appointment times are currently published. Use this order’s conversation to arrange a time with Capistor, or open a support request. Your payment and request remain recorded with this order.</Notice>
       )}
     </div>
   );

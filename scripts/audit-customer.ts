@@ -13,7 +13,9 @@ if(signed.error) throw signed.error;
 const token = signed.data.session!.access_token;
 async function call(action:string, body?:unknown, query='') {
  const response = await fetch(`${process.env.APP_ORIGIN}/api/commerce?action=${action}${query}`,{method:body===undefined?'GET':'POST',headers:{Authorization:`Bearer ${token}`,Origin:process.env.APP_ORIGIN!,'Content-Type':'application/json','x-vercel-protection-bypass':process.env.VERCEL_AUTOMATION_BYPASS_SECRET!},body:body===undefined?undefined:JSON.stringify(body)});
- const result=await response.json();
+ const raw=await response.text();
+ let result;
+ try { result=JSON.parse(raw); } catch { result={error:raw.slice(0,250)}; }
  console.log(JSON.stringify({action,status:response.status,error:result.error}));
  return {status:response.status,result};
 }

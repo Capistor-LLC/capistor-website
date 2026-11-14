@@ -1,6 +1,7 @@
 {
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
+  "functions": { "api/commerce.ts": { "maxDuration": 60 } },
   "routes": [
     { "src": "/api/commerce", "dest": "/api/commerce" },
     { "src": "/products", "status": 308, "headers": { "Location": "/work" } },
