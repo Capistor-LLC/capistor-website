@@ -67,6 +67,7 @@ export const starterServices: ShopItem[] = [
     category: "02 / CHECK YOUR DESIGN",
     summary: "Get another pair of eyes before fabrication.",
     price_minor: 24900,
+    checkout_enabled: true,
     scope:
       "One low-voltage, two-layer PCB up to 50 components; schematic and layout review; prioritised findings; one follow-up question round.",
     exclusions:

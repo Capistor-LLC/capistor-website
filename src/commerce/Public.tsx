@@ -473,7 +473,7 @@ export function ItemPage() {
           <div className="prose-text">{item.description}</div>
           <section>
             <h2>What’s included</h2>
-            <p className="prose-text">{item.scope}</p>
+            <ul className="deliverables-list">{item.scope.split(/\n|;/).map((entry) => entry.trim()).filter(Boolean).map((entry) => <li key={entry}><span aria-hidden="true">✓</span>{entry}</li>)}</ul>
           </section>
           <section>
             <h2>What’s outside the scope</h2>

@@ -22,7 +22,7 @@ async function call(action:string, body?:unknown, query='') {
 const catalog=await call('catalog');
 await call('orders');
 await call('admin');
-for (const slug of ['hardware-idea-review','custom-pcb-design','basketball-shot-timer-pcb-pack']) {
+for (const slug of ['hardware-idea-review','pcb-pre-order-review','custom-pcb-design','basketball-shot-timer-pcb-pack']) {
  const item=catalog.result.items.find((i:{slug:string})=>i.slug===slug);
  const body={item_id:item.id,request_key:randomUUID(),client_name:'Staging QA customer',company:'Test fixture',billing_address:'Test address, Dubai',brief:'Automated staging test. Do not fulfil or contact.',phone_e164:'+12025550123',marketing_phone_consent:false,accept_terms:true,accept_license:true};
  const order=await call('create-order',body);
@@ -31,6 +31,12 @@ for (const slug of ['hardware-idea-review','custom-pcb-design','basketball-shot-
   console.log(JSON.stringify({slug,idempotent:repeat.result.id===order.result.id}));
   const detail=await call('order',undefined,`&id=${order.result.id}`);
   console.log(JSON.stringify({slug,detailKeys:Object.keys(detail.result),documents:detail.result.documents?.length}));
+  for (const document of detail.result.documents || []) {
+    if (document.status === 'issued') await call('sign',{document_id:document.id,name:'Staging QA customer',sha256:document.sha256,consent:true,party:'client'});
+  }
+  await call('message',{order_id:order.result.id,message:'Automated customer conversation test. No action required.'});
+  await call('support-case',{order_id:order.result.id,case_type:'support',subject:'Automated QA support case',detail:'Verifying customer support submission in staging. No fulfilment required.',requested_remedy:'QA verification only'});
+  if(slug==='hardware-idea-review') await call('available-slots',undefined,`&id=${order.result.id}`);
   await call('payment',{order_id:order.result.id,provider:'stripe'});
  }
 }

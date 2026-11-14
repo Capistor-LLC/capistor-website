@@ -19,6 +19,9 @@
 .commerce * {
   box-sizing: border-box;
 }
+.commerce .deliverables-list { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin: 20px 0; }
+.commerce .deliverables-list li { display: flex; gap: 12px; padding: 16px; border: 1px solid var(--line); border-radius: 8px; background: white; }
+.commerce .deliverables-list li span { color: #2563eb; font-weight: 700; }
 .commerce a {
   color: inherit;
   text-decoration: none;

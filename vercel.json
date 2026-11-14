@@ -24,7 +24,7 @@
       "continue": true
     },
     {
-      "src": "/(portal|admin|login)(/.*)?",
+      "src": "/(portal|admin|login|checkout)(/.*)?",
       "headers": {
         "X-Robots-Tag": "noindex, nofollow",
         "Cache-Control": "private, no-store"
