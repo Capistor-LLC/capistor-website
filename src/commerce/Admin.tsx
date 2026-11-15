@@ -15,6 +15,7 @@ import { api } from "./api";
 import { Notice } from "./Shell";
 import { Files, Upload, date } from "./Portal";
 import { starterServices } from "./catalog";
+import NotificationQueue from "./Notifications";
 type Template = { id: string; title: string; body: string; approved: boolean };
 type AdminData = {
   items: ShopItem[];
@@ -121,7 +122,7 @@ export default function CommerceAdmin() {
       : data.role === "engineer"
         ? ["orders", "products", "calendar"]
         : data.role === "support"
-          ? ["orders", "customers", "calendar"]
+          ? ["orders", "customers", "calendar", "notifications"]
           : data.role === "sales"
             ? ["orders", "customers", "calendar", "legal templates"]
             : [
@@ -130,6 +131,7 @@ export default function CommerceAdmin() {
                 "customers",
                 "calendar",
                 "staff access",
+                "notifications",
                 "company & payments",
                 "legal templates",
               ];
@@ -192,6 +194,7 @@ export default function CommerceAdmin() {
       </div>
       {error && <Notice error>{error}</Notice>}
       {notice && <Notice>{notice}</Notice>}
+      {tab === "notifications" && <NotificationQueue />}
       {tab === "orders" && (
         <>
           <p className="micro">

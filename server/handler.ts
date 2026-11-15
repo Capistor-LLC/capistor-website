@@ -17,6 +17,7 @@ import {
   confirmBank,
 } from "./admin.js";
 import { taxReadiness } from "./stripe-checkout.js";
+import { listNotifications, sendNotification } from "./notifications.js";
 import { paymentMode, requestOriginAllowed } from "./environment.js";
 import {
   addAvailability,
@@ -47,6 +48,7 @@ const getActions = new Set([
   "customers",
   "calendar",
   "available-slots",
+  "notifications",
 ]);
 async function readBody(req: IncomingMessage) {
   let size = 0;
@@ -200,6 +202,12 @@ export default async function handler(
     }
     let result: unknown;
     switch (action) {
+      case "notifications":
+        result = await listNotifications(ctx);
+        break;
+      case "send-notification":
+        result = await sendNotification(ctx, z.object({id}).parse(body).id);
+        break;
       case "orders":
         result = check(
           await ctx.db
