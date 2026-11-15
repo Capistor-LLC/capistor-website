@@ -286,7 +286,7 @@ export default function Login() {
                 Continue with Apple
               </button>}
             </div>
-            <div className="login-divider"><span>or use email</span></div>
+            {(providers.google || providers.apple) && <div className="login-divider"><span>or use email</span></div>}
             <form onSubmit={login} className="stack-form">
               <label>
                 Email address
@@ -299,7 +299,7 @@ export default function Login() {
                     type="password"
                     name="password"
                     required
-                    minLength={10}
+                    minLength={mode === "signup" ? 12 : undefined}
                     autoComplete={
                       mode === "signup" ? "new-password" : "current-password"
                     }
@@ -329,10 +329,6 @@ export default function Login() {
                 {mode === "magic" ? "Use a password instead" : "Use a one-time email link"}
               </button>
             </div>
-            <p className="micro">
-              Social sign-in buttons become active after their provider is
-              connected in the secure authentication settings.
-            </p>
           </>
         )}
         {error && <Notice error>{error}</Notice>}
