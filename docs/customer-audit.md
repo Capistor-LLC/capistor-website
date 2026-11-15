@@ -26,6 +26,12 @@ The paid order then passed the booking service: an appointment was created, a re
 
 A labelled, approved QA text file was stored privately in R2. The customer's signed download returned the exact bytes. Another customer's access was rejected. This tests service-order delivery, not a finished digital-product bundle or the upload/quarantine workflow.
 
-Not yet verified end to end: browser MFA, recovery email delivery and password change, paid digital-product entitlement, browser file upload, booking UI, refunds, external email/SMS delivery, Google/Apple OAuth. These are not implied by passing unit tests or successful checkout-session creation.
+## Upload and notifications follow-up — 15 November 2026
+
+The customer upload service generated a signed R2 PUT URL, accepted the QA text file, verified its hash and size during finalization, and quarantined it. Repeated finalization preserved quarantine, and the download service blocked unreviewed access. This was exercised through the service and signed HTTP upload, not the browser file picker.
+
+Staff notification status and manual appointment-email dispatch are implemented. Access controls, configuration guards and a mocked successful provider request are tested. No external notification was sent: the verified sender and Resend API key remain unconfigured, and sandbox sending is disabled. Provider acceptance is not inbox delivery. See notification-delivery.md for the remaining automation scope.
+
+Not yet verified end to end: browser MFA, recovery email delivery and password change, paid digital-product entitlement, browser file picker, booking UI, refunds, external email/SMS delivery, Google/Apple OAuth. These are not implied by passing unit tests or successful checkout-session creation.
 
 Production dependencies: live payment configuration, OAuth credentials, messaging/video provider configuration, verified product bundles and business availability. No production payments have been enabled.

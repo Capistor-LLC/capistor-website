@@ -1,8 +1,9 @@
 import { database, check, storage, env } from '../server/runtime.js';
 import { bookAppointment } from '../server/operations.js';
-import { downloadFile } from '../server/files.js';
+import { downloadFile, prepareUpload, finishUpload } from '../server/files.js';
 import { PutObjectCommand } from '@aws-sdk/client-s3';
 import { randomUUID, createHash } from 'node:crypto';
+import { HttpError } from '../server/policy.js';
 
 if(process.env.STRIPE_MODE !== 'test' || !process.env.SUPABASE_URL?.includes('bzkmfhjsqcttyrvbasjj')) throw Error('Staging sandbox only');
 const db=database();
@@ -35,5 +36,16 @@ const response=await fetch(download.url);
 if(!response.ok || !Buffer.from(await response.arrayBuffer()).equals(bytes)) throw Error('Delivered file bytes differ');
 console.log('PASS: private R2 signed download returns exact approved bytes');
 try { await downloadFile({...ctx,user:{...ctx.user,id:randomUUID()}},id); throw Error('Cross-customer access allowed'); }
-catch(error){if((error as Error).message==='Cross-customer access allowed') throw error; console.log('PASS: another customer cannot download this order file');}
-console.log('Labelled QA appointment and delivery file retained in staging.');
+catch(error){if(!(error instanceof HttpError) || error.status!==404) throw error; console.log('PASS: another customer cannot download this order file');}
+const uploadBytes=Buffer.from('QA upload workflow fixture. Do not fulfil.');
+const upload=await prepareUpload(ctx,{order_id:order.id,filename:'QA-client-upload.txt',size_bytes:uploadBytes.length,sha256:createHash('sha256').update(uploadBytes).digest('hex'),version_label:'QA'});
+const uploadResponse=await fetch(upload.url,{method:'PUT',headers:{'Content-Type':'application/octet-stream'},body:uploadBytes});
+if(!uploadResponse.ok) throw Error(`Signed upload failed: ${uploadResponse.status}`);
+const finalized=await finishUpload(ctx,upload.id);
+if(finalized.status!=='quarantined') throw Error('Unreviewed upload escaped quarantine');
+const repeatedUpload=await finishUpload(ctx,upload.id);
+if(repeatedUpload.status!=='quarantined') throw Error('Repeated upload finalization changed state');
+console.log('PASS: signed client upload verified and quarantined; finalization retry is safe');
+try { await downloadFile(ctx,upload.id); throw Error('Unreviewed upload downloaded'); }
+catch(error){if(!(error instanceof HttpError) || error.status!==409) throw error; console.log('PASS: quarantined client upload cannot be downloaded before review');}
+console.log('Labelled QA appointment, delivery and quarantined upload retained in staging.');
