@@ -24,7 +24,7 @@ await call('orders');
 await call('admin');
 for (const slug of ['hardware-idea-review','pcb-pre-order-review','custom-pcb-design','basketball-shot-timer-pcb-pack']) {
  const item=catalog.result.items.find((i:{slug:string})=>i.slug===slug);
- const body={item_id:item.id,request_key:randomUUID(),client_name:'Staging QA customer',company:'Test fixture',billing_address:'Test address, Dubai',brief:'Automated staging test. Do not fulfil or contact.',phone_e164:'+12025550123',marketing_phone_consent:false,accept_terms:true,accept_license:true};
+ const body={item_id:item.id,request_key:randomUUID(),client_name:'Staging QA customer',company:'Test fixture',billing_address:'Test address, Dubai',brief:'Automated staging test. Do not fulfil or contact.',phone_e164:'+12025550123',marketing_phone_consent:slug==='hardware-idea-review',accept_terms:true,accept_license:true};
  const order=await call('create-order',body);
  if(order.status===200){
   const repeat=await call('create-order',body);

@@ -101,11 +101,20 @@ beforeAll(async () => {
     readFileSync("supabase/migrations/0004_commerce_operations.sql", "utf8"),
   );
   item = String((await row("select id from shop_items limit 1")).id);
+  await db.exec(readFileSync("supabase/migrations/0005_marketing_consent_fix.sql", "utf8"));
 }, 30000);
 afterAll(async () => {
   await db.close();
 });
 describe("Postgres transactions and RLS", () => {
+  it.each([false, true])("creates consultation orders with marketing consent %s", async (consent) => {
+    await db.exec('reset role');
+    const id = randomUUID();
+    const payload = {id,reference:`CAP-${id}`,client_id:client,client_email:'client@example.com',item_id:item,item_snapshot:{kind:'service',agreement_required:false,booking_required:true},client_name:'QA',company:'',billing_address:'Test',brief:'Test',phone_e164:'+12025550123',marketing_phone_consent:consent,request_key:randomUUID(),total_minor:9900,currency:'USD',status:'awaiting_payment',accepted_terms:'Terms',accepted_license:'',terms_sha256:'a'.repeat(64),privacy_sha256:'b'.repeat(64),refund_sha256:'c'.repeat(64)};
+    await db.query(`select create_order_bundle($1,'[]','{}')`,[JSON.stringify(payload)]);
+    expect((await row('select payment_status from client_orders where id=$1',[id])).payment_status).toBe('unpaid');
+    expect((await row("select count(*)::int as n from policy_acceptances where order_id=$1 and policy_kind='marketing_phone'",[id])).n).toBe(consent ? 1 : 0);
+  });
   it("keeps published portfolio data public and requires MFA for legacy writes", async () => {
     await db.exec("set role anon");
     try {
