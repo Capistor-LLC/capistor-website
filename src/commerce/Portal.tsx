@@ -128,10 +128,15 @@ export function Portal() {
 }
 export function OrderPage() {
   const { id } = useParams();
+  const location = useLocation();
   const [data, setData] = useState<OrderDetail | null>(null);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
-  const [tab, setTab] = useState("history");
+  const [tab, setTab] = useState(() => {
+    const query = new URLSearchParams(location.search);
+    if (query.get("payment") === "processing" || query.get("tab") === "payment") return "payment";
+    return query.get("tab") === "agreements" ? "agreements" : "history";
+  });
   const [bank, setBank] = useState<Record<string, string> | null>(null);
   const { business } = useCatalog();
   const { user } = useAuth();
@@ -306,7 +311,7 @@ export function OrderPage() {
       <div className="portal-layout">
         <div>
           <div className="tabs" role="tablist" aria-label="Order sections">
-            {["history", "agreements", "files", "scope", "support"].map((t) => (
+            {["payment", "history", "agreements", "files", "scope", "support"].map((t) => (
               <button
                 key={t}
                 role="tab"
@@ -319,6 +324,7 @@ export function OrderPage() {
             ))}
           </div>
           <section id="order-tab" role="tabpanel" aria-label={tab}>
+            {tab === "payment" && <div className="panel"><h2>{o.payment_status === "paid" ? "Payment confirmed" : "Review and pay"}</h2><p>{o.payment_status === "paid" ? "Your payment is recorded. Your next steps and booking options are in this order workspace." : "Your order details are saved. Review the total and choose an available payment method below. Your payment is confirmed only after verification by the provider."}</p><a className="button" href="#order-payment">{o.payment_status === "paid" ? "View next steps" : "View payment options"}</a></div>}
             {tab === "history" && (
               <>
                 <div className="panel">
@@ -569,7 +575,7 @@ export function OrderPage() {
             <AdminOrderTools data={data} run={action} busy={busy} />
           )}
         </div>
-        <aside>
+        <aside id="order-payment">
           <div className="panel">
             <p className="eyebrow">ORDER SUMMARY</p>
             <div className="big-price">{money(o.total_minor, o.currency)}</div>

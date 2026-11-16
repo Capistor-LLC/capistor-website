@@ -626,7 +626,7 @@ function OrderForm({ item }: { item: ShopItem }) {
           item.kind === "digital" ? f.get("license") === "on" : false,
       });
       completed.current = true;
-      navigate(`/portal/orders/${r.id}`);
+      navigate(`/portal/orders/${r.id}?tab=${item.kind === "digital" || item.agreement_required === false ? "payment" : "agreements"}`);
     } catch (e) {
       setError((e as Error).message);
     } finally {
