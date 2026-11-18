@@ -1,11 +1,32 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { appointmentEmail, emailReadiness, sendNotification } from '../server/notifications.js';
+import { appointmentEmail, dispatchBookedOrderEmail, emailReadiness, sendNotification } from '../server/notifications.js';
 import type { Context } from '../server/auth.js';
 afterEach(()=>{vi.unstubAllEnvs();vi.unstubAllGlobals();});
 describe('transactional notification boundaries',()=>{
   it('keeps sandbox sending disabled even when a provider key exists',()=>{
     vi.stubEnv('STRIPE_MODE','test');vi.stubEnv('RESEND_API_KEY','test-placeholder');vi.stubEnv('NOTIFICATION_FROM','Capistor <test@example.com>');vi.stubEnv('ALLOW_SANDBOX_EMAIL','');
     expect(emailReadiness()).toEqual({configured:true,sendingEnabled:false});
+  });
+  it('does not read or send queued emails when sandbox delivery is disabled',async()=>{
+    vi.stubEnv('STRIPE_MODE','test');vi.stubEnv('ALLOW_SANDBOX_EMAIL','');
+    vi.stubEnv('RESEND_API_KEY','test-placeholder');vi.stubEnv('NOTIFICATION_FROM','test@example.com');
+    const from=vi.fn();const fetchMock=vi.fn();vi.stubGlobal('fetch',fetchMock);
+    await dispatchBookedOrderEmail({db:{from}} as unknown as Context,'order');
+    expect(from).not.toHaveBeenCalled();expect(fetchMock).not.toHaveBeenCalled();
+  });
+  it('limits automatic dispatch to the booking customer and order',async()=>{
+    vi.stubEnv('STRIPE_MODE','test');vi.stubEnv('ALLOW_SANDBOX_EMAIL','true');
+    vi.stubEnv('RESEND_API_KEY','test-placeholder');vi.stubEnv('NOTIFICATION_FROM','test@example.com');
+    const filters: unknown[][]=[];const chain:Record<string,unknown>={};
+    for(const method of ['select','eq','in','lt','limit']) chain[method]=(...args:unknown[])=>{filters.push([method,...args]);return chain;};
+    chain.then=(resolve:(value:unknown)=>unknown)=>Promise.resolve({data:[],error:null}).then(resolve);
+    const fetchMock=vi.fn();vi.stubGlobal('fetch',fetchMock);
+    await dispatchBookedOrderEmail({user:{id:'customer'},db:{from:()=>chain}} as unknown as Context,'booked-order');
+    expect(filters).toContainEqual(['eq','recipient_user_id','customer']);
+    expect(filters).toContainEqual(['eq','order_id','booked-order']);
+    expect(filters).toContainEqual(['eq','template_key','appointment_booked']);
+    expect(filters).toContainEqual(['lt','attempts',3]);
+    expect(fetchMock).not.toHaveBeenCalled();
   });
   it('rejects a customer before reading notification records',async()=>{
     await expect(sendNotification({isAdmin:false,aal:'aal1',role:null} as Context,'anything')).rejects.toThrow('Administrator');

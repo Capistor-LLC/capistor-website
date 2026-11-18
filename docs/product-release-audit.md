@@ -1,6 +1,6 @@
 # Product release audit — 18 November 2026
 
-Read-only copies of the owner-specified repositories were checked using installed KiCad CLI with schematic parity and error-level DRC. Sources were not modified. Reports are retained locally at `.local/timer-drc.json` and `.local/pager-drc.json`.
+Read-only copies of the owner-specified repositories were checked using installed KiCad CLI with schematic parity and error-level DRC. Checks were repeated with zone refilling in memory; the counts below were unchanged. Sources were not modified. Refilled reports are retained locally at `.local/timer-drc-refilled.json` and `.local/pager-drc-refilled.json`.
 
 | Design | KiCad result | Release decision |
 | --- | --- | --- |
