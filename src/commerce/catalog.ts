@@ -96,7 +96,7 @@ export const starterServices: ShopItem[] = [
     kind: "digital",
     category: "PCB DESIGN / MANUFACTURING PACK",
     summary:
-      "A compact ATmega328P timer board package with a manufacturing-ready handoff.",
+      "An ATmega328P timer design package being prepared for release.",
     description:
       "Designed as a compact timer controller with USB-C, LiPo power, display, sound and button interfaces. The release page shows the board render and production contents before purchase. Files unlock in the customer workspace after verified payment.",
     image_url: "/products/basketball-shot-timer-pcb.webp",

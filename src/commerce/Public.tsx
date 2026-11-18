@@ -553,8 +553,7 @@ export function ItemPage() {
           ) : (
             <>
               <Notice>
-                Online ordering is being prepared. Ask for a proposal to confirm
-                price, scope and availability.
+                {item.kind === "digital" ? "This design is not released for sale yet. Contact us for release updates or a custom design with an agreed scope." : "Contact us to confirm price, scope and availability for this service."}
               </Notice>
               <a
                 className="button full"

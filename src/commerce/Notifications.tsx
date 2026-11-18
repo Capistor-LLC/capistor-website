@@ -22,7 +22,7 @@ export default function NotificationQueue() {
     finally {setBusy(false);}
   }
   return <section className="panel"><h2>Notification queue</h2>
-    <p>Appointment emails waiting for staff dispatch. “Accepted by email provider” confirms submission, not inbox delivery. Workspace records remain available in each order.</p>
+    <p>Booking confirmations send automatically when email delivery is enabled. Review queued or failed messages here. “Accepted by email provider” confirms submission, not inbox delivery. Workspace records remain available in each order.</p>
     <button className="small-button" disabled={busy} onClick={()=>void load()}>Refresh status</button>
     {error && <Notice error>{error}</Notice>}
     {!data ? <p>Loading notification status…</p> : <>

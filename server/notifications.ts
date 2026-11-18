@@ -27,6 +27,12 @@ export function appointmentEmail(reference: string, orderId: string, origin: str
 }
 export async function sendNotification(ctx: Context, notificationId: unknown) {
   staffRole(ctx, ['owner', 'admin', 'support']);
+  return deliverNotification(ctx, notificationId);
+}
+
+// Internal dispatcher: public endpoints still require staff permission. Booking
+// invokes it only after ownership and payment have been checked transactionally.
+async function deliverNotification(ctx: Context, notificationId: unknown) {
   const readiness = emailReadiness();
   if (!readiness.configured) throw new HttpError(409, 'Configure RESEND_API_KEY and a verified NOTIFICATION_FROM sender first');
   if (!readiness.sendingEnabled) throw new HttpError(409, 'External email sending is disabled in this sandbox');
@@ -70,5 +76,18 @@ export async function sendNotification(ctx: Context, notificationId: unknown) {
     const reason = error instanceof Error && error.message.startsWith('Email provider') ? error.message : 'Delivery status is uncertain. Check the provider record before retrying';
     check(await ctx.db.from('notification_outbox').update({status:'failed',last_error:reason}).eq('id',row.id).neq('status','sent'));
     throw new HttpError(502,reason);
+  }
+}
+
+export async function dispatchBookedOrderEmail(ctx: Context, orderId: string) {
+  const readiness = emailReadiness();
+  if (!readiness.configured || !readiness.sendingEnabled) return;
+  const rows = check(await ctx.db.from('notification_outbox').select('id')
+    .eq('order_id',orderId).eq('recipient_user_id',ctx.user.id)
+    .eq('channel','email').eq('template_key','appointment_booked')
+    .in('status',['queued','failed']).lt('attempts',3).limit(1));
+  for (const row of rows) {
+    try { await deliverNotification(ctx,row.id); }
+    catch { console.warn('Appointment email remains in the staff notification queue'); }
   }
 }

@@ -4,6 +4,7 @@ import { administrator, staffRole } from "./auth.js";
 import { check } from "./runtime.js";
 import { HttpError, id, text } from "./policy.js";
 import { event, getOrder } from "./orders.js";
+import { dispatchBookedOrderEmail } from "./notifications.js";
 
 const OWNER_EMAIL = "krish.shoaib55@gmail.com";
 const staffRoles = z.enum([
@@ -228,6 +229,9 @@ export async function bookAppointment(ctx: Context, body: unknown) {
       p_timezone: b.timezone,
     }),
   );
+  // Email failure must not undo or disguise a successfully booked appointment.
+  try { await dispatchBookedOrderEmail(ctx,b.order_id); }
+  catch { console.warn('Appointment email dispatch unavailable; booking is saved'); }
   return { id: appointmentId };
 }
 
