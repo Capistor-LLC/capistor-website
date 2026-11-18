@@ -141,7 +141,7 @@ insert into public.products (slug, name, tagline, position) values
   ('smart-watch',     'Smart Watch',
    'ESP32-powered wearable with health monitoring, OLED display, and Bluetooth connectivity.', 0),
   ('industrial-board','Industrial Board',
-   'CE-compliant industrial PCB with EMI shielding built for harsh-environment automation.',   1)
+   'Industrial PCB for control and automation applications.',   1)
 on conflict (slug) do nothing;
 
 insert into public.product_images (product_id, url, alt, caption, position)

@@ -9,6 +9,7 @@ import rehypeHighlight from "rehype-highlight";
 import { supabase, DbBlogPost, DbBlogSeries } from "../../lib/supabase";
 import { formatDate } from "../../lib/blog";
 import Seo from "../ui/Seo";
+import {useBuildContent} from "../../commerce/BuildContent";
 import ShareButtons from "../ui/ShareButtons";
 import { BlogPostSkeleton } from "../ui/Skeleton";
 import "katex/dist/katex.min.css";
@@ -20,7 +21,8 @@ interface PostWithSeries extends DbBlogPost {
 
 export default function BlogPost() {
   const { slug } = useParams<{ slug: string }>();
-  const [post, setPost] = useState<PostWithSeries | null | undefined>(undefined);
+  const initialPost=useBuildContent().posts?.find(p=>p.slug===slug);
+  const [post, setPost] = useState<PostWithSeries | null | undefined>(initialPost?{...initialPost,series:null}:undefined);
   const [seriesPosts, setSeriesPosts] = useState<DbBlogPost[]>([]);
 
   useEffect(() => {
