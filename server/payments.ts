@@ -4,6 +4,7 @@ import { getOrder, agreementsReady, event } from "./orders.js";
 import { check, env, stripe, btcRequest } from "./runtime.js";
 import { HttpError, readyForPayment, verifyHmac } from "./policy.js";
 import { createCheckout } from "./stripe-checkout.js";
+import { billingCustomer } from "./billing.js";
 import {
   appOrigin,
   assertPaymentEnvironment,
@@ -113,6 +114,7 @@ export async function beginPayment(
       ctx.user.email!,
       appOrigin(),
       attempt.id,
+      await billingCustomer(ctx),
     );
     if (!session.url) throw new HttpError(502, "Checkout could not be created");
     externalId = session.id;

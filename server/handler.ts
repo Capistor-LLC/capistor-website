@@ -5,6 +5,7 @@ import { database, check } from "./runtime.js";
 import { HttpError, id, text, csvCell } from "./policy.js";
 import { createOrder, detail, getOrder, event } from "./orders.js";
 import { beginPayment, stripeWebhook, btcWebhook } from "./payments.js";
+import { billingPortal } from "./billing.js";
 import { prepareUpload, finishUpload, downloadFile } from "./files.js";
 import {
   adminData,
@@ -237,6 +238,9 @@ export default async function handler(
         result = await beginPayment(ctx, b.order_id, b.provider);
         break;
       }
+      case "billing-portal":
+        result = await billingPortal(ctx);
+        break;
       case "upload":
         result = await prepareUpload(ctx, body);
         break;

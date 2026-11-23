@@ -30,6 +30,7 @@ export function checkoutParameters(
   email: string,
   origin: string,
   rateId?: string,
+  customerId?: string,
 ): Stripe.Checkout.SessionCreateParams {
   const automatic = order.item_snapshot.tax_mode === "automatic",
     manual =
@@ -39,8 +40,11 @@ export function checkoutParameters(
   return {
     mode: "payment",
     client_reference_id: order.id,
-    customer_email: email,
-    customer_creation: "always",
+    ...(customerId ? {
+      customer: customerId,
+      customer_update: {address:'auto' as const,name:'auto' as const,...(automatic ? {shipping:'auto' as const} : {})},
+      saved_payment_method_options: {payment_method_save:'enabled' as const},
+    } : {customer_email: email,customer_creation: 'always' as const}),
     billing_address_collection: "required",
     phone_number_collection: { enabled: true },
     tax_id_collection: { enabled: true },
@@ -96,6 +100,7 @@ export async function createCheckout(
   email: string,
   origin: string,
   attemptId: string,
+  customerId?: string,
 ) {
   const s = stripe();
   let rateId: string | undefined;
@@ -122,7 +127,7 @@ export async function createCheckout(
     );
     rateId = rate.id;
   }
-  const params = checkoutParameters(order, email, origin, rateId);
+  const params = checkoutParameters(order, email, origin, rateId, customerId);
   // Identifier recommended by the Stripe agent integration guide; retained for API versions supporting it.
   const withIdentifier = {
     ...params,

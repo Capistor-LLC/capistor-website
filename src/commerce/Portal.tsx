@@ -49,6 +49,15 @@ export function PrivatePage({
 export function Portal() {
   const { user, signOut, isAdmin } = useAuth();
   const [orders, setOrders] = useState<Order[] | null>(null);
+  const [billingBusy, setBillingBusy] = useState(false);
+  const [billingError, setBillingError] = useState('');
+  async function openBilling() {
+    setBillingBusy(true);setBillingError('');
+    try {
+      const result = await api<{url:string}>('billing-portal',{});
+      window.location.assign(result.url);
+    } catch(e) {setBillingError((e as Error).message);setBillingBusy(false);}
+  }
   const [error, setError] = useState("");
   const load = useCallback(() => {
     setError("");
@@ -79,6 +88,13 @@ export function Portal() {
           </button>
         </div>
       </header>
+      <section className="panel" aria-label="Billing and payment methods">
+        <h2>Billing and payment methods</h2>
+        <p>Securely manage saved cards, billing details and invoices with Stripe. Saving a card is optional at checkout; each new order still requires your approval.</p>
+        <button className="small-button" disabled={billingBusy} onClick={()=>void openBilling()}>{billingBusy ? 'Opening Stripe…' : 'Manage billing with Stripe'}</button>
+        <p className="micro">Earlier invoices remain available in their order workspace. Billing changes do not change your Capistor sign-in details or signed agreements.</p>
+        {billingError && <Notice error>{billingError}</Notice>}
+      </section>
       {error ? (
         <Notice error>
           {error}{" "}

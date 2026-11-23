@@ -102,11 +102,27 @@ beforeAll(async () => {
   );
   item = String((await row("select id from shop_items limit 1")).id);
   await db.exec(readFileSync("supabase/migrations/0005_marketing_consent_fix.sql", "utf8"));
+  await db.exec(readFileSync("supabase/migrations/0006_stripe_customers.sql", "utf8"));
 }, 30000);
 afterAll(async () => {
   await db.close();
 });
 describe("Postgres transactions and RLS", () => {
+  it('keeps billing mappings private and separates sandbox from live identities', async()=>{
+    await db.exec('reset role');
+    await db.query("insert into stripe_customers(user_id,mode,customer_id) values($1,'test','cus_test'),($1,'live','cus_live')",[client]);
+    await expect(db.query("insert into stripe_customers(user_id,mode) values($1,'test')",[client])).rejects.toThrow();
+    for(const role of ['anon','authenticated']) {
+      await db.exec(`set role ${role}`);
+      try {
+        await expect(db.query('select * from stripe_customers')).rejects.toThrow(/permission denied/);
+        await expect(db.query("update stripe_customers set customer_id='cus_other'")).rejects.toThrow(/permission denied/);
+      } finally {await db.exec('reset role');}
+    }
+    await db.exec('set role service_role');
+    try {expect((await row('select count(*)::int as n from stripe_customers')).n).toBe(2);}
+    finally {await db.exec('reset role');}
+  });
   it.each([false, true])("creates consultation orders with marketing consent %s", async (consent) => {
     await db.exec('reset role');
     const id = randomUUID();

@@ -52,6 +52,7 @@ if (
       "shop_items",
       "client_orders",
       "blog_posts",
+      "stripe_customers",
     ]) {
       const response = await fetch(
         `${url.origin}/rest/v1/${table}?select=*&limit=0`,
