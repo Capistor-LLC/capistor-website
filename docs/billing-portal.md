@@ -13,6 +13,8 @@ Configure the portal separately in sandbox and live Stripe accounts: allow payme
 - Applied migration to staging and confirmed it exists through the database API.
 - 58 automated tests pass, including private mapping permissions, sandbox/live separation, identity reuse, retry expiry, trusted return URL, and optional card saving. TypeScript, commerce lint and production build pass.
 - Created a real sandbox portal session and a sandbox Checkout session using the persistent customer. Stripe accepted optional card saving and invoice creation.
+- Opened the hosted portal in a browser and successfully saved the sandbox Visa ending 4242 as the default payment method. No real card or real charge was used.
+- Verified the deployed billing endpoint rejects anonymous access, ignores browser-supplied customer/return parameters, and creates the mapping for the authenticated QA customer.
 - Saved live account's default portal configuration `bpc_1UeuQWLFAmiFFgyn84W6GiMf`.
 - The live account `acct_1UZ81FLFAmiFFgyn` differs from the existing sandbox account. Production needs its own server key, webhook secret and production database/storage configuration; sandbox credentials must not be repurposed as live credentials.
 
