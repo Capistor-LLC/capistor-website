@@ -31,7 +31,7 @@ export default function Seo({
       ? url
       : `${SITE_URL}${url}`
     : typeof window !== "undefined"
-      ? window.location.href
+      ? `${SITE_URL}${window.location.pathname}`
       : SITE_URL;
   const fullImage = image.startsWith("http") ? image : `${SITE_URL}${image}`;
 

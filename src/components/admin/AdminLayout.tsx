@@ -3,8 +3,9 @@ import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../../lib/useAuth";
 
 const navItems = [
+  { to: "/admin/commerce", label: "Shop & orders" },
   { to: "/admin", label: "Dashboard", end: true },
-  { to: "/admin/products", label: "Products" },
+  { to: "/admin/products", label: "Portfolio" },
   { to: "/admin/blog", label: "Blog" },
   { to: "/admin/series", label: "Series" },
   { to: "/admin/subscribers", label: "Subscribers" },

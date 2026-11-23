@@ -1,22 +1,37 @@
 import { createClient } from "@supabase/supabase-js";
+import { supabaseFetch } from "./supabaseFetch";
 
-const url = import.meta.env.VITE_SUPABASE_URL as string;
-const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string;
+const useStaging = import.meta.env.VITE_PAYMENT_MODE === "test";
+export const supabaseUrl =
+  (useStaging && import.meta.env.VITE_STAGING_SUPABASE_URL) ||
+  import.meta.env.VITE_SUPABASE_URL;
+const anonKey =
+  (useStaging && import.meta.env.VITE_STAGING_SUPABASE_ANON_KEY) ||
+  import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-if (!url || !anonKey) {
-  console.warn(
-    "[supabase] Missing VITE_SUPABASE_URL or VITE_SUPABASE_ANON_KEY. " +
-      "Set them in .env.local. See .env.example."
-  );
+export const hasSupabase = !!supabaseUrl && !!anonKey;
+export async function enabledSignInProviders(): Promise<{google: boolean; apple: boolean}> {
+  if (!hasSupabase) return {google:false, apple:false};
+  const response = await fetch(`${supabaseUrl}/auth/v1/settings`, {
+    headers: {apikey: anonKey}, signal: AbortSignal.timeout(8000),
+  });
+  if (!response.ok) throw new Error('Could not check sign-in providers');
+  const settings = await response.json();
+  return {google: settings.external?.google === true, apple: settings.external?.apple === true};
 }
-
-export const supabase = createClient(url ?? "", anonKey ?? "", {
-  auth: {
-    persistSession: true,
-    autoRefreshToken: true,
-    detectSessionInUrl: true,
+export const supabase = createClient(
+  supabaseUrl || "https://unconfigured.invalid",
+  anonKey || "unconfigured",
+  {
+    global: { fetch: supabaseFetch },
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true,
+      flowType: "pkce",
+    },
   },
-});
+);
 
 export const ADMIN_EMAIL =
   (import.meta.env.VITE_ADMIN_EMAIL as string | undefined)?.toLowerCase() ??
