@@ -19,3 +19,12 @@ Configure the portal separately in sandbox and live Stripe accounts: allow payme
 - The live account `acct_1UZ81FLFAmiFFgyn` differs from the existing sandbox account. Production needs its own server key, webhook secret and production database/storage configuration; sandbox credentials must not be repurposed as live credentials.
 
 Deploying source to main is separate from activating sales. Keep live checkout gated until production configuration and its webhook delivery are verified. Never record credentials or short-lived portal URLs in logs or committed files.
+
+## Production wiring — 25 November 2026
+
+- Restored the original production Supabase project and waited for Healthy status. Its five original content tables were present before applying commerce migrations 0002–0006 in one transaction; the resulting schema has 27 public tables.
+- Seeded customer policies, NDA/contract templates, service descriptions and three digital previews. Payment-provider switches remain disabled pending production validation; digital downloads require approved release files.
+- Saved the production database server credential and live Stripe webhook signing secret as Production-only Vercel secrets. Saved the live portal configuration and matching payment mode separately from Preview.
+- Created live Stripe destination `we_1UfQUmLFAmiFFgynWPt2RILA` with the five events listed in the launch runbook. Its endpoint uses the publicly reachable main-branch Vercel alias until the custom domain is restored. Signed delivery still needs verification after deployment.
+- Created private R2 bucket `capistor-private-production`, with public access disabled and CORS restricted to the production website origins. A bucket-scoped Object Read & Write credential still needs owner authorization and installation.
+- The custom domain did not resolve during this check. Production auth redirects, email delivery, storage access, live billing and the complete order flow remain launch checks. Do not interpret saved environment variables as proof of a successful deployment.
