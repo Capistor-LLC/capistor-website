@@ -32,13 +32,13 @@ export async function sendNotification(ctx: Context, notificationId: unknown) {
 
 // Internal dispatcher: public endpoints still require staff permission. Booking
 // invokes it only after ownership and payment have been checked transactionally.
-async function deliverNotification(ctx: Context, notificationId: unknown) {
+async function deliverNotification(ctx: Pick<Context, 'db'>, notificationId: unknown) {
   const readiness = emailReadiness();
   if (!readiness.configured) throw new HttpError(409, 'Configure RESEND_API_KEY and a verified NOTIFICATION_FROM sender first');
   if (!readiness.sendingEnabled) throw new HttpError(409, 'External email sending is disabled in this sandbox');
   const row = check(await ctx.db.from('notification_outbox').select('*').eq('id', id.parse(notificationId)).single());
   if (row.status === 'sent') return {ok:true};
-  if (!['queued','failed'].includes(row.status) || row.channel !== 'email' || row.template_key !== 'appointment_booked')
+  if (!['queued','failed'].includes(row.status) || row.channel !== 'email' || !['appointment_booked', 'digital_delivery'].includes(row.template_key))
     throw new HttpError(409, 'This notification cannot be sent by this email dispatcher');
   const started = row.payload.email_started_at;
   if (started && Date.now() - Date.parse(started) > 23 * 3600000)
@@ -46,13 +46,15 @@ async function deliverNotification(ctx: Context, notificationId: unknown) {
   if (row.attempts >= 3) throw new HttpError(409, 'Three attempts reached. Review the email provider record before taking further action');
   const order = check(await ctx.db.from('client_orders').select('id,reference,client_id,payment_status').eq('id', row.order_id).single());
   if (order.client_id !== row.recipient_user_id || order.payment_status !== 'paid') throw new HttpError(409, 'Notification recipient or paid order is no longer valid');
-  const appointment = check(await ctx.db.from('appointments').select('id,status').eq('order_id',order.id).single());
-  if (appointment.status !== 'scheduled') throw new HttpError(409, 'This appointment is no longer scheduled');
+  if (row.template_key === 'appointment_booked') {
+    const appointment = check(await ctx.db.from('appointments').select('id,status').eq('order_id',order.id).single());
+    if (appointment.status !== 'scheduled') throw new HttpError(409, 'This appointment is no longer scheduled');
+  }
   const {data,error} = await ctx.db.auth.admin.getUserById(order.client_id);
   if (error || !data.user?.email || !data.user.email_confirmed_at) throw new HttpError(409, 'A verified recipient email is required');
   const message = row.payload.email_message || {
     from: process.env.NOTIFICATION_FROM!, to: [data.user.email],
-    ...appointmentEmail(order.reference, order.id, appOrigin()),
+    ...(row.template_key === 'digital_delivery' ? digitalDeliveryEmail : appointmentEmail)(order.reference, order.id, appOrigin()),
   };
   // Compare-and-swap plus provider idempotency protects concurrent staff clicks.
   // Freeze the message so a retry uses exactly the same provider request.
@@ -90,4 +92,32 @@ export async function dispatchBookedOrderEmail(ctx: Context, orderId: string) {
     try { await deliverNotification(ctx,row.id); }
     catch { console.warn('Appointment email remains in the staff notification queue'); }
   }
+}
+
+export function digitalDeliveryEmail(reference: string, orderId: string, origin: string) {
+  return {
+    subject: `Your Capistor downloads are ready · ${reference}`,
+    text: `Your payment has been verified and your digital files are ready. Open your purchase below and select Download in the files section.
+
+${origin}/portal/orders/${orderId}
+
+Please sign in with the account used for this purchase. Your files remain available in your purchase history. For help, open a support request inside the order.
+
+Capistor Technologies`,
+  };
+}
+
+// Called only after authoritative payment settlement. One stable outbox record
+// per order survives webhook retries, including when email is not configured yet.
+export async function dispatchDigitalDeliveryEmail(db: Context['db'], orderId: string) {
+  const order = check(await db.from('client_orders').select('id,client_id,payment_status,item_snapshot').eq('id', orderId).single());
+  if (order.payment_status !== 'paid' || order.item_snapshot.kind !== 'digital') return;
+  check(await db.from('notification_outbox').upsert({
+    id: order.id, order_id: order.id, recipient_user_id: order.client_id,
+    channel: 'email', template_key: 'digital_delivery', payload: {},
+  }, {onConflict:'id', ignoreDuplicates:true}));
+  const readiness = emailReadiness();
+  if (!readiness.configured || !readiness.sendingEnabled) return;
+  try { await deliverNotification({db}, order.id); }
+  catch { console.warn('Digital delivery email remains in the staff notification queue'); }
 }

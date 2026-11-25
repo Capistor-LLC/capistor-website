@@ -1,3 +1,4 @@
+import { dispatchDigitalDeliveryEmail } from "./notifications.js";
 import type { Context } from "./auth.js";
 import type Stripe from "stripe";
 import { getOrder, agreementsReady, event } from "./orders.js";
@@ -209,6 +210,7 @@ async function settleStripeSession(
       p_invoice: invoice,
     }),
   );
+  await dispatchDigitalDeliveryEmail(db, orderId);
 }
 
 export async function stripeWebhook(

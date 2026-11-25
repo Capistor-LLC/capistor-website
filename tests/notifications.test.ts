@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { appointmentEmail, dispatchBookedOrderEmail, emailReadiness, sendNotification } from '../server/notifications.js';
+import { appointmentEmail, digitalDeliveryEmail, dispatchDigitalDeliveryEmail, dispatchBookedOrderEmail, emailReadiness, sendNotification } from '../server/notifications.js';
 import type { Context } from '../server/auth.js';
 afterEach(()=>{vi.unstubAllEnvs();vi.unstubAllGlobals();});
 describe('transactional notification boundaries',()=>{
@@ -74,5 +74,33 @@ describe('transactional notification boundaries',()=>{
     expect(writes[0].attempts).toBe(1);
     expect(writes[1].status).toBe('sent');
     expect(results).toHaveLength(0);
+  });
+});
+
+describe('digital delivery emails', () => {
+  it('links to the protected order rather than exposing a storage URL', () => {
+    const message=digitalDeliveryEmail('CAP-DEMO','order-id','https://example.com');
+    expect(message.subject).toContain('downloads are ready');
+    expect(message.text).toContain('https://example.com/portal/orders/order-id');
+    expect(message.text).toContain('sign in');
+    expect(message.text).not.toContain('r2.cloudflarestorage');
+  });
+  it('does not queue delivery for unpaid orders', async () => {
+    const chain:Record<string,unknown>={};
+    for(const key of ['select','eq'])chain[key]=()=>chain;
+    chain.single=()=>Promise.resolve({data:{payment_status:'pending',item_snapshot:{kind:'digital'}},error:null});
+    const from=vi.fn(()=>chain);
+    await dispatchDigitalDeliveryEmail({from} as unknown as Context['db'],'order');
+    expect(from).toHaveBeenCalledTimes(1);
+  });
+  it('queues one stable notification even when email is unavailable', async () => {
+    vi.stubEnv('RESEND_API_KEY','');
+    const upsert=vi.fn().mockResolvedValue({data:[],error:null});
+    const chain:Record<string,unknown>={};
+    for(const key of ['select','eq'])chain[key]=()=>chain;
+    chain.single=()=>Promise.resolve({data:{id:'order',client_id:'owner',payment_status:'paid',item_snapshot:{kind:'digital'}},error:null});
+    const from=vi.fn((table:string)=>table==='client_orders'?chain:{upsert});
+    await dispatchDigitalDeliveryEmail({from} as unknown as Context['db'],'order');
+    expect(upsert).toHaveBeenCalledWith(expect.objectContaining({id:'order',recipient_user_id:'owner',template_key:'digital_delivery'}),{onConflict:'id',ignoreDuplicates:true});
   });
 });
