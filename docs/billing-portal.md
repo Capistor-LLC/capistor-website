@@ -26,5 +26,12 @@ Deploying source to main is separate from activating sales. Keep live checkout g
 - Seeded customer policies, NDA/contract templates, service descriptions and three digital previews. Payment-provider switches remain disabled pending production validation; digital downloads require approved release files.
 - Saved the production database server credential and live Stripe webhook signing secret as Production-only Vercel secrets. Saved the live portal configuration and matching payment mode separately from Preview.
 - Created live Stripe destination `we_1UfQUmLFAmiFFgynWPt2RILA` with the five events listed in the launch runbook. Its endpoint uses the publicly reachable main-branch Vercel alias until the custom domain is restored. Signed delivery still needs verification after deployment.
-- Created private R2 bucket `capistor-private-production`, with public access disabled and CORS restricted to the production website origins. A bucket-scoped Object Read & Write credential still needs owner authorization and installation.
+- Created private R2 bucket `capistor-private-production`, with public access disabled and CORS restricted to the production website origins. The owner installed its scoped Object Read & Write credentials in Production; the account ID and bucket configuration were subsequently saved. End-to-end upload verification must follow deployment.
 - The custom domain did not resolve during this check. Production auth redirects, email delivery, storage access, live billing and the complete order flow remain launch checks. Do not interpret saved environment variables as proof of a successful deployment.
+
+### Connected production checks
+
+- Public catalog returns HTTP 200. An intentionally invalid webhook signature returns 400; a signed, non-transactional configuration probe returns 200. This checks signature handling, not Stripe-originated payment delivery.
+- A dedicated internal QA customer can authenticate, list orders (200), and create a consultation request (200). Admin access is correctly denied (403). No payment or booking was made.
+- The live billing endpoint creates a Stripe-hosted portal session (200) for that authenticated QA customer. No card or real charge was used.
+- Corrected the production Supabase Site URL and added login callback allow-list entries for the exact production hosts, including recovery query parameters. Supabase still reports its built-in email service; custom SMTP and actual email delivery remain required before public signup.
