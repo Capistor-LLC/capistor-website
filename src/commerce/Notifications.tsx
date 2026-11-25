@@ -22,7 +22,7 @@ export default function NotificationQueue() {
     finally {setBusy(false);}
   }
   return <section className="panel"><h2>Notification queue</h2>
-    <p>Booking confirmations send automatically when email delivery is enabled. Review queued or failed messages here. “Accepted by email provider” confirms submission, not inbox delivery. Workspace records remain available in each order.</p>
+    <p>Booking confirmations and digital-download notices send automatically when email delivery is enabled. Review queued or failed messages here. “Accepted by email provider” confirms submission, not inbox delivery. Workspace records remain available in each order.</p>
     <button className="small-button" disabled={busy} onClick={()=>void load()}>Refresh status</button>
     {error && <Notice error>{error}</Notice>}
     {!data ? <p>Loading notification status…</p> : <>
@@ -34,7 +34,7 @@ export default function NotificationQueue() {
         <p>{new Date(item.created_at).toLocaleString()} · {item.attempts} send attempts</p>
         {item.last_error && <p role="status">{item.last_error}</p>}
         <div className="actions">{item.order_id && <Link className="small-button" to={`/portal/orders/${item.order_id}`}>Open order</Link>}
-        {item.channel==='email' && item.template_key==='appointment_booked' && ['queued','failed'].includes(item.status) && <button className="small-button" disabled={busy || !data.configured || !data.sendingEnabled || item.attempts>=3} onClick={()=>void send(item.id)}>{item.attempts ? 'Retry same email' : 'Send appointment email'}</button>}</div>
+        {item.channel==='email' && ['appointment_booked','digital_delivery'].includes(item.template_key) && ['queued','failed'].includes(item.status) && <button className="small-button" disabled={busy || !data.configured || !data.sendingEnabled || item.attempts>=3} onClick={()=>void send(item.id)}>{item.attempts ? 'Retry same email' : item.template_key==='digital_delivery' ? 'Send download email' : 'Send appointment email'}</button>}</div>
       </article>)}</div>}
     </>}
   </section>;
