@@ -4,6 +4,18 @@ import { check } from './runtime.js';
 import { HttpError, id } from './policy.js';
 import { appOrigin, paymentMode } from './environment.js';
 
+export function providerError(status: number, body: unknown) {
+  const error = body as {name?: unknown; message?: unknown} | null;
+  const name = typeof error?.name === 'string' && /^[a-z_]{1,60}$/.test(error.name) ? error.name : 'request_failed';
+  // Provider errors can contain submitted addresses. Keep staff diagnostics useful
+  // without retaining recipient addresses or credentials in error text.
+  const detail = typeof error?.message === 'string' ? error.message
+    .replace(/Bearer\s+\S+|\b(?:re|sk|rk)_[A-Za-z0-9_]+/gi, '[redacted]')
+    .replace(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi, '[email]')
+    .replace(/[\r\n]+/g, ' ').slice(0, 240) : '';
+  return `Email provider returned HTTP ${status} (${name})${detail ? `: ${detail}` : ''}`;
+}
+
 export function emailReadiness() {
   return {
     configured: !!(process.env.RESEND_API_KEY && process.env.NOTIFICATION_FROM),
@@ -69,7 +81,7 @@ async function deliverNotification(ctx: Pick<Context, 'db'>, notificationId: unk
       method:'POST', headers:{Authorization:`Bearer ${process.env.RESEND_API_KEY}`, 'Content-Type':'application/json','Idempotency-Key':`capistor-notification/${row.id}`},
       body:JSON.stringify(message), signal:AbortSignal.timeout(15000),
     });
-    if (!response.ok) throw new Error(`Email provider returned HTTP ${response.status}`);
+    if (!response.ok) throw new Error(providerError(response.status, await response.json().catch(() => null)));
     const result = await response.json();
     if (!result.id) throw new Error('Email provider did not return a message identifier');
     check(await ctx.db.from('notification_outbox').update({status:'sent',sent_at:new Date().toISOString(),last_error:'',payload:{...row.payload,email_started_at:started || new Date().toISOString(),email_message:message,provider_id:result.id}}).eq('id',row.id));
