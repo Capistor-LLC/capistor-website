@@ -394,7 +394,7 @@ export function Shop() {
               onClick={() => void trackJourney("product_click", i.id, { source: "shop_grid" })}
             >
               {i.image_url ? (
-                <img src={i.image_url} alt={i.title} />
+                <img src={i.image_url} alt={i.title} loading="lazy" decoding="async" />
               ) : (
                 <div className="file-cover" aria-hidden="true">
                   {i.category}
@@ -406,7 +406,7 @@ export function Shop() {
               </p>
               <h2>{i.title}</h2>
               <p>{i.summary}</p>
-              <strong>{money(i.price_minor, i.currency)}</strong>
+              <div className="product-price-row"><strong>{money(i.price_minor, i.currency)}</strong><span>View design</span></div>
             </Link>
           ))}
         </div>
@@ -511,7 +511,7 @@ export function ItemPage() {
             {item.requires_quote
               ? "STARTING FROM"
               : available
-                ? "YOUR SERVICE"
+                ? item.kind === "digital" ? "DIGITAL DOWNLOAD" : "YOUR SERVICE"
                 : "GUIDE PRICE"}
           </p>
           <div className="big-price">
@@ -586,7 +586,26 @@ export function CheckoutPage() {
   const { slug } = useParams();
   const { items, available, business, loading } = useCatalog();
   const item = items.find((entry) => entry.slug === slug);
-  return <div className="page-wrap narrow"><PageIntro label="SECURE ORDER" title="Your order details" /><p>1. Details → 2. Agreements → 3. Payment → 4. Delivery or booking</p>{loading ? <p>Loading…</p> : item && available && business.legal_approved && (item.checkout_enabled || item.requires_quote) ? <><h2>{item.title}</h2><p>{money(item.price_minor, item.currency)}{item.requires_quote ? " starting price; final quote before payment" : ""}</p><OrderForm item={item} /></> : <Notice>This item is not available for checkout yet.</Notice>}</div>;
+  return <div className="page-wrap">
+    <PageIntro label="CHECKOUT" title="A clear next step."><p>Review your order and provide your details. You can review the terms before payment.</p></PageIntro>
+    <ol className="checkout-steps" aria-label="Checkout progress">
+      <li aria-current="step">Your details</li>
+      <li>{item?.kind === "digital" ? "Licence & policies" : "Agreements"}</li>
+      <li>Payment</li><li>{item?.kind === "digital" ? "Downloads" : "Project or booking"}</li>
+    </ol>
+    {loading ? <p role="status">Loading your order…</p> : item && available && business.legal_approved && (item.checkout_enabled || item.requires_quote) ?
+      <div className="checkout-layout">
+        <section className="checkout-form-panel"><h2>Your contact details</h2><p>Your account keeps your purchase, files and updates together.</p><OrderForm item={item} /></section>
+        <aside className="order-card checkout-summary" aria-label="Order summary">
+          {item.image_url && <img src={item.image_url} alt={item.title} />}
+          <p className="eyebrow">ORDER SUMMARY</p><h2>{item.title}</h2>
+          <div className="big-price">{money(item.price_minor, item.currency)}</div>
+          <p className="price-note">{item.requires_quote ? "Starting price. Your final quote is agreed before payment." : item.tax_mode === "automatic" ? "Includes applicable tax, calculated at checkout." : item.tax_bps ? `Plus ${item.tax_bps / 100}% tax.` : "No additional tax is added."}</p>
+          <div className="order-trust"><span>{item.kind === "digital" ? "Files unlock after payment verification" : "Scope and terms reviewed before payment"}</span><span>Order history in your account</span></div>
+          <Link className="text-link" to={`/${item.kind === "digital" ? "shop" : "services"}/${item.slug}`}>Review full details</Link>
+        </aside>
+      </div> : <Notice>This item is not available for checkout yet.</Notice>}
+  </div>;
 }
 function OrderForm({ item }: { item: ShopItem }) {
   const { user, loading } = useAuth();

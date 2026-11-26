@@ -4,7 +4,7 @@ import { useCatalog } from "./context";
 import "./commerce.css";
 import Analytics from "./Analytics";
 export function Arrow() {
-  return <span aria-hidden="true">↗</span>;
+  return null;
 }
 export default function Shell({ children }: { children: ReactNode }) {
   const { business } = useCatalog();
@@ -14,6 +14,17 @@ export default function Shell({ children }: { children: ReactNode }) {
     setOpen(false);
     window.scrollTo(0, 0);
   }, [location.pathname]);
+  useEffect(() => {
+    if (!open) return;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setOpen(false);
+        document.querySelector<HTMLButtonElement>(".menu-toggle")?.focus();
+      }
+    };
+    window.addEventListener("keydown", closeOnEscape);
+    return () => window.removeEventListener("keydown", closeOnEscape);
+  }, [open]);
   return (
     <div className="commerce">
       <a className="skip" href="#main">
