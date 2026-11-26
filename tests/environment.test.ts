@@ -74,3 +74,13 @@ describe("deployment payment boundaries", () => {
     ).toBe(false);
   });
 });
+
+describe('portable deployment payment boundaries', () => {
+  it('enforces the same payment isolation on Workers and rejects conflicting host settings', () => {
+    expect(() => assertPaymentEnvironment('stripe', {DEPLOYMENT_ENV:'preview', STRIPE_MODE:'live'})).toThrow();
+    expect(() => assertPaymentEnvironment('stripe', {DEPLOYMENT_ENV:'production', STRIPE_MODE:'test'})).toThrow();
+    expect(() => assertPaymentEnvironment('stripe', {DEPLOYMENT_ENV:'production', VERCEL_ENV:'preview', STRIPE_MODE:'live'})).toThrow();
+    expect(() => assertPaymentEnvironment('stripe', {DEPLOYMENT_ENV:'typo', STRIPE_MODE:'live'})).toThrow();
+    expect(() => assertPaymentEnvironment('stripe', {DEPLOYMENT_ENV:'production', STRIPE_MODE:'live'})).not.toThrow();
+  });
+});

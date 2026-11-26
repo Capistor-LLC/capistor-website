@@ -14,12 +14,17 @@ export function assertPaymentEnvironment(
   config: Environment = process.env,
 ) {
   const mode = paymentMode(config);
-  if (config.VERCEL_ENV === "production" && mode !== "live")
+  const deployment = config.DEPLOYMENT_ENV || config.VERCEL_ENV;
+  if (deployment && !['production', 'preview', 'development'].includes(deployment))
+    throw new HttpError(503, "Payment deployment is not configured");
+  if (config.DEPLOYMENT_ENV && config.VERCEL_ENV && config.DEPLOYMENT_ENV !== config.VERCEL_ENV)
+    throw new HttpError(503, "Payment deployment settings conflict");
+  if (deployment === "production" && mode !== "live")
     throw new HttpError(503, "Payments are not enabled for this deployment");
   if (
     mode === "live" &&
-    config.VERCEL_ENV &&
-    config.VERCEL_ENV !== "production"
+    deployment &&
+    deployment !== "production"
   )
     throw new HttpError(
       503,

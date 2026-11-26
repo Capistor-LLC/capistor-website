@@ -36,3 +36,6 @@ dist-ssr
 
 .local/
 .playwright/
+.wrangler/
+.dev.vars
+.dev.vars.*

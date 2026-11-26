@@ -20,3 +20,9 @@
 6. Real digital product release bundles remain a separate launch blocker. Staging samples must not become paid production deliverables.
 
 Do not mark the business email, automatic delivery, hosting migration or launch complete based only on domain registration or DNS propagation.
+
+## Automated email test outcome
+
+The real deployed sandbox webhook was replayed for owner order `CAP-95A6C9A6D4`. Settlement remained valid, but all three permitted email attempts were rejected. The latest deployment exposes a sanitized provider diagnostic: the API key is associated with an unverified domain. The old key must be replaced with a sending-only key scoped to the newly verified domain. No automated delivery success is claimed. Review this rejected notification and reconcile the provider record before authorizing another attempt; do not bypass the retry ceiling silently.
+
+Source/contact updates and sanitized email diagnostics are on main and the staging branch (through `48a03fc`). Cloudflare hosting preparation and local audit evidence are documented in `cloudflare-hosting.md`.
