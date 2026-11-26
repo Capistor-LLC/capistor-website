@@ -8,7 +8,7 @@ import {
 export const FIVERR_URL = "https://www.fiverr.com/shoaibmustafa7";
 export const defaultBusiness: Business = {
   legal_name: "CAPISTOR TECHNOLOGIES - FZCO",
-  contact_email: "inquiry@capistor.com",
+  contact_email: "inquiry@capistortechnologies.com",
   address: "Dubai, United Arab Emirates",
   registration_number: "",
   verification_url: "",

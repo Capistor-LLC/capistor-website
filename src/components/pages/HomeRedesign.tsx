@@ -319,7 +319,7 @@ export default function HomeRedesign() {
             <h2 style={{ fontWeight: 200, fontSize: "clamp(36px,5.2vw,84px)", lineHeight: 1.03, letterSpacing: "-0.02em", color: "#1a1813" }}>Tell us what<br />you want to build.</h2>
             <div style={{ paddingBottom: 14 }}>
               <p style={{ fontWeight: 300, fontSize: 17, lineHeight: 1.7, color: "#6f685c", marginBottom: 34 }}>Send the brief, the constraints, or just the idea. We&apos;ll come back with a path to a manufacturable product.</p>
-              <a href="mailto:inquiry@capistor.com" className="ul-link" style={{ display: "inline-block", textDecoration: "none", color: "#1a1813", fontSize: "clamp(18px,1.8vw,26px)", fontWeight: 300, letterSpacing: "0.01em" }}>inquiry@capistor.com</a>
+              <a href="mailto:inquiry@capistortechnologies.com" className="ul-link" style={{ display: "inline-block", textDecoration: "none", color: "#1a1813", fontSize: "clamp(18px,1.8vw,26px)", fontWeight: 300, letterSpacing: "0.01em" }}>inquiry@capistortechnologies.com</a>
               <div style={{ marginTop: 18, fontSize: 14, letterSpacing: "0.06em", color: "#8a8276" }}>+971 508 726 178 &nbsp;·&nbsp; Silicon Oasis, Dubai</div>
             </div>
           </div>

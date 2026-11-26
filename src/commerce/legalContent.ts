@@ -2,7 +2,7 @@ export const CUSTOMER_TERMS = `CAPISTOR CUSTOMER TERMS
 Effective date: 14 November 2026
 
 1. WHO WE ARE
-These terms govern purchases from CAPISTOR TECHNOLOGIES - FZCO ("Capistor", "we", "us"), Dubai, United Arab Emirates. Contact: inquiry@capistor.com. The customer named in an order is "you" or the "Customer".
+These terms govern purchases from CAPISTOR TECHNOLOGIES - FZCO ("Capistor", "we", "us"), Dubai, United Arab Emirates. Contact: inquiry@capistortechnologies.com. The customer named in an order is "you" or the "Customer".
 
 2. HOW AN ORDER IS FORMED
 Product pages describe the standard scope, price, deliverables, exclusions, software compatibility and estimated delivery. A binding order is formed when you submit the order, accept the applicable terms and licence, and Capistor confirms the order in your account. For a custom service, the project-specific proposal and Engineering Services Agreement become binding when both parties sign the issued version. If documents conflict, the following order applies: the signed project-specific agreement; the final accepted proposal or change order; these Customer Terms; then the product page.
@@ -56,7 +56,7 @@ Either party may terminate a custom project for a material breach not corrected 
 Neither party is responsible for delay caused by an event outside reasonable control, provided it promptly informs the other party and takes reasonable steps to reduce the effect. Payment obligations for work already delivered are not excused. If the event prevents substantial performance for more than 30 days, either party may end the affected undelivered work and receive or pay the appropriate unused balance.
 
 15. NOTICES, SUPPORT AND COMPLAINTS
-Open a support or refund ticket by emailing inquiry@capistor.com from the account email and include the order reference. Formal notices may also be posted in the order workspace. Capistor will acknowledge a support request within two business days and keep the decision and outcome in the order history.
+Open a support or refund ticket by emailing inquiry@capistortechnologies.com from the account email and include the order reference. Formal notices may also be posted in the order workspace. Capistor will acknowledge a support request within two business days and keep the decision and outcome in the order history.
 
 16. GOVERNING LAW AND DISPUTES
 These terms are governed by the laws of the United Arab Emirates. The parties will first try in good faith for 30 days to resolve a dispute through the recorded support process. If unresolved, the courts of Dubai have jurisdiction, subject always to any mandatory consumer forum or right that applies. Nothing in these terms excludes a right to contact a competent consumer-protection or regulatory authority.
@@ -87,7 +87,7 @@ WHAT THE GUARANTEE DOES NOT COVER
 The guarantee does not cover a failure caused solely by: a change made after delivery by the customer or an unauthorised third party; fabrication, assembly or component substitution that does not follow the approved production package; use outside ratings or disclosed environmental limits; incorrect installation, accident, abuse or normal wear; counterfeit parts; or a material requirement withheld before acceptance. Capistor bears the responsibility to explain and document any exclusion it relies on. A mixed-cause problem remains covered to the extent caused by Capistor.
 
 HOW TO OPEN A TICKET
-Email inquiry@capistor.com from the email used for the order with:
+Email inquiry@capistortechnologies.com from the email used for the order with:
 • the Capistor order reference;
 • a clear description of the problem and when it appeared;
 • photographs, video, measurements, logs or test conditions reasonably available; and
@@ -104,7 +104,7 @@ export const PRIVACY_POLICY = `CAPISTOR PRIVACY POLICY
 Effective date: 14 November 2026
 
 1. CONTROLLER AND CONTACT
-CAPISTOR TECHNOLOGIES - FZCO, Dubai, United Arab Emirates, controls the personal data described in this policy. Privacy, access, correction, export, objection and deletion requests may be sent to inquiry@capistor.com.
+CAPISTOR TECHNOLOGIES - FZCO, Dubai, United Arab Emirates, controls the personal data described in this policy. Privacy, access, correction, export, objection and deletion requests may be sent to inquiry@capistortechnologies.com.
 
 2. OUR CONFIDENTIALITY COMMITMENT
 We do not sell customer data, company data, client data, project files or contact details. We do not disclose them for another organisation's independent marketing. We use and disclose information only to operate the requested service, protect the parties, meet legal obligations, or where the customer has given a clear instruction or consent. Project information is not used in a portfolio or public case study without recorded permission.
@@ -132,13 +132,13 @@ Some providers may process data outside the United Arab Emirates. We select prov
 7. RETENTION AND PERMANENT DELETION REQUESTS
 Active account and project information is kept while needed to provide the service. Order, invoice, contract, consent, security, refund and dispute records are kept for the period reasonably required for warranty, accounting, tax, fraud prevention, legal claims and mandatory retention. Optional analytics is kept according to the configured analytics retention period. Marketing data is suppressed promptly after withdrawal so the preference can be respected.
 
-You may request permanent deletion by emailing inquiry@capistor.com from the account email. We verify the request to prevent unauthorised deletion. We then delete or irreversibly anonymise personal, company and client data that is no longer required, including private project files, from active systems and instruct relevant processors to do the same. Data that must be retained for law, tax, payment reconciliation, fraud prevention, a live dispute or the establishment or defence of a claim is isolated, access-restricted and used only for that purpose until deletion is permitted. Encrypted backup copies expire through the backup cycle and are not restored for ordinary business use. We confirm completion or explain any limited retention and its reason.
+You may request permanent deletion by emailing inquiry@capistortechnologies.com from the account email. We verify the request to prevent unauthorised deletion. We then delete or irreversibly anonymise personal, company and client data that is no longer required, including private project files, from active systems and instruct relevant processors to do the same. Data that must be retained for law, tax, payment reconciliation, fraud prevention, a live dispute or the establishment or defence of a claim is isolated, access-restricted and used only for that purpose until deletion is permitted. Encrypted backup copies expire through the backup cycle and are not restored for ordinary business use. We confirm completion or explain any limited retention and its reason.
 
 8. YOUR CHOICES AND RIGHTS
 Subject to applicable law and verification, you may request information about processing; access and a copy; correction; machine-readable export of data you provided; restriction; objection; withdrawal of consent; and deletion. You may also complain to the competent data-protection or consumer authority. Requests are free unless manifestly excessive or repetitive. We respond without unjustified delay.
 
 9. TELEPHONE, MESSAGING AND MARKETING
-A valid telephone number is required for operational messages such as appointment, delivery, security and urgent order updates. It is not automatically enrolled in marketing. Marketing calls or messages are sent only after a separate affirmative choice where required. You can withdraw that choice through your profile, a message opt-out or inquiry@capistor.com. Withdrawal does not stop necessary order or security messages.
+A valid telephone number is required for operational messages such as appointment, delivery, security and urgent order updates. It is not automatically enrolled in marketing. Marketing calls or messages are sent only after a separate affirmative choice where required. You can withdraw that choice through your profile, a message opt-out or inquiry@capistortechnologies.com. Withdrawal does not stop necessary order or security messages.
 
 10. COOKIES AND ANALYTICS
 Essential storage supports authentication, security and saved preferences. Optional analytics is off until the visitor chooses to allow it. A visitor can change that preference from the website footer. We do not use optional analytics consent as a condition of purchase.

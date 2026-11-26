@@ -158,7 +158,7 @@ export default function Login() {
         {!hasSupabase ? (
           <Notice>
             Client sign-in is being prepared. Email{" "}
-            <a href="mailto:inquiry@capistor.com">inquiry@capistor.com</a> to
+            <a href="mailto:inquiry@capistortechnologies.com">inquiry@capistortechnologies.com</a> to
             start a project.
           </Notice>
         ) : loading ? (

@@ -151,10 +151,10 @@ export default function ContactSection() {
               </p>
               <div className="flex flex-col sm:flex-row justify-center gap-4 text-center text-sm">
                 <a
-                  href="mailto:inquiry@capistor.com"
+                  href="mailto:inquiry@capistortechnologies.com"
                   className="text-sexyblue hover:text-black font-futura font-semibold transition-colors"
                 >
-                  inquiry@capistor.com
+                  inquiry@capistortechnologies.com
                 </a>
                 <span className="hidden sm:block text-sexyblue/30">·</span>
                 <a

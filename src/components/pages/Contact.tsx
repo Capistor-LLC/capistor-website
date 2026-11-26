@@ -167,10 +167,10 @@ export default function ContactPage() {
               </p>
               <div className="flex flex-col sm:flex-row justify-center gap-4 text-center">
                 <a
-                  href="mailto:inquiry@capistor.com"
+                  href="mailto:inquiry@capistortechnologies.com"
                   className="text-sexyblue hover:text-black font-futura font-semibold text-sm transition-colors"
                 >
-                  inquiry@capistor.com
+                  inquiry@capistortechnologies.com
                 </a>
                 <a
                   href="https://wa.me/971508726178"

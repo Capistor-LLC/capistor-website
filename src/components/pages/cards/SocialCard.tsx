@@ -85,10 +85,10 @@ const SocialCard = () => {
             Embedded Systems Engineer
           </p>
           <a
-            href="mailto:inquiry@capistor.com"
+            href="mailto:inquiry@capistortechnologies.com"
             className="text-sm text-sexyblue/80 mt-2 inline-block hover:underline hover:text-sexyblue font-fransisco transition-colors duration-200"
           >
-            inquiry@capistor.com
+            inquiry@capistortechnologies.com
           </a>
         </div>
 

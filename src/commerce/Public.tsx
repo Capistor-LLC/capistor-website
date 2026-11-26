@@ -332,7 +332,7 @@ export function Services() {
             scoped separately. Explain the outcome you need and we’ll establish
             what fits.
           </p>
-          <a className="text-link" href="mailto:inquiry@capistor.com">
+          <a className="text-link" href="mailto:inquiry@capistortechnologies.com">
             Discuss a custom project <Arrow />
           </a>
         </div>
@@ -423,7 +423,7 @@ export function Shop() {
           </p>
           <a
             className="button"
-            href="mailto:inquiry@capistor.com?subject=Digital%20product%20request"
+            href="mailto:inquiry@capistortechnologies.com?subject=Digital%20product%20request"
           >
             Suggest a useful design <Arrow />
           </a>
