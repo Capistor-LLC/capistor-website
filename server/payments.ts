@@ -221,7 +221,7 @@ export async function stripeWebhook(
   if (!sig) throw new HttpError(400, "Missing signature");
   let notification;
   try {
-    notification = stripe().webhooks.constructEvent(
+    notification = await stripe().webhooks.constructEventAsync(
       raw,
       sig,
       env("STRIPE_WEBHOOK_SECRET"),

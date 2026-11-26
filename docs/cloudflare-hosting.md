@@ -1,6 +1,6 @@
 # Cloudflare hosting preparation
 
-The existing Node commerce handler now runs through Cloudflare's Node HTTP adapter (`workers/index.mjs`). The checked-in Wrangler configuration is **staging only**, with test Stripe mode, automatic email disabled and indexing disabled. It has not been deployed to Cloudflare.
+The existing Node commerce handler now runs through Cloudflare's Node HTTP adapter (`workers/index.mjs`). The checked-in Wrangler configuration is **staging only**, with test Stripe mode, automatic email enabled for the owner delivery test and indexing disabled. It is deployed at https://capistor-staging.capistor-website.workers.dev.
 
 Run `npm run build:worker`, then `npm run dev:worker`. Local credentials belong in ignored, mode-0600 `.dev.vars`; never in Wrangler configuration. `npm run check:worker` checks the bundle without deploying. Worker environment variables populate `process.env` through the compatibility date's Node support.
 
@@ -26,3 +26,9 @@ This is not proof of deployed Workers CPU limits, private file transfers, produc
 4. Prepare a separate production Worker with live credentials, indexing enabled and approved origin. Only then attach the purchased domain, update Supabase callbacks, R2 CORS and Stripe webhook destination.
 
 References: https://developers.cloudflare.com/workers/runtime-apis/nodejs/http/ and https://developers.cloudflare.com/workers/runtime-apis/nodejs/process/
+
+## Deployed validation
+
+Wrangler was authorized with account/user read, Worker/script/route write, tail read and zone read, plus refresh access; no billing access. Staging secrets were installed encrypted. The six catalogue items prerender from staging correctly. The full hosted customer audit passed, including checkout creation, agreements, messages, support, idempotency and denial of customer admin access. Stripe webhook replay, email delivery and private R2 download/checksum/cross-customer denial passed. See `domain-launch-status.md` for message evidence.
+
+Production still requires separate credentials/configuration, final-origin routing and checks. Current deployment is staging only. Free-plan CPU headroom under load has not been measured.

@@ -3,7 +3,9 @@
   "name": "capistor-staging",
   "main": "workers/index.mjs",
   "compatibility_date": "2026-11-26",
-  "compatibility_flags": ["nodejs_compat"],
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
   "workers_dev": true,
   "preview_urls": false,
   "assets": {
@@ -11,11 +13,21 @@
     "binding": "ASSETS",
     "html_handling": "drop-trailing-slash",
     "not_found_handling": "none",
-    "run_worker_first": ["/api/*", "/portal*", "/admin*", "/login*", "/checkout*", "/products", "/capabilities", "/blog"]
+    "run_worker_first": [
+      "/api/*",
+      "/portal*",
+      "/admin*",
+      "/login*",
+      "/checkout*",
+      "/products",
+      "/capabilities",
+      "/blog"
+    ]
   },
   "vars": {
     "DEPLOYMENT_ENV": "preview",
     "STRIPE_MODE": "test",
-    "ALLOW_SANDBOX_EMAIL": "false"
+    "ALLOW_SANDBOX_EMAIL": "true",
+    "NOTIFICATION_FROM": "Capistor Technologies <support@capistortechnologies.com>"
   }
 }

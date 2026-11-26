@@ -2,18 +2,21 @@ import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { resolve } from "node:path";
 import { loadEnv } from "vite";
 const env = { ...loadEnv("production", process.cwd(), ""), ...process.env };
+const useStaging = env.VITE_PAYMENT_MODE === "test";
+const contentUrl = (useStaging && env.VITE_STAGING_SUPABASE_URL) || env.VITE_SUPABASE_URL;
+const contentKey = (useStaging && env.VITE_STAGING_SUPABASE_ANON_KEY) || env.VITE_SUPABASE_ANON_KEY;
 const { render } = await import("../.local/ssr/entry-server.js");
 const template = readFileSync("dist/index.html", "utf8");
 async function published(table) {
-  if (!env.VITE_SUPABASE_URL || !env.VITE_SUPABASE_ANON_KEY) return [];
+  if (!contentUrl || !contentKey) return [];
   try {
     const res = await fetch(
-      `${env.VITE_SUPABASE_URL}/rest/v1/${table}?select=*&${table === "shop_items" ? "published" : "is_published"}=eq.true`,
+      `${contentUrl}/rest/v1/${table}?select=*&${table === "shop_items" ? "published" : "is_published"}=eq.true`,
       {
         headers: {
-          apikey: env.VITE_SUPABASE_ANON_KEY,
-          ...(!env.VITE_SUPABASE_ANON_KEY.startsWith("sb_")
-            ? { Authorization: `Bearer ${env.VITE_SUPABASE_ANON_KEY}` }
+          apikey: contentKey,
+          ...(!contentKey.startsWith("sb_")
+            ? { Authorization: `Bearer ${contentKey}` }
             : {}),
         },
         signal: AbortSignal.timeout(10000),
