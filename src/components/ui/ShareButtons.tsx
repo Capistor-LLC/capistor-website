@@ -9,7 +9,7 @@ interface ShareButtonsProps {
 export default function ShareButtons({ url, title, text }: ShareButtonsProps) {
   const [copied, setCopied] = useState(false);
 
-  const fullUrl = url.startsWith("http") ? url : `https://capistor.com${url}`;
+  const fullUrl = url.startsWith("http") ? url : `https://capistortechnologies.com${url}`;
   const tweetText = text ? `${text}\n\n${title}` : title;
 
   const links = {

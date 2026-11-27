@@ -83,7 +83,7 @@ export function Article() {
     description: a.excerpt,
     author: { "@type": "Organization", name: "Capistor editorial" },
     publisher: { "@type": "Organization", name: "Capistor Technologies" },
-    mainEntityOfPage: `https://capistor.com/journal/${a.slug}`,
+    mainEntityOfPage: `https://capistortechnologies.com/journal/${a.slug}`,
   };
   return (
     <div className="page-wrap narrow">

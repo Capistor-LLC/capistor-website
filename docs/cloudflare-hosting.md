@@ -32,3 +32,7 @@ References: https://developers.cloudflare.com/workers/runtime-apis/nodejs/http/ 
 Wrangler was authorized with account/user read, Worker/script/route write, tail read and zone read, plus refresh access; no billing access. Staging secrets were installed encrypted. The six catalogue items prerender from staging correctly. The full hosted customer audit passed, including checkout creation, agreements, messages, support, idempotency and denial of customer admin access. Stripe webhook replay, email delivery and private R2 download/checksum/cross-customer denial passed. See `domain-launch-status.md` for message evidence.
 
 Production still requires separate credentials/configuration, final-origin routing and checks. Current deployment is staging only. Free-plan CPU headroom under load has not been measured.
+
+## Production build
+
+`wrangler.production.jsonc` is a separate production Worker configuration. Build with `VITE_PAYMENT_MODE=live`, the production `VITE_SUPABASE_URL` and its public `VITE_SUPABASE_ANON_KEY`, then deploy with `npx wrangler deploy --config wrangler.production.jsonc`. Never deploy a staging build to production or a production build to staging. The current asset preparation intentionally keeps all static pages noindex until the final domain launch is validated. Production secret installation and pending Stripe account verification are recorded in `domain-launch-status.md`.

@@ -32,3 +32,15 @@ A separate authenticated request to the deployed Worker downloaded the 76,179-by
 The Worker needed asynchronous Stripe webhook verification; the synchronous SDK verifier rejected valid signatures under its Web Crypto build. This was corrected and covered by an async-crypto regression test that rejects altered and unsigned payloads. All 64 tests, type checking and commerce lint pass.
 
 Staging Supabase Site URL and exact `/login` redirect now include the Cloudflare origin. All digital assets are still samples; this does not establish production product readiness or a real-money charge.
+
+## Production hosting progress — 27 November 2026
+
+Production Worker is deployed at https://capistor-production.capistor-website.workers.dev, separately from staging, using the production Supabase browser configuration. The server has encrypted production Supabase credentials, existing Stripe webhook signing secret and production-only R2 credentials. No paid hosting plan was enabled.
+
+New-domain canonical/share/sitemap URLs are prepared. Production assets remain noindex until final cutover. APP_ORIGIN is currently the production workers.dev URL; no custom domain route has been attached. The live Stripe secret and Resend sending key are not yet installed in this Worker, and customer payments remain disabled in the production database.
+
+Browser session restoration discarded one-time credential memory. A new approved production-only R2 key named `capistor-worker-production-deploy` was created and installed encrypted in the production Worker; the prior unused `capistor-worker-production-files` key should be revoked after checking no consumer uses it. Existing Vercel storage credentials were preserved.
+
+The restricted Stripe key `capistor-cloudflare-commerce` exists but its one-time secret is unavailable. A replacement named `capistor-worker-production-deploy` is prepared with the same nine limited permissions: Checkout Sessions, Customers and Customer Portal write; Charges and Refunds, Payment Intents, Invoices, Products, Prices, and Tax Settings/Registrations read. Stripe requires account verification before creation/reveal can finish. No payouts, transfers, refund-write or webhook-management permissions were requested.
+
+Next: complete Stripe verification and install its secret immediately; install a domain-scoped Resend sending key in production; configure exact production authentication callbacks and R2 CORS; validate production portal/checkout without charging a card; attach domain/TLS, update APP_ORIGIN and Stripe webhook URL, and enable indexing only on the final public origin. Release-ready digital bundles are still required before enabling their real-money sales.

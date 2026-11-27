@@ -11,7 +11,7 @@ interface SeoProps {
 }
 
 const SITE_NAME = "Capistor Technologies";
-const SITE_URL = "https://capistor.com";
+const SITE_URL = "https://capistortechnologies.com";
 const DEFAULT_DESCRIPTION =
   "Custom embedded systems, PCB design, and industrial technology solutions — engineered for production.";
 const DEFAULT_IMAGE = `${SITE_URL}/og-default.jpg`;

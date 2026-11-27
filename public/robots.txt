@@ -4,4 +4,4 @@ Disallow: /admin
 Disallow: /portal
 Disallow: /login
 Disallow: /api/
-Sitemap: https://capistor.com/sitemap.xml
+Sitemap: https://capistortechnologies.com/sitemap.xml

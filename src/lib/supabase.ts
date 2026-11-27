@@ -35,7 +35,7 @@ export const supabase = createClient(
 
 export const ADMIN_EMAIL =
   (import.meta.env.VITE_ADMIN_EMAIL as string | undefined)?.toLowerCase() ??
-  "shoaib@capistor.com";
+  "krish.shoaib55@gmail.com";
 
 export type DbProduct = {
   id: string;
