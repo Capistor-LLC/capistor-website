@@ -14,6 +14,7 @@ import { getOrder, agreementsReady } from "./orders.js";
 import { stripe } from "./runtime.js";
 import { taxReadiness } from "./stripe-checkout.js";
 import { NDA_TEMPLATE, CONTRACT_TEMPLATE } from "./documents.js";
+import { dispatchDigitalDeliveryEmail } from "./notifications.js";
 import { assertPaymentEnvironment } from "./environment.js";
 export async function adminData(ctx: Context) {
   administrator(ctx);
@@ -303,6 +304,7 @@ export async function quoteOrder(ctx: Context, body: unknown) {
       p_actor: ctx.user.id,
     }),
   );
+  await dispatchDigitalDeliveryEmail(ctx.db, o.id);
   return { ok: true };
 }
 
@@ -330,5 +332,6 @@ export async function confirmBank(ctx: Context, body: unknown) {
       p_actor: ctx.user.id,
     }),
   );
+  await dispatchDigitalDeliveryEmail(ctx.db, o.id);
   return { ok: true };
 }

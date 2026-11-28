@@ -1,6 +1,6 @@
 # Google login activation
 
-Status, 28 November 2026: application support exists, but the production Google OAuth provider is not configured. Google Cloud was signed out in the available browser during handover. Do not claim Google sign-in is active until a real callback test passes.
+Status, 28 November 2026: application support exists, but the production Google OAuth provider is not configured. Google project `organic-storm-516102-p7` (Capistor Website) now exists. Branding and external audience are prepared; owner approval is pending for the API User Data Policy and creation of the OAuth connection. Do not claim Google sign-in is active until a real callback test passes.
 
 ## Existing application wiring
 

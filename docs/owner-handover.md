@@ -211,7 +211,7 @@ Supabase Auth handles email/password, verified email links and session refresh. 
 
 The designated owner is krish.shoaib55@gmail.com. The owner can invite staff and assign owner, admin, sales, engineer, support or editor roles. Sensitive server actions apply role checks; all staff administration requires AAL2 authenticator verification. Google login will not bypass staff MFA.
 
-Google status at handover: the application already checks Supabase's enabled providers and displays “Continue with Google” when Google is enabled. Google Cloud is signed out in the available browser, so no OAuth client has been created or activated in this task. Email login remains available.
+Google status at handover: the application already checks Supabase's enabled providers and displays “Continue with Google” when Google is enabled. The Capistor Website Google Cloud project has been created and its consent form prepared. Policy acceptance and OAuth credential creation are awaiting owner confirmation, so the provider is not active. Email login remains available.
 
 Activation recipe: in the owner's Google Cloud project, configure Google Auth branding/audience for Capistor, its public domain, support email, home and policy URLs. Create a Web application OAuth client using the main website origin and this exact authorized redirect:
 https://mqzxzvesyjfftddquxik.supabase.co/auth/v1/callback
@@ -373,7 +373,7 @@ DOWNLOAD BLOCKED: verify confirmed payment, entitlement, correct user, approved 
 
 MAIL IN JUNK: check Resend delivery/bounce details, authentication and domain alignment, then the recipient folder. Delivered is not inbox. BOOKING ABSENT: check paid status, open slots, schedule variable and cron logs. A calendar download is not automatic external-calendar sync.
 
-Evidence at handover: 77 automated tests across 14 files previously passed, along with typecheck, commerce lint and production build. Live checkout-session and billing-portal creation succeeded without real charges. Bank fallback, future slots, private-file gates and customer/admin separation were checked. Staging verified paid booking, digital download bytes, repeat operations and another customer's denial.
+Evidence at handover: 80 automated tests across 15 files passed, along with typecheck, commerce lint and production build. Live checkout-session and billing-portal creation succeeded without real charges. Bank fallback, future slots, private-file gates and customer/admin separation were checked. Staging verified paid booking, digital download bytes, repeat operations and another customer's denial.
 
 Not established: production real-money settlement/refund, two-person Jitsi call, inbox placement, sustained load capacity, full recovery drill or activated Google login. Treat these as explicit tests to complete, not as proven by a green unit-test suite.
 
@@ -382,7 +382,7 @@ Not established: production real-money settlement/refund, two-person Jitsi call,
 ## Finish these in a controlled order
 FIRST: activate and test Google OAuth after signing into the owner's Google Cloud account. Keep email login and staff MFA. Review the completed handover, verify GitHub access on your own machine and save provider recovery information.
 
-BEFORE SELLING DIGITAL PRODUCTS: replace showcase files with validated releases, resolve PCB/CAD audit findings, verify rights/licences, approve uploads, test paid delivery and only then enable checkout. Bank settlement currently unlocks via the shared database settlement flow, but confirmBank does not queue the Stripe-style digital-delivery email; verify/fix that notification path before digital bank sales.
+BEFORE SELLING DIGITAL PRODUCTS: replace showcase files with validated releases, resolve PCB/CAD audit findings, verify rights/licences, approve uploads, test paid delivery and only then enable checkout. Bank settlement now queues the same digital-delivery notification as Stripe after successful settlement; repeated requests use the existing stable notification key. Verify the complete paid file/email path for your real release.
 
 BEFORE MORE CLIENT TRAFFIC: run one controlled real payment/refund, test the actual consultation call, verify Zoho incoming/outgoing email, establish database/R2 backups, and review provider usage limits. Measure Worker CPU and frontend performance under realistic load before promising capacity.
 
