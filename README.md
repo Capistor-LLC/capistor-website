@@ -1,85 +1,39 @@
-# Capistor Website
+# Capistor Technologies website
 
-A modern web application built with Vite, React, and Tailwind CSS.
+Production: https://capistortechnologies.com
 
-## Tech Stack
+Start with the **[owner and engineering handover](docs/owner-handover.md)** or its **[23-page PDF](output/pdf/capistor-owner-handover.pdf)**. The handover explains services, URLs, customer/staff workflows, deployment, backups and known gaps as of 28 November 2026.
 
-- **Vite** - Build tool and development server
-- **React 18** - UI library with TypeScript support
-- **Tailwind CSS** - Utility-first CSS framework
-- **TypeScript** - Type safety and better developer experience
-- **ESLint** - Code linting and formatting
+## Architecture
 
-## Getting Started
+React + TypeScript + Vite frontend; Node commerce handler hosted on Cloudflare Workers; Supabase Auth/PostgreSQL; private Cloudflare R2 files; Stripe Checkout and customer portal; Resend transactional mail; Zoho business inbox. Production and staging are separate.
 
-### Prerequisites
+GitHub is the source backup. **Pushing main does not deploy the production Cloudflare Worker.** Vercel is a retained legacy deployment. See [Cloudflare hosting](docs/cloudflare-hosting.md) and [launch status](docs/domain-launch-status.md).
 
-- Node.js (version 18 or higher)
-- npm or yarn
+## Local development
 
-### Installation
+Use Node 22 LTS and npm. Run `npm ci`. Configure ignored `.env.local` from `.env.example` with staging credentials; never commit credentials. Run `npm run dev:api` in one terminal and `npm run dev` in another. Vite normally serves http://127.0.0.1:5173 and proxies `/api` to port 3001. Match `APP_ORIGIN` to the actual frontend URL.
 
-1. Clone the repository:
-   ```bash
-   git clone <your-repo-url>
-   cd capistor-website
-   ```
+## Validation
 
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-
-3. Start the development server:
-   ```bash
-   npm run dev
-   ```
-
-4. Open your browser and visit `http://localhost:5173`
-
-## Available Scripts
-
-- `npm run dev` - Start the development server
-- `npm run build` - Build the application for production
-- `npm run preview` - Preview the production build locally
-- `npm run lint` - Run ESLint to check for code issues
-
-## Project Structure
-
-```
-capistor-website/
-├── public/
-│   └── vite.svg
-├── src/
-│   ├── App.tsx          # Main application component
-│   ├── main.tsx         # Application entry point
-│   └── index.css        # Global styles with Tailwind imports
-├── index.html           # HTML template
-├── package.json         # Dependencies and scripts
-├── tailwind.config.js   # Tailwind CSS configuration
-├── postcss.config.js    # PostCSS configuration
-├── tsconfig.json        # TypeScript configuration
-├── vite.config.ts       # Vite configuration
-└── eslint.config.js     # ESLint configuration
+```sh
+npm run typecheck
+npm run lint:commerce
+npm test
+npm run build:worker
 ```
 
-## Deployment
+Build with environment-specific browser variables before deploying. Production uses `wrangler.production.jsonc`; staging uses `wrangler.jsonc`. Never deploy a reused `dist` build to the other environment. Secrets live in encrypted Worker bindings and provider dashboards.
 
-This project is configured to work with Vercel out of the box. Simply connect your repository to Vercel and it will automatically deploy your application.
+## Key documents
 
-The build command (`npm run build`) creates optimized production files in the `dist` directory.
+- [Order workflow](docs/order-workflow.md)
+- [Product release audit](docs/product-release-audit.md)
+- [Stripe integration](docs/stripe-integration-plan.md)
+- [Billing portal](docs/billing-portal.md)
+- [Notification delivery](docs/notification-delivery.md)
+- [Google login activation](docs/google-login-activation.md)
 
-## Tailwind CSS
+## Rebuild the handover PDF
 
-Tailwind CSS is pre-configured and ready to use. You can start using Tailwind utility classes immediately in your components.
-
-Custom configurations can be added to `tailwind.config.js`.
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Run linting: `npm run lint`
-5. Build the project: `npm run build`
-6. Submit a pull request.
+In an isolated Python environment, install `reportlab` and `pypdf`, then run `python scripts/build-handover.py`. The editable source is `docs/owner-handover.md`. Render and inspect every page after changes; the generator checks the page count to catch overflow.

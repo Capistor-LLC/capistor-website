@@ -16,7 +16,7 @@ flowchart TD
   K -->|Digital| L[Approved purchased files available]
   K -->|Consultation| M[Client selects a published available slot]
   K -->|Engineering| N[Staff posts updates and deliverables]
-  M --> O[Staff adds meeting link]
+  M --> O[Generate Jitsi link and queue client/staff notices]
   N --> P[Client reviews deliverables]
   L --> Q[Order history, support cases and export]
   O --> Q
@@ -33,10 +33,10 @@ flowchart TD
 | Record negotiation | Adds proposal, objection or decision to order history | Access to the order |
 | Confirm bank settlement | Records a real bank payment | Live payment mode and owner/admin role; unavailable in sandbox |
 | Calendar | Publish availability and manage booked appointments | Appropriate staff role |
-| Meeting URL | Saves the joining link for the appointment | Staff supplies the URL; provider generation is not connected |
+| Meeting URL | Generates a random Jitsi link after booking; staff can replace it | Production `MEETING_PROVIDER=jitsi`; host signs in to start the room |
 | Files | Upload, review and approve delivery files | Appropriate access; private files remain controlled |
 | Export | Downloads the project record | Access to the order |
 
 ## Current limitations to resolve
 
-Digital showcase items cannot be purchased until approved bundles exist and checkout is enabled. NDA and contract drafts are automatic, but issuing them still requires staff review. Calls are booked after payment; meeting-link generation and notification delivery require provider integration. Google and Apple sign-in require configured OAuth providers. Phone collection does not yet verify the phone number. Sandbox bank settlement is intentionally rejected; use Stripe test checkout to exercise verified-payment workflows.
+Digital showcase items cannot be purchased until approved bundles exist and checkout is enabled. NDA and contract drafts are automatic, but issuing them still requires staff review. Calls are booked after payment; production generates Jitsi links and queues email with scheduled retries. A live two-person call still needs checking. Google sign-in requires provider activation; see `google-login-activation.md`. Apple is not part of the current requested addition. Phone collection does not yet verify the phone number. Sandbox bank settlement is intentionally rejected; use Stripe test checkout to exercise verified-payment workflows.

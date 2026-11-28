@@ -39,3 +39,6 @@ dist-ssr
 .wrangler/
 .dev.vars
 .dev.vars.*
+
+# Handover rendering intermediates
+/tmp/pdfs/

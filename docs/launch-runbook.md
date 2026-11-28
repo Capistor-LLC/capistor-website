@@ -1,5 +1,7 @@
 # Capistor commerce: setup and operation
 
+> Historical implementation/setup reference. Production now runs on Cloudflare Workers. For the current owner workflow, deployment and status, start with [owner-handover.md](owner-handover.md), [cloudflare-hosting.md](cloudflare-hosting.md) and [domain-launch-status.md](domain-launch-status.md). Migrations 0001-0006 are the installed baseline; do not blindly rerun them.
+
 This branch adds a storefront and authenticated commerce backend to the existing Vite/Vercel site. It retains Supabase and uses a private Cloudflare R2 bucket. Checkout and legal approvals default off. No sample downloadable product is sold as if it were a real release.
 
 ## 1. Database and accounts
