@@ -6,6 +6,7 @@ import { check, env, stripe, btcRequest } from "./runtime.js";
 import { HttpError, readyForPayment, verifyHmac } from "./policy.js";
 import { createCheckout } from "./stripe-checkout.js";
 import { billingCustomer } from "./billing.js";
+import { prepareBankFallback } from "./bank-fallback.js";
 import {
   appOrigin,
   assertPaymentEnvironment,
@@ -29,6 +30,12 @@ export async function beginPayment(
   if (ctx.user.id !== order.client_id)
     throw new HttpError(403, "Only the client can start payment");
   readyForPayment(order, await agreementsReady(ctx, orderId));
+  if (order.item_snapshot.booking_required) {
+    const slots = check(await ctx.db.from("availability_slots").select("id")
+      .eq("status", "open").gte("starts_at", new Date().toISOString()).limit(1));
+    if (!slots.length) throw new HttpError(409,
+      "No consultation times are currently available. Please contact Capistor before paying.");
+  }
   const settings = check(
     await ctx.db.from("business_settings").select("*").eq("id", true).single(),
   );
@@ -48,6 +55,7 @@ export async function beginPayment(
     const bank = JSON.parse(env("BANK_DETAILS_JSON"));
     if (!bank.account_holder || !bank.iban || !bank.bic)
       throw new HttpError(503, "Bank payment instructions are not configured");
+    await prepareBankFallback(ctx, orderId);
     const attempt = check(
       await ctx.db.rpc("reserve_payment", {
         p_order: orderId,

@@ -5,6 +5,7 @@ import { supabase, hasSupabase, enabledSignInProviders } from "../lib/supabase";
 import { useAuth } from "../lib/useAuth";
 import { Notice, PageIntro } from "./Shell";
 import { api } from "./api";
+import { parseEmailLink } from "./emailLink";
 export function safeNext(value: string | null) {
   return value &&
     value.startsWith("/") &&
@@ -18,7 +19,15 @@ export default function Login() {
   const [params] = useSearchParams();
   const navigate = useNavigate();
   const next = safeNext(params.get("next"));
-  const recovering = params.get("recovery") === "1";
+  const [emailLink, setEmailLink] = useState(() => parseEmailLink(params));
+  const recovering = params.get("recovery") === "1" || ["recovery","invite"].includes(params.get("type") || "");
+  useEffect(() => {
+    if (params.has("token_hash")) {
+      const clean = new URL(window.location.href);
+      clean.searchParams.delete("token_hash");
+      window.history.replaceState(window.history.state, "", clean.pathname + clean.search);
+    }
+  }, [params]);
   const [error, setError] = useState("");
   const [sent, setSent] = useState(false);
   const [mode, setMode] = useState<
@@ -37,9 +46,20 @@ export default function Login() {
     secret?: string;
   } | null>(null);
   useEffect(() => {
-    if (!recovering && !loading && user && (!next.startsWith("/admin") || isAdmin))
+    if (!emailLink && !recovering && !loading && user && (!next.startsWith("/admin") || isAdmin))
       navigate(next, { replace: true });
-  }, [loading, user, isAdmin, next, navigate, recovering]);
+  }, [loading, user, isAdmin, next, navigate, recovering, emailLink]);
+  async function confirmEmailLink() {
+    if (!emailLink) return;
+    setBusy(true); setError("");
+    try {
+      const {error} = await supabase.auth.verifyOtp(emailLink);
+      if (error) throw error;
+      setEmailLink(null);
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "This link could not be verified. Request a new email and try again.");
+    } finally { setBusy(false); }
+  }
   async function login(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setBusy(true);
@@ -163,6 +183,12 @@ export default function Login() {
           </Notice>
         ) : loading ? (
           <p>Checking your account…</p>
+        ) : emailLink ? (
+          <div className="stack-form">
+            <h2>{recovering ? "Continue to set your password" : "Confirm your email link"}</h2>
+            <p>Continue only if you requested this email from Capistor. This link can be used once.</p>
+            <button className="button" disabled={busy} onClick={() => void confirmEmailLink()}>{busy ? "Verifying…" : "Continue securely"}</button>
+          </div>
         ) : recovering && user ? (
           <form className="stack-form" onSubmit={async (e) => {
             e.preventDefault(); setBusy(true); setError("");

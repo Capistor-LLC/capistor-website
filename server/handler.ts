@@ -22,6 +22,7 @@ import { listNotifications, sendNotification } from "./notifications.js";
 import { paymentMode, requestOriginAllowed } from "./environment.js";
 import {
   addAvailability,
+  setAvailability,
   availableSlots,
   bookAppointment,
   bootstrapOwner,
@@ -411,6 +412,9 @@ export default async function handler(
         break;
       case "add-availability":
         result = await addAvailability(ctx, body);
+        break;
+      case "set-availability":
+        result = await setAvailability(ctx, body);
         break;
       case "available-slots":
         result = await availableSlots(ctx, queryId());

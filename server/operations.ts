@@ -4,7 +4,8 @@ import { administrator, staffRole } from "./auth.js";
 import { check } from "./runtime.js";
 import { HttpError, id, text } from "./policy.js";
 import { event, getOrder } from "./orders.js";
-import { dispatchBookedOrderEmail } from "./notifications.js";
+import { dispatchBookedOrderEmail, dispatchStaffAppointmentEmail } from "./notifications.js";
+import { prepareAppointmentMeeting } from "./scheduling.js";
 
 const OWNER_EMAIL = "krish.shoaib55@gmail.com";
 const staffRoles = z.enum([
@@ -201,6 +202,15 @@ export async function addAvailability(ctx: Context, body: unknown) {
   );
 }
 
+export async function setAvailability(ctx: Context, body: unknown) {
+  staffRole(ctx, ["owner", "admin", "sales"]);
+  const b = z.object({id, status:z.enum(["open", "blocked"])}).parse(body);
+  const slot = check(await ctx.db.from("availability_slots").update({status:b.status})
+    .eq("id",b.id).in("status",["open","blocked"]).gt("starts_at",new Date().toISOString()).select("id").maybeSingle());
+  if (!slot) throw new HttpError(409,"This time is booked, held or already past. Manage its appointment instead.");
+  return {ok:true};
+}
+
 export async function availableSlots(ctx: Context, orderId: string) {
   const order = await getOrder(ctx, orderId);
   if (!order.item_snapshot.booking_required)
@@ -230,7 +240,11 @@ export async function bookAppointment(ctx: Context, body: unknown) {
     }),
   );
   // Email failure must not undo or disguise a successfully booked appointment.
-  try { await dispatchBookedOrderEmail(ctx,b.order_id); }
+  try {
+    await prepareAppointmentMeeting(ctx.db, appointmentId);
+    await dispatchBookedOrderEmail(ctx,b.order_id);
+    await dispatchStaffAppointmentEmail(ctx,b.order_id,appointmentId);
+  }
   catch { console.warn('Appointment email dispatch unavailable; booking is saved'); }
   return { id: appointmentId };
 }

@@ -932,6 +932,7 @@ function CalendarPanel() {
     <div className="admin-grid calendar-admin">
       <div className="panel admin-form">
         <h2>Upcoming consultations</h2>
+        <p>Paid bookings receive a joining link automatically. For Jitsi calls, open the link a few minutes early and sign in as host. Only admit the expected client.</p>
         {error && <Notice error>{error}</Notice>}
         {notice && <Notice>{notice}</Notice>}
         {calendar?.appointments.length ? calendar.appointments.map((a) => (
@@ -944,9 +945,10 @@ function CalendarPanel() {
                 .then(() => { setNotice("Appointment updated."); load(); })
                 .catch((e) => setError(e.message)).finally(() => setBusy(false));
             }}>
+              {a.meeting_url && <a className="small-button" href={a.meeting_url} target="_blank" rel="noreferrer">Open meeting</a>}
               <label>Meeting URL<input name="meeting_url" type="url" defaultValue={a.meeting_url} placeholder="https://…" /></label>
               <label>Status<select name="status" defaultValue={a.status}><option>scheduled</option><option>completed</option><option>cancelled</option><option>no_show</option></select></label>
-              <label>Internal / client-visible notes<textarea name="notes" /></label>
+              <label>Notes visible to the client<textarea name="notes" defaultValue={a.notes} /></label>
               <button className="small-button" disabled={busy}>Update appointment</button>
             </form>
           </article>
@@ -954,6 +956,7 @@ function CalendarPanel() {
       </div>
       <div className="panel admin-form">
         <h2>Publish available times</h2>
+        <p>Daily consultations run 10 am–9 pm UAE time, with 45-minute calls and 15-minute gaps. The next 30 days are replenished automatically. Block any time you cannot attend; blocked slots stay blocked. Dates below use your device timezone.</p>
         <form className="stack-form" onSubmit={(e) => {
           e.preventDefault(); const form = e.currentTarget; const f = new FormData(form); setBusy(true); setError("");
           api("add-availability", { starts_at: new Date(String(f.get("starts_at"))).toISOString(), ends_at: new Date(String(f.get("ends_at"))).toISOString() })
@@ -965,7 +968,14 @@ function CalendarPanel() {
           <button className="button" disabled={busy}>Add available time</button>
         </form>
         <h3>Open and booked slots</h3>
-        {calendar?.slots.map((s) => <p key={s.id}><span className="badge">{s.status}</span> {date(s.starts_at)} – {date(s.ends_at)}</p>)}
+        {calendar?.slots.map((s) => <div className="appointment-row" key={s.id}><p><span className="badge">{s.status}</span> {date(s.starts_at)} – {date(s.ends_at)}</p>
+          {["open","blocked"].includes(s.status) && <button className="small-button" disabled={busy} onClick={() => {
+            setBusy(true); setError("");
+            api("set-availability",{id:s.id,status:s.status === "open" ? "blocked" : "open"})
+              .then(() => {setNotice("Availability updated."); return load();})
+              .catch(e=>setError(e.message)).finally(()=>setBusy(false));
+          }}>{s.status === "open" ? "Block this time" : "Reopen this time"}</button>}
+        </div>)}
       </div>
     </div>
   );

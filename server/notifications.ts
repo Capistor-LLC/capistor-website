@@ -3,6 +3,7 @@ import { staffRole } from './auth.js';
 import { check } from './runtime.js';
 import { HttpError, id } from './policy.js';
 import { appOrigin, paymentMode } from './environment.js';
+import { prepareAppointmentMeeting } from './scheduling.js';
 
 export function providerError(status: number, body: unknown) {
   const error = body as {name?: unknown; message?: unknown} | null;
@@ -50,23 +51,28 @@ async function deliverNotification(ctx: Pick<Context, 'db'>, notificationId: unk
   if (!readiness.sendingEnabled) throw new HttpError(409, 'External email sending is disabled in this sandbox');
   const row = check(await ctx.db.from('notification_outbox').select('*').eq('id', id.parse(notificationId)).single());
   if (row.status === 'sent') return {ok:true};
-  if (!['queued','failed'].includes(row.status) || row.channel !== 'email' || !['appointment_booked', 'digital_delivery'].includes(row.template_key))
+  if (!['queued','failed'].includes(row.status) || row.channel !== 'email' || !['appointment_booked', 'staff_appointment_booked', 'digital_delivery'].includes(row.template_key))
     throw new HttpError(409, 'This notification cannot be sent by this email dispatcher');
   const started = row.payload.email_started_at;
   if (started && Date.now() - Date.parse(started) > 23 * 3600000)
     throw new HttpError(409, 'Retry window expired. Reconcile the provider delivery record before sending a new notification');
   if (row.attempts >= 3) throw new HttpError(409, 'Three attempts reached. Review the email provider record before taking further action');
   const order = check(await ctx.db.from('client_orders').select('id,reference,client_id,payment_status').eq('id', row.order_id).single());
-  if (order.client_id !== row.recipient_user_id || order.payment_status !== 'paid') throw new HttpError(409, 'Notification recipient or paid order is no longer valid');
-  if (row.template_key === 'appointment_booked') {
+  if (order.payment_status !== 'paid') throw new HttpError(409, 'Notification paid order is no longer valid');
+  const staffNotice = row.template_key === 'staff_appointment_booked';
+  if (staffNotice) {
+    const recipient = check(await ctx.db.from('staff_members').select('user_id').eq('user_id',row.recipient_user_id).eq('active',true).eq('role','owner').maybeSingle());
+    if (!recipient) throw new HttpError(409, 'Notification staff recipient is no longer authorized');
+  } else if (order.client_id !== row.recipient_user_id) throw new HttpError(409, 'Notification recipient is no longer valid');
+  if (row.template_key === 'appointment_booked' || staffNotice) {
     const appointment = check(await ctx.db.from('appointments').select('id,status').eq('order_id',order.id).single());
     if (appointment.status !== 'scheduled') throw new HttpError(409, 'This appointment is no longer scheduled');
   }
-  const {data,error} = await ctx.db.auth.admin.getUserById(order.client_id);
+  const {data,error} = await ctx.db.auth.admin.getUserById(row.recipient_user_id);
   if (error || !data.user?.email || !data.user.email_confirmed_at) throw new HttpError(409, 'A verified recipient email is required');
   const message = row.payload.email_message || {
     from: process.env.NOTIFICATION_FROM!, to: [data.user.email],
-    ...(row.template_key === 'digital_delivery' ? digitalDeliveryEmail : appointmentEmail)(order.reference, order.id, appOrigin()),
+    ...(staffNotice ? staffAppointmentEmail : row.template_key === 'digital_delivery' ? digitalDeliveryEmail : appointmentEmail)(order.reference, order.id, appOrigin()),
   };
   // Compare-and-swap plus provider idempotency protects concurrent staff clicks.
   // Freeze the message so a retry uses exactly the same provider request.
@@ -132,4 +138,40 @@ export async function dispatchDigitalDeliveryEmail(db: Context['db'], orderId: s
   if (!readiness.configured || !readiness.sendingEnabled) return;
   try { await deliverNotification({db}, order.id); }
   catch { console.warn('Digital delivery email remains in the staff notification queue'); }
+}
+
+export function staffAppointmentEmail(reference: string, _orderId: string, origin: string) {
+  return {
+    subject: `Consultation booked · ${reference}`,
+    text: `A paid consultation has been booked. Review the date, time and private joining link in your staff calendar.\n\n${origin}/staff\n\nFor Jitsi calls, open the joining link before the appointment and sign in as the host. Admit only the expected client. Do not forward the room link.\n\nCapistor Technologies`,
+  };
+}
+
+export async function dispatchStaffAppointmentEmail(ctx: Context, orderId: string, appointmentId: string) {
+  const owner = check(await ctx.db.from('staff_members').select('user_id').eq('role','owner').eq('active',true).order('created_at').limit(1).maybeSingle());
+  if (!owner) return;
+  // The appointment UUID is a stable key across booking retries.
+  check(await ctx.db.from('notification_outbox').upsert({id:appointmentId,order_id:orderId,
+    recipient_user_id:owner.user_id,channel:'email',template_key:'staff_appointment_booked',payload:{appointment_id:appointmentId}},
+    {onConflict:'id',ignoreDuplicates:true}));
+  if (emailReadiness().configured && emailReadiness().sendingEnabled) {
+    try { await deliverNotification(ctx,appointmentId); }
+    catch { console.warn('Owner booking email remains in the notification queue'); }
+  }
+}
+
+export async function retryPendingNotifications(db: Context['db']) {
+  if (!emailReadiness().configured || !emailReadiness().sendingEnabled) return;
+  const rows = check(await db.from('notification_outbox').select('id,payload,template_key')
+    .eq('channel','email').in('template_key',['appointment_booked','staff_appointment_booked','digital_delivery'])
+    .in('status',['queued','failed']).lt('attempts',3)
+    .gte('created_at',new Date(Date.now()-23*3600000).toISOString()).order('created_at').limit(25));
+  for (const row of rows) {
+    const started = row.payload.email_started_at;
+    if (started && Date.now() - Date.parse(started) > 23 * 3600000) continue;
+    try {
+      if (row.payload.appointment_id) await prepareAppointmentMeeting(db,row.payload.appointment_id);
+      await deliverNotification({db},row.id);
+    } catch { console.warn('Queued email requires retry or staff review'); }
+  }
 }

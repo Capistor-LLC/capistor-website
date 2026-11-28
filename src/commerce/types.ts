@@ -128,6 +128,7 @@ export type Appointment = {
   ends_at: string;
   timezone: string;
   meeting_url: string;
+  notes?: string;
   status: string;
   created_at: string;
 };

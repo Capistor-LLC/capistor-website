@@ -637,8 +637,7 @@ export function OrderPage() {
               <div className="panel">
                 <h2>Choose how to pay</h2>
                 <p className="micro">
-                  Choose one payment method. Once payment starts, contact
-                  Capistor before switching so you aren’t charged twice.
+                  Pay by card or bank transfer. Choosing bank transfer closes any unpaid Stripe checkout first. If a card payment is already processing, wait for confirmation before sending a transfer.
                 </p>
                 {business.stripe_enabled && (
                   <>
@@ -909,6 +908,7 @@ function AppointmentPanel({
           <Notice>{data.appointment.status === "cancelled" ? "This appointment has been cancelled. Use the order conversation to arrange a new time." : data.appointment.status === "scheduled" ? "Capistor will add the joining link to this order. Check here before your call, or use the order conversation if you need help." : "This appointment is closed. Its details remain in your order history."}</Notice>
         )}
         <button className="button secondary full" onClick={() => downloadAppointment(data.appointment!, data.order.reference)}>Download calendar event</button>
+        {data.appointment.meeting_url.startsWith("https://meet.jit.si/") && <p className="micro">Your call opens in Jitsi. If asked to wait for a moderator, wait for your engineer to start the meeting. Keep the joining link private.</p>}
         <p className="micro">Import into Apple Calendar, Google Calendar or Outlook. This is a snapshot; download it again if the appointment changes.</p>
       </div>
     );

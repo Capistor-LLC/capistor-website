@@ -35,3 +35,7 @@ Deploying source to main is separate from activating sales. Keep live checkout g
 - A dedicated internal QA customer can authenticate, list orders (200), and create a consultation request (200). Admin access is correctly denied (403). No payment or booking was made.
 - The live billing endpoint creates a Stripe-hosted portal session (200) for that authenticated QA customer. No card or real charge was used.
 - Corrected the production Supabase Site URL and added login callback allow-list entries for the exact production hosts, including recovery query parameters. Supabase still reports its built-in email service; custom SMTP and actual email delivery remain required before public signup.
+
+## Final-domain activation — 28 November 2026
+
+Production Cloudflare live billing portal and Stripe checkout return 200 on capistortechnologies.com. The live webhook points to this domain. Stripe and bank transfer are enabled; digital previews remain unavailable for paid sale. Bank fallback expires an unpaid Stripe checkout before issuing instructions and rejects completed, processing or uncertain attempts. Instructions do not settle an order. See domain-launch-status.md for current evidence; earlier sections are historical.

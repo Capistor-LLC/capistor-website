@@ -1,46 +1,44 @@
-# Domain launch status — 26 November 2026
+# Launch status — 28 November 2026
 
-## Confirmed
+## Live infrastructure
 
-- Cloudflare registration for `capistortechnologies.com` is active, expiring 26 November 2027. Purchase cost: $11.17. The original $20 setup budget leaves $8.83; no additional paid plans were purchased.
-- Resend sending domain added in Tokyo. Cloudflare now has its provider-specified DKIM TXT record at `resend._domainkey`, DNS-only CNAME `rsend` → `rsend-apne1.forge.rmta.net`, and DNS-only CNAME `send` → `send.forge.rmta.net`.
-- DMARC TXT `_dmarc` is `v=DMARC1; p=none;` (monitoring, not enforcement).
-- All four records resolve in public DNS. Resend now reports the domain verified and ready to send. Automatic digital-delivery email has now been confirmed delivered (see evidence below).
-- Zoho Mail Free is active (5 user licenses, 5 GB owner mailbox). Created `shoaib@capistortechnologies.com`, with `inquiry@` and `support@` aliases delivering into the same mailbox. Zoho reports all MX/SPF/DKIM records verified.
-- Public DNS resolves MX 10 `mx.zoho.com`, MX 20 `mx2.zoho.com`, MX 50 `mx3.zoho.com`; root SPF authorizes `zohomail.com`, and `zmail._domainkey` contains Zoho's generated DKIM key.
-- Updated current application contact/policy addresses in both databases and source. Existing order documents were not rewritten. Vercel Production and Preview `NOTIFICATION_FROM` now use `Capistor Technologies <support@capistortechnologies.com>`. Preview `ALLOW_SANDBOX_EMAIL=true` is enabled for the requested owner delivery test. A deployment is required to apply environment changes.
+- https://capistortechnologies.com serves the production Cloudflare Worker over HTTPS. `www` redirects to the apex while preserving the path. Public pages are indexable; login, staff, portal and API pages are private/no-store/noindex. The workers.dev alias remains noindex.
+- Production uses Supabase `mqzxzvesyjfftddquxik`, private R2 `capistor-private-production`, Stripe live mode and a domain-restricted Resend sending key. Credentials are encrypted Worker secrets. No paid hosting subscription was added.
+- Supabase Site URL and exact login callbacks use the new domain. Private R2 CORS permits the final origins and retained deployment origins, with no public bucket access. The expired old domain was removed from R2 CORS.
+- Stripe webhook `we_1UfQUmLFAmiFFgynWPt2RILA` now targets the final domain's `/api/commerce?action=stripe-webhook`, preserving all five event subscriptions. Billing portal configuration remains `bpc_1UeuQWLFAmiFFgyn84W6GiMf`.
+- Stripe and bank transfer are enabled for eligible service orders. Bank instructions use the owner's approved Wio account. Unpaid Stripe checkouts are closed before switching to bank transfer; completed, processing or uncertain card attempts block the switch. Only verified settlement unlocks paid features.
 
-## Required before launch
+## Consultation operations
 
-1. Prove mailbox send/receive and alias delivery. Leave Resend's `send` and `rsend` records intact.
-2. Custom Resend SMTP is saved in both Supabase projects. Paid-order email is verified delivered; sign-in/password recovery email still needs delivery testing.
-3. Cloudflare staging is deployed and validated at https://capistor-staging.capistor-website.workers.dev. Production credential migration and domain cutover are still pending. No paid hosting subscription was enabled.
-4. Connect the domain to the validated host, configure TLS, APP_ORIGIN, Supabase redirects, R2 CORS, Stripe webhook URL, canonical URLs and sitemap. The website still contains old-domain references; change them as part of this coordinated cutover.
-5. Repeat authenticated ordering, payment webhook, private file delivery, consultation booking and billing portal checks on the final origin. Production payment methods remain disabled until these checks pass.
-6. Real digital product release bundles remain a separate launch blocker. Staging samples must not become paid production deliverables.
+The owner confirmed daily availability from 10 am to 9 pm UAE time. The schedule generates hourly starts from 10 am through 8 pm, 45-minute calls, 15-minute gaps, and at least 24 hours' notice when publishing new slots. Thirty days are replenished daily; existing booked or blocked slots are never reopened. Staff can block/reopen future unbooked times in Calendar.
 
-Do not mark the business email, automatic delivery, hosting migration or launch complete based only on domain registration or DNS propagation.
+Paid clients select an available time in their order workspace. Booking is transactionally protected against duplicate orders/slots. A random Jitsi room link is generated without customer/project identifiers; staff can replace it. The host must sign in to Jitsi and start the room before the call. Client and owner booking notices are queued, and scheduled retries run every ten minutes with stable provider idempotency keys, attempt limits and a 23-hour automatic retry window. Older/uncertain notices remain for staff review.
 
-## Automated delivery proof — 26 November 2026
+This does not reserve a chosen slot before payment; customers choose after confirmed payment. No real-money charge was submitted during testing.
 
-Cloudflare deployed webhook returned HTTP 200 for the authentic Stripe test completion event for owner order `CAP-95A6C9A6D4`. The previously rejected notification was reconciled: all earlier attempts were HTTP 400, no accepted provider ID existed, and Resend showed no accepted email. One controlled retry was authorized in staging, with an immutable order event and the original failures retained in notification payload.
+## Email
 
-The retry succeeded using the approved new-domain sending key. Resend message `01a21945-5efc-713a-96ac-86b7123cd604` shows **delivered** to the owner's Gmail at 23:11 Dubai time. The email links to the authenticated Cloudflare order workspace.
+Zoho Mail Free is configured for `shoaib@capistortechnologies.com`, with `support@` and `inquiry@` aliases. MX/SPF/DKIM were verified publicly and in Zoho. Resend's sending domain is verified; DMARC monitoring is published.
 
-A separate authenticated request to the deployed Worker downloaded the 76,179-byte steering sample ZIP from private R2. SHA-256 matched its database record. Another customer received HTTP 404 for the same file. Local evidence is in ignored `.local/delivery-proof/worker-result.json`.
+Production Supabase signup, magic-link, password reset, invitation and email-change templates now link to a branded confirmation page. Verification requires a button press rather than consuming the token on page load; the hash is removed from the visible URL. The email template bodies are maintained in Supabase.
 
-The Worker needed asynchronous Stripe webhook verification; the synchronous SDK verifier rejected valid signatures under its Web Crypto build. This was corrected and covered by an async-crypto regression test that rejects altered and unsigned payloads. All 64 tests, type checking and commerce lint pass.
+Resend message `01a21ee2-94d9-758a-867d-17e02bdc3c08` was delivered to the owner's Gmail on 28 November. Insights passes sender/link-domain alignment and DMARC with no "needs attention" warning. This proves provider delivery, not inbox placement. The owner reports junk placement; domain reputation/recipient filtering remains an operational issue. Do not promise inbox placement or send bulk warm-up mail.
 
-Staging Supabase Site URL and exact `/login` redirect now include the Cloudflare origin. All digital assets are still samples; this does not establish production product readiness or a real-money charge.
+## Evidence
 
-## Production hosting progress — 27 November 2026
+- 77 automated tests pass, including payment boundaries, asynchronous webhook signatures, private file access, scheduling, bank fallback and email-link parsing; TypeScript and commerce lint pass.
+- Final-domain authenticated order access and live billing portal returned 200; customer admin access returned 403.
+- Live Stripe checkout creation returned 200 without charging a card. Switching the QA order to bank returned the correct IBAN, amount and currency, while leaving payment unconfirmed.
+- Final-domain signed client upload/CORS succeeded. The file stayed quarantined and an unreviewed download returned 409.
+- Staging paid consultation booking/retry, private download bytes, cross-customer denial, upload quarantine and repeated finalization passed.
+- Staging paid digital order `CAP-95A6C9A6D4` delivered an email and a 76,179-byte sample ZIP with matching checksum. Another customer received 404. See ignored `.local/delivery-proof/worker-result.json`.
+- Production deployment version: `21b0be48-965d-4109-9b0d-0fb8d88615e2`.
 
-Production Worker is deployed at https://capistor-production.capistor-website.workers.dev, separately from staging, using the production Supabase browser configuration. The server has encrypted production Supabase credentials, existing Stripe webhook signing secret and production-only R2 credentials. No paid hosting plan was enabled.
+## Remaining limitations
 
-New-domain canonical/share/sitemap URLs are prepared. Production assets remain noindex until final cutover. APP_ORIGIN is currently the production workers.dev URL; no custom domain route has been attached. The live Stripe secret and Resend sending key are not yet installed in this Worker, and customer payments remain disabled in the production database.
-
-Browser session restoration discarded one-time credential memory. A new approved production-only R2 key named `capistor-worker-production-deploy` was created and installed encrypted in the production Worker; the prior unused `capistor-worker-production-files` key should be revoked after checking no consumer uses it. Existing Vercel storage credentials were preserved.
-
-The restricted Stripe key `capistor-cloudflare-commerce` exists but its one-time secret is unavailable. A replacement named `capistor-worker-production-deploy` is prepared with the same nine limited permissions: Checkout Sessions, Customers and Customer Portal write; Charges and Refunds, Payment Intents, Invoices, Products, Prices, and Tax Settings/Registrations read. Stripe requires account verification before creation/reveal can finish. No payouts, transfers, refund-write or webhook-management permissions were requested.
-
-Next: complete Stripe verification and install its secret immediately; install a domain-scoped Resend sending key in production; configure exact production authentication callbacks and R2 CORS; validate production portal/checkout without charging a card; attach domain/TLS, update APP_ORIGIN and Stripe webhook URL, and enable indexing only on the final public origin. Release-ready digital bundles are still required before enabling their real-money sales.
+- Digital previews stay disabled for paid sales. Real, validated release bundles are required; see `product-release-audit.md` for unresolved PCB DRC issues and missing CAD source.
+- Google/Apple OAuth and SMS verification/marketing are not configured. Email/password and one-time email links are available; wallet eligibility is handled by Stripe and differs from social login.
+- Zoho mailbox send/receive and a live two-person Jitsi call still need human operational checks. Provider delivery to Gmail has been verified.
+- No real-money checkout settlement, live refund, or load/capacity test was performed. Sandbox settlement was tested. New authentication templates have confirmed delivery; full invitation/email-change round trips need dedicated QA accounts.
+- Unused migration credentials should be reviewed/revoked once old hosting is retired. Preserve credentials still used by Vercel until that decision.
+- Registration cost was $11.17 of the $20 setup budget. No paid email/hosting upgrade was purchased.

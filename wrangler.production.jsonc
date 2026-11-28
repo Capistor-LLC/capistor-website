@@ -13,22 +13,31 @@
     "binding": "ASSETS",
     "html_handling": "drop-trailing-slash",
     "not_found_handling": "none",
-    "run_worker_first": [
-      "/api/*",
-      "/portal*",
-      "/admin*",
-      "/login*",
-      "/checkout*",
-      "/products",
-      "/capabilities",
-      "/blog"
-    ]
+    "run_worker_first": true
   },
   "vars": {
     "DEPLOYMENT_ENV": "production",
     "STRIPE_MODE": "live",
-    "APP_ORIGIN": "https://capistor-production.capistor-website.workers.dev",
+    "APP_ORIGIN": "https://capistortechnologies.com",
     "NOTIFICATION_FROM": "Capistor Technologies <support@capistortechnologies.com>",
-    "STRIPE_PORTAL_CONFIGURATION_ID": "bpc_1UeuQWLFAmiFFgyn84W6GiMf"
+    "STRIPE_PORTAL_CONFIGURATION_ID": "bpc_1UeuQWLFAmiFFgyn84W6GiMf",
+    "MEETING_PROVIDER": "jitsi",
+    "CONSULTATION_SCHEDULE": "daily-10-21-dubai"
+  },
+  "routes": [
+    {
+      "pattern": "capistortechnologies.com",
+      "custom_domain": true
+    },
+    {
+      "pattern": "www.capistortechnologies.com",
+      "custom_domain": true
+    }
+  ],
+  "triggers": {
+    "crons": [
+      "*/10 * * * *",
+      "0 0 * * *"
+    ]
   }
 }
